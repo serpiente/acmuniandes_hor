@@ -1,4 +1,66 @@
 acmuniandes_hor
-codename: auhor
 
-Instrucciones de trabajo a continuación:
+Excel de asignación de tareas lo pueden encontrar dentro de dropbox/../Proyecto Horario/Implementacion/.
+
+Como les comenté el repositorio ya está montado en http://github.com (desde el Lunes), y funciona a través de Git, un sistema de control de versiones, que funciona totalmente sobre COMMAND LINE INTERFACE (cli). Entonces para empezar a trabajar, lo PRIMERO que deben hacer es crear una cuenta en http://github.com. Una vez creada, POR FAVOR completar el archivo CuentasGITHUB.xls ubicado en dropbox/../Proyecto Horario/Implementacion.
+
+Una vez creada la cuenta deben seguir estos tutoriales (los cuales ya les había dejado y espero que ya hayan adelantado):
+
+  - http://help.github.com/set-up-git-redirect :: Aquí configurarán su cuenta e instalarán Git en sus computadores, lo cual es necesario para trabajar.
+
+ - Una vez configurada sus cuentas deben leer, más no necesariamente seguir, los tutoriales en los siguientes links que explican como crear un repositorio, como trabajar sobre otro repositorio (no lo deben seguir por que el repositorio ya está creado, pero deben entenderlos para saber como trabajar):
+
+   http://help.github.com/create-a-repo/
+   http://help.github.com/fork-a-repo/
+   http://help.github.com/send-pull-requests/
+
+Todos estos tutoriales de GitHub los deben ir acompañando de un tutorial de GIT como tal. SI no entienden como funciona bien Git, se van aconfundir con GitHub, pueden ir leyendolos en paralelo:
+   http://progit.org/book/ch1-3.html
+
+En realidad es muy muy simple, los tutoriales son bastante cortos, y lo importante es entender cómo funciona lógicamente. Acá les dejo unos puntos claves que les ayudará con el tutorial y a aclarar dudas.
+
+- Git funciona de manera LOCAL, en sus computadores. En cada uno de sus computadores tendrán una copia del repositorio principal.
+
+- De esta forma cuando hacen commit de sus cambios, lo están haciendo en sus propios computadores y están trabajando sobre su propia máquina. Esto implica que se puede trabajar offline. Después pueden hacer un push (diferente de commit) de su master branch a la master branch del repositorio central en un servidor externo.
+
+- GitHub provee el servidor central donde se monta el repositorio principal. Cualquier persona (totalmente público) puede hacer una copia de éste repositorio en su computador. Si la persona tiene permisos de escritura, es decir es un colaborador del repositorio, puede hacer push (actualizar) directamente el repositorio central desde su computador. Si no es colaborador, puede copiar totalmente el repositorio como si fuera un repositorio nuevo creado por él (esto se llama fork), trabajar sobre éste y luego hacer un pull request para solicitar al dueño del repositorio original que su nuevo repositorio se unido al repositorio original del que fue copiado.
+
+- Por otro lado, una branch es totalmente local a un repositorio.
+
+Esto les puede ayudar a entender conceptos de los tutoriales, y lo entenderán mejor una vez leídos.
+Mario respondió ayer que el repositorio de SVN solo estaría listo hasta enero, entonces debemos usar éste. Es extremadamente popular y sencillo y rápido, se darán cuenta.El único problema es que es totalmente público, cualquier persona puede acceder al código. Si queremos que sea privado es necesario pagar una mensualidad de 7USD. Sería menos de 1USD por persona al mes. No sé que opinen.
+
+Entonces por favor apenas hagan sus cuentas, agregarlas al archivo para poder agregarlos como colaboradores a nuestro repositorio. En éste repositorio ya está montada toda la estructura y esqueleto de nuestro sistema:
+
+Encontraran:
+
+  - Dentro del directorio _php/, un archivo .php (que comienzan con hor_), por cada componente definido en la arquitectura funcional, nivel 1. (Revisar DocumentoProyectoHorario.docx)
+
+  - Dentro del directorio _php/, un directorio _classes, donde hay un archivo .php por cada clase definida en el modelo de entidades, Y además el archivo hor_dao.php para la clase Hor_Dao, que será la que controla los accesos a la base de datos.
+
+  - Un directorio _javacomponent/, el cual contiene un proyecto de eclipse para desarrollar la funcionalidad del DataLoader y el monitor.
+
+  - Directorios para imágenes, css y javascript, que por el momento no usaremos.
+
+  - Encontrarán también un esqueleto de código dentro de cada archivo .php.
+
+  - Un archivo README que contendrá éste correo.
+
+Entonces para aclarar, deben mirar muy bien DocumentoProyectoHorario.docx donde están claramente definidas las responsabilidades de cada componente. Cada tarea de implementación asignada a ustedes deben ubicarla en el componente respectivo de acuerdo a sus funcionalidades. 
+
+Cada componente es un archivo .php que comienza por hor_. Es importante aclarar que estos archivos reciben directamente requests http viniendo del usuario, por lo que ahí se debe manejar la entrada de parámetros a través de las superglobals $_GET y $_POST. (Si no saben de qué les hablo, documéntense en PHP, y de paso HTTP!). Estos componentes deben retornar objetos en formato json al cliente web.
+
+No sobra mencionar que aunque ya estará un esqueleto del código, deben ser claros con su código y documentarlo, POR FAVOR, con estándares de Cupi2 que todos conocemos y para que DTI sea feliz. 
+
+Acerca de las secciones de código que requieran conexiones externas a las bases de datos del DTI o al LDAP, por favor dejar un //TODO expresando que hace falta la conexión explicita, pero todo lo demás lo pueden dejar listo.
+
+La conexión a nuestra base de datos es:
+Servidor: mysqlhostingdti.uniandes.edu.co
+Usuario: usdbcrearhorario
+Base de datos: dbcrearhorario
+
+Igualmente dentro del esqueleto del código encontrarán que ya se está estableciendo la conexión en el DAO.
+
+Nuevamente, el modelo relacional de tablas lo pueden encontrar en DocumentoProyectoHorario.docx, y no sobre mencionar que evidentemente la estrategia de carga de datos que estaremos utilizando es con el dataloader de JAVA.
+
+Finalmente, en PangoScrum (http://iica.pangoscrum.com, su login es el user de su correo oficial dentro del grupo que le hayan enviado a Ballen) está el Sprint1 y todas las tareas que les fueron asignadas. PangoScrum no permite asignar tareas, es por esto que utilicé el Excel, sin embargo pueden acceder y marcar como completadas las tareas a medida que las vayan completando. Les pido el favor de que hagan eso. Éste SPRINT 1 está programado desde Dic20 hasta Dic31. Está muy fácil!! El difícil va a ser el siguiente! Así que porfa.

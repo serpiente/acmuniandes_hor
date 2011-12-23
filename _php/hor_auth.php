@@ -11,6 +11,9 @@ function autenticar($usuario, $contrasenia){
 	//TODO
 }
 
+/**
+ * Hace logout del usuario actual y redirecciona a la pagina de login
+ */
 function logout(){
 	destroySession();
 	//Redirigir a la página de login

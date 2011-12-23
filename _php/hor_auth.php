@@ -1,4 +1,50 @@
 <?php
+require_once 'utils.php';
+/**
+ * Autentica a un usuario dados su login y su contraseña
+ * Utiliza el LDAP
+ * Se debe encargar ademas de redirigir a la página principal de horarios una vez autenticado el usuario
+ * @param $usuario string indicando nombre de usuario o login
+ * @param $contrasenia string indicando la contraseña del usuario
+ */
+function autenticar($usuario, $contrasenia){
+	//TODO
+}
+
+function logout(){
+	destroySession();
+	//Redirigir a la página de login
+	redirigirLoginPage();
+}
+
+
+$tipo_solicitud = sanitizeString($_GET['tipsol']);
+if (!isset($tipo_solicitud)) {
+	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
+	throw new Exception("No se indico el tipo de solicitud", 1);
+}
+
+switch ($tipo_solicitud) {
+		
+	case TiposSolicitud::TipoAutenticar:
+		$usuario = sanitizeString($_POST['usuario']);
+		if(!isset($usuario)){
+			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
+			throw new Exception("No se indico el nombre de usuario", 1);	
+		}
+		$contrasenia = sanitizeString($_POST['contrasenia']);
+		if(!isset($contrasenia)){
+			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
+			throw new Exception("No se indico la contrasenia", 1);	
+		}
+		autenticar($usuario, $contrasenia);
+		break;
+	case TiposSolicitud::TipoLogout:
+		logout();	
+	default:
+		throw new Exception("El tipo de solicitud no es valido", 1);
+		break;
+}
 
 
 ?>

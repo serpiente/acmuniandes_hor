@@ -3,12 +3,15 @@ require_once 'utils.php';
 /**
  * Autentica a un usuario dados su login y su contraseña
  * Utiliza el LDAP
+ * Una vez autenticado debe iniciar la sesión del usuario con $_SESSION['usuario']
  * Se debe encargar ademas de redirigir a la página principal de horarios una vez autenticado el usuario
  * @param $usuario string indicando nombre de usuario o login
  * @param $contrasenia string indicando la contraseña del usuario
  */
 function autenticar($usuario, $contrasenia){
 	//TODO
+	
+	//iniciar sesion $_SESSION['usuario'] = $usuario
 }
 
 /**
@@ -27,6 +30,7 @@ if (!isset($tipo_solicitud)) {
 	throw new Exception("No se indico el tipo de solicitud", 1);
 }
 
+//Determina el tipo de solicitud hecha por el usuario
 switch ($tipo_solicitud) {
 		
 	case TiposSolicitud::TipoAutenticar:

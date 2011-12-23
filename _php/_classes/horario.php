@@ -1,7 +1,7 @@
 <?php
 
 /**
- * 
+ * Representa un horario
  */
 class Horario {
 	

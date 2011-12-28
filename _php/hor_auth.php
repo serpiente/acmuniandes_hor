@@ -18,16 +18,16 @@ function autenticar($usuario, $contrasenia){
  * Hace logout del usuario actual y redirecciona a la pagina de login
  */
 function logout(){
+	//TODO
 	destroySession();
-	//Redirigir a la página de login
-	redirigirLoginPage();
+	redirigirLoginPage(); //Redirigir a la página de login
 }
 
 
 $tipo_solicitud = sanitizeString($_GET['tipsol']);
 if (!isset($tipo_solicitud)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
-	throw new Exception("No se indico el tipo de solicitud", 1);
+	throw new Exception("No se indico el tipo de solicitud");
 }
 
 //Determina el tipo de solicitud hecha por el usuario
@@ -37,19 +37,19 @@ switch ($tipo_solicitud) {
 		$usuario = sanitizeString($_POST['usuario']);
 		if(!isset($usuario)){
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
-			throw new Exception("No se indico el nombre de usuario", 1);	
+			throw new Exception("No se indico el nombre de usuario");	
 		}
 		$contrasenia = sanitizeString($_POST['contrasenia']);
 		if(!isset($contrasenia)){
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
-			throw new Exception("No se indico la contrasenia", 1);	
+			throw new Exception("No se indico la contrasenia");	
 		}
 		autenticar($usuario, $contrasenia);
 		break;
 	case TiposSolicitud::TipoLogout:
 		logout();	
 	default:
-		throw new Exception("El tipo de solicitud no es valido", 1);
+		throw new Exception("El tipo de solicitud no es valido");
 		break;
 }
 

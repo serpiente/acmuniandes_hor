@@ -98,28 +98,79 @@ class Hor_Dao {
 	}
 	
 	/**
-	 * Retorna un string con el query de mysql dado un arreglo de selects, unarreglos de froms, un arreglo de as y un arreglo de wheres
+	 * Retorna un string con el query de mysql dado un arreglo de selects, unarreglos de froms, un arreglo de as y un string indicando la condición del update.
 	 * @param $selects arreglo que contiene los selects
-	 * @param $froms arreglo que contiene los froms, debe ser del mismo tamanio que el arreglo $ass
-	 * @param $ass arreglo que contiene los as, debe ser del mismo tamanio que el arreglo $froms
-	 * @param $wheres arreglo que contiene los wheres
+	 * @param $froms arreglo asociativo de key-value pairs donde cada llave del arreglo es el nombre de cada tabla del from, y el valor asociado a cada tabla es el alias dentro de la sentencia.
+	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de select from where
 	 */
-	private function selectFromWhereMysql($selects,$froms,$ass,$wheres){
+	private function selectFromWhereMysql($selects,$froms,$where){
 		//TODO
 		
 	}
 	
 	/**
-	 * Retorna un string con el query de oracle dado un arreglo de selects, unarreglos de froms, un arreglo de as y un arreglo de wheres
+	 * Retorna un string con el query de oracle dado un arreglo de selects, unarreglos de froms, un arreglo de as y un string indicando la condición del update.
 	 * @param $selects arreglo que contiene los selects
-	 * @param $froms arreglo que contiene los froms, debe ser del mismo tamanio que el arreglo $ass
-	 * @param $ass arreglo que contiene los as, debe ser del mismo tamanio que el arreglo $froms
-	 * @param $wheres arreglo que contiene los wheres
+	 * @param $froms arreglo asociativo de key-value pairs donde cada llave del arreglo (o posicion del arreglo) es el nombre de cada tabla del from, y el valor asociado a cada tabla es el alias dentro de la sentencia.
+	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de select from where
 	 */
-	private function selectFromWhereOracle($selects,$froms,$ass,$wheres){
+	private function selectFromWhereOracle($selects,$froms,$where){
 		//TODO
+		
+	}
+	
+	/**
+	 * Retorna un string con la sentencia sql tanto para mysql como para oracle para hacer un update en una tabala dado el nombre de la tabla, un arregla associativa de las columnas 
+	 * a actualizar con sus respectivos valores y un string indicando la condición del update.
+	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
+	 * @param $colums_valores arreglo asociativo de key-value pairs donde cada llave del arreglo (o posicion del arreglo) es el nombre de cada columnda de la tabla a actualizar, y el valor asociado a cada columna es el valor a actualizar.
+	 * @param $where string que indica las condiciones de la sentencia
+	 */
+	private function updateSetWhere($nombre_tabla, $colums_valores, $where){
+		$query = "UPDATE $nombre_tabla SET ";	
+		$flag = TRUE;	
+		foreach ($colums_valores as $colum => $valor) {
+			if($flag){
+				$query.="$colum=$valor";
+				$flag = FALSE;
+			}
+			$query.=", $colum=$valor";
+		}
+		$query.= " WHERE $where;";
+	}
+	
+	/**
+	 * Retorna un string con la sentencia sql de mysql para hacer un delete en una table dado el nombre de la tabla y un string indicando la condicion del where
+	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
+	 * @param $where string que indica las condiciones de la sentencia
+	 */
+	private function deleteFromWhereMysql($nombre_tabla, $where){
+		return "DELETE FROM $nombre_tabla WHERE $where;";
+	}
+	
+	/**
+	 * Retorna un string con la sentencia sql de oracle para hacer un delete en una tabla dado el nombre de la tabla y un string indicando la condicion del where
+	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
+	 * @param $where string que indica las condiciones de la sentencia
+	 */
+	private function deleteFromWhereOracle($nombre_tabla, $where){
+		return "DELETE FROM $nombre_tabla WHERE $where;";
+	}
+	
+	private function insertInto($nombre_tabla, $valores){
+		
+		$vals = "";
+		$flag = TRUE;	
+		foreach ($valores as $valor) {
+			if($flag){
+				$vals.="$valor";
+				$flag = FALSE;
+			}
+			$vals .= ", $valor";
+		}
+		$query = "INSERT INTO $nombre_tabla VALUES ($vals)";
 		
 	}
 
@@ -253,11 +304,14 @@ class Hor_Dao {
 	 * @param $horario objeto de tipo Horario
 	 */
 	function persistirHorario($horario){
-		//TODO
+		//TODO REVISION
+		$query = "INSERT INTO Horarios (Login_Usuario, Creditos_Totales, Num_Cursos, Fecha_Creacion, Nombre) VALUES (".$horario -> getUsuario().", ".$horario -> getCreditosTotales().", ".$horario -> getNumCursos().", NOW(), ".$horario -> getNombre().")";
+		$this -> queryMysql($query);
 	}
 	
 	/**
 	 * Persiste un nuevo curso dentro de la(s) base(s) de datos
+ 	 * Funcion inutil, nunca sera utilizada
 	 * @param $curso objeto de tipo Curso
 	 */
 	function persistirCurso($curso){
@@ -269,14 +323,50 @@ class Hor_Dao {
 	 * @param $horario objeto de tipo Horario
 	 */
 	function actualizarHorario($horario){
-		//TODO
+		//TODO REVISION
+		if(!($horario instanceof Horario)){
+			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");			
+		}
+		else{
+			$colums_valores = array('Creditos_Totales' => $horario -> getCreditosTotales(),'Num_Cursos' => $horario -> getNumCursos(), 'Nombre' => $horario -> getNombre());
+			$query = $this -> updateSetWhere("Horarios", $colums_valores, "Id_Horario=".$horario -> getIdHorario());
+			$query.= $this -> deleteFromWhereMysql('Cursos_Horarios', "Id_Horario=".$horario -> getIdHorario());
+			
+			$cursos = $horario -> getCursos();
+			foreach ($cursos as $curso) {
+				if (!($curso instanceof Curso)) {
+					throw new Exception("El objeto no es una instancia de Curso", 1);					
+				}
+				$query.= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (".$horario -> getIdHorario().",".$curso -> getCRN().");";
+			}
+			$this -> queryMysql($query);
+		}
 	}
 	
 	/**
 	 * Actualiza un curso dentro de la(s) base(s) de datos
+	 * Funcion inutil, nunca sera utilizada
 	 * @param $curso objeto de tipo Curso
 	 */	
 	function actualizarCurso($curso){
+		//TODO
+	}
+	
+	/**
+	 * Elimina un horario y todos sus cursos dentro de la(s) base(s) de datos
+	 * @param $id_hor el id del horario a eliminar
+	 */
+	function eliminarHorario($id_hor){
+		//TODO REVISION
+		$this -> queryMysql($this -> deleteFromWhereMysql("Horarios", "Id_Horario=$id_hor"));
+	}
+	
+	/**
+	 * Elimina un curso dentro de la(s) base(s) de datos
+	 * Funcion inutil, nunca sera utilizada
+	 * @param $id_curso el id del curso a eliminar
+	 */
+	function eliminarCurso($id_curso){
 		//TODO
 	}
 

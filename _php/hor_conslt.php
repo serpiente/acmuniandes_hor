@@ -8,6 +8,9 @@ foreach (glob("_classes/*.php") as $filename)
 //NOTA IMPORTANTE: echo es la manera de imprimir información al cliente web
 
 session_start();
+if (!isset($_SESSION['usuario'])) {
+	redirigirLoginPage(); 	//Redirigir a la página de login
+}
 $dao = new Hor_Dao(); //instanciación del dao
 
 
@@ -19,6 +22,7 @@ $dao = new Hor_Dao(); //instanciación del dao
  */
 function consultarCursosPorNombreProfesor($profesor, $cbuflag){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -31,6 +35,7 @@ function consultarCursosPorNombreProfesor($profesor, $cbuflag){
  */
 function consultarCursosPorNombreCurso($curso, $cbuflag){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -43,6 +48,7 @@ function consultarCursosPorNombreCurso($curso, $cbuflag){
  */
 function consultarCursosPorNombreDepartamento($depto, $cbuflag){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -54,6 +60,8 @@ function consultarCursosPorNombreDepartamento($depto, $cbuflag){
  */
 function consultarCursosPorCRN($crn){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
+	
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -65,6 +73,7 @@ function consultarCursosPorCRN($crn){
  */
 function consultarCursosPorCodigoCurso($cod){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -78,6 +87,7 @@ function consultarCursosPorCodigoCurso($cod){
  */
 function consultarCursosPorDiasHoras($dias, $horas, $cbuflag){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -89,6 +99,7 @@ function consultarCursosPorDiasHoras($dias, $horas, $cbuflag){
  */
 function consultarCursosPorCBU($tipo){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -104,6 +115,7 @@ function consultarCursosPorCBU($tipo){
  */
 function procesarConsulta($valor_consulta, $cbuflag){
 	//TODO
+	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 	
 	//echo del arreglo con objetos Curso, json encoded
 }
@@ -112,12 +124,12 @@ function procesarConsulta($valor_consulta, $cbuflag){
 $valor_consulta = sanitizeString($_GET['valcon']);
 if(!isset($valor_consulta)){
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
-	throw new Exception("No existe entrada de usuario", 1);
+	throw new Exception("No existe entrada de usuario");
 }
 $cbuflag = sanitizeString($_GET['cbuflag']);
-if(!isset($valor_consulta)){
+if(!isset($cbuflag)){
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
-	throw new Exception("No existe indicador de cbu", 1);
+	throw new Exception("No existe indicador de cbu");
 }
 
 
@@ -157,7 +169,7 @@ if(isset($_GET['tipcon'])){
 			consultarHorariosPorUsuario();
 			break;
 		default:
-			throw new Exception("El tipo de consulta no es valido", 1);
+			throw new Exception("El tipo de consulta no es valido");
 			break;
 	}
 } else {

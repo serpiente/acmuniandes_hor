@@ -47,6 +47,34 @@ class Ocurrencia {
 	function getdia(){
 		return $dia;
 	}
+	
+	function setdia($ndia){
+		$dia=$ndia;
+	}
+	
+	function gethoraInicio(){
+		return $horaInicio;
+	}
+	
+	function sethoraInicio($nhoraInicio){
+		$horaInicio=$nhoraInicio;
+	}
+	
+	function getsalon(){
+		return $salon;
+	}
+	
+	function setsalon($nsalon){
+		$salon=$nsalon;
+	}
+	
+	function getunidades_Duracion(){
+		return $unidades_Duracion;
+	}
+	
+	function setunidades_Duracion($nunidades_Duracion){
+		$unidades_Duracion=$nunidades_Duracion;
+	}
 }
 
 ?>

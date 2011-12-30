@@ -138,6 +138,14 @@ class Curso {
 		return $tipo;
 	}
 	
+	function getcomplementarias(){
+		return $complementarias;
+	}
+	
+	function getocurrencias(){
+		return $ocurrencias;
+	}
+	
 	
 	function setcapacidad_Total($ncapacidad_Total){
 		 $capacidad_Total=$ncapacidad_Total;
@@ -173,6 +181,14 @@ class Curso {
 	
 	function settipo($ntipo){
 	 $tipo=$ntipo;
+	}
+	
+	function setcomplementarias($ncomplementarias){
+		$complementarias=$ncomplementarias;
+	}
+	
+	function setocurrencias($nocurrencias){
+		$ocurrencias=$nocurrencias;
 	}
 }
 

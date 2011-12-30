@@ -34,6 +34,14 @@ class Usuario {
 	function setlogin($nlogin){
 		$login=$nlogin;
 	}
+	
+	function gethorarios(){
+		return $horarios;
+	}
+	
+	function sethorarios($nhorarios){
+		$horarios=$nhorarios;
+	}
 }
 
 ?>

@@ -58,7 +58,7 @@ function crearNuevoHorario($nombre) {
  * @return boolean indicando si el horario fue eliminado exitosamente
  */
 function eliminarHorario($id_hor) {
-	//TODO
+	//TODO REVISION
 	global $dao; //Permite utilizar estas variables declaradas fuera de la funcion
 	
 	try{

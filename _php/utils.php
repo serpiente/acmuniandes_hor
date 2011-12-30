@@ -56,6 +56,22 @@ function sanitizeString($var)
 }
 
 /**
+ * Dado un arreglo que contiene arreglos asociativos los cuales contienen los valores de atributos para un objeto,
+ * y dado el nombre del objeto a construir, la funcion pobla el arreglo original con objetos del tipo especificado reemplazandolos
+ * por los arreglos asociativos que se encontraban ahi inicialmente.
+ * @param $arr arreglo que contiene arreglos asociativos a ser reemplazados por objetos del tipo especificado con los valores de los arreglos asoicativos
+ * @param $nombreobj string que indica el nombre de la clase de los objetos a crear
+ */
+function poblarArregloObjetos($arr, $nombreobj) {
+		for ($i = 0; $i < sizeof($arr); $i++) {
+			$obj = $arr[$i];
+			$sub = new ${nombreobj};
+			$sub -> set($obj);
+			$arr[$i] = $sub;
+		}
+	}
+
+/**
  * Redirige al usuario a la página de login
  */
 function redirigirLoginPage(){

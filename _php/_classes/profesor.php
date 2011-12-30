@@ -5,10 +5,29 @@
  */
 class Profesor {
 	
-	//TODO Implementar clase
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------ATRIBUTOS-------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//
 	
-	function __construct() {
-		
+	/*
+	* Representa el apellido del profesor
+	*/
+	
+	private $apellido;
+	
+	/*
+	* Representa el nombre del profesor
+	*/
+	
+	private $nombre;
+	
+	/*
+	*Construye un nuevo profesor
+	*/
+	
+	function __construct($napellido, $nnombre) {
+	$apellido=$napellido;
+	$nombre=$nnombre;
 	}
 }
 

@@ -9,19 +9,19 @@ class Profesor {
 	//-----------------------------------------ATRIBUTOS-------------------------------------------------//
 	//---------------------------------------------------------------------------------------------------//
 	
-	/*
+	/**
 	* Representa el apellido del profesor
 	*/
 	
 	private $apellido;
 	
-	/*
+	/**
 	* Representa el nombre del profesor
 	*/
 	
 	private $nombre;
 	
-	/*
+	/**
 	* Representa los cursos de los que es responsable un profesor
 	*/
 	

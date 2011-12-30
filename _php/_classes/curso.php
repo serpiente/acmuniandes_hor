@@ -66,6 +66,12 @@ class Curso {
 	private $complementarias;
 	
 	/*
+	* Representa las ocurrencias del curso
+	*/
+	
+	private $ocurrencias;
+	
+	/*
 	* Construye un nuevo curso
 	*/
 	
@@ -80,6 +86,7 @@ class Curso {
 	$seccion=$nseccion;
 	$tipo=$ntipo;
 	$complementarias=new array();	
+	$ocurrencias=new array();
 	}
 }
 

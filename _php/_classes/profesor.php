@@ -22,12 +22,18 @@ class Profesor {
 	private $nombre;
 	
 	/*
+	* Representa los cursos de los que es responsable un profesor
+	*/
+	
+         private $cursos;
+	/*
 	*Construye un nuevo profesor
 	*/
 	
 	function __construct($napellido, $nnombre) {
 	$apellido=$napellido;
 	$nombre=$nnombre;
+	$cursos=new array();
 	}
 }
 

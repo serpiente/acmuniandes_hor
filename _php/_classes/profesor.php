@@ -52,6 +52,15 @@ class Profesor {
 	function setnombre($nnombre){
 		$nombre=$nnombre;
 	}
+	
+	
+	function getcursos(){
+		return $cursos;
+	}
+	
+	function setcursos($ncursos){
+		$cursos=$ncursos;
+	}
 }
 
 ?>

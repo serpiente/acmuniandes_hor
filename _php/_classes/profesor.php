@@ -5,8 +5,25 @@
  */
 class Profesor {
 	
-	//TODO Implementar clase
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------ATRIBUTOS-------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//
 	
+	/**
+	* Representa el apellido del profesor
+	*/	
+	private $apellido;
+	
+	/**
+	* Representa el nombre del profesor
+	*/	
+	private $nombre;
+	
+	
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------METODOS---------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//	
+
 	/**
 	 * Constructor de la clase
 	 * Puede recibir un string en formato json con la representación del objeto. Si recibe el objeto en representación json se encarga 
@@ -14,8 +31,7 @@ class Profesor {
 	 * @param $json representacion del objeto en formato json (string). Puede ser o no pasado como parametro.
 	 */
 	function __construct($json = false) {
-		if ($json)
-			$this -> set(json_decode($json, true));
+		if ($json) $this -> set(json_decode($json, true));
 	}
 	
 	/**
@@ -27,6 +43,22 @@ class Profesor {
 		foreach ($data as $llave => $valor) {
 			$this -> ${llave} = $valor;
 		}
+	}
+	
+	function getApellido(){
+		return $this -> apellido;
+	}
+	
+	function setApellido($napellido){
+		$this -> apellido = $napellido;
+	}
+	
+	function getNombre(){
+		return $this -> nombre;
+	}
+	
+	function setNombre($nnombre){
+		$this -> nombre = $nnombre;
 	}
 }
 

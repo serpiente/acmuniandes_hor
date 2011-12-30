@@ -5,7 +5,34 @@
  */
 class Ocurrencia {
 	
-	//TODO Implementar clase
+	//------------------------------------------------------------------------------------------------------//
+	//------------------------------------------ATRIBUTOS---------------------------------------------------//
+	//------------------------------------------------------------------------------------------------------//
+	
+	/**
+	* Representa el dia de la ocurrencia del curso
+	*/	
+	private $dia;
+	
+	/**
+	* Representa la hora de inicio del curso
+	*/	
+	private $horaInicio;
+	
+	/**
+	* Representa el salon del curso
+	*/	
+	private $salon;
+	
+	/**
+	* Representa la duración del curso
+	*/	
+	private $unidades_Duracion;
+	
+	
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------METODOS---------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//	
 	
 	/**
 	 * Constructor de la clase
@@ -14,8 +41,7 @@ class Ocurrencia {
 	 * @param $json representacion del objeto en formato json (string). Puede ser o no pasado como parametro.
 	 */
 	function __construct($json = false) {
-		if ($json)
-			$this -> set(json_decode($json, true));
+		if ($json) $this -> set(json_decode($json, true));
 	}
 	
 	/**
@@ -27,6 +53,38 @@ class Ocurrencia {
 		foreach ($data as $llave => $valor) {
 			$this -> ${llave} = $valor;
 		}
+	}
+	
+	function getDia(){
+		return $this -> dia;
+	}
+	
+	function setDia($ndia){
+		$this -> dia = $ndia;
+	}
+	
+	function getHoraInicio(){
+		return $this -> horaInicio;
+	}
+	
+	function setHoraInicio($nhoraInicio){
+		$this -> horaInicio = $nhoraInicio;
+	}
+	
+	function getSalon(){
+		return $this -> salon;
+	}
+	
+	function setSalon($nsalon){
+		$this -> salon = $nsalon;
+	}
+	
+	function getUnidadesDuracion(){
+		return $this -> unidades_Duracion;
+	}
+	
+	function setUnidadesDuracion($nunidades_Duracion){
+		$this -> unidades_Duracion = $nunidades_Duracion;
 	}
 }
 

@@ -7,6 +7,26 @@ class Usuario {
 	
 	//TODO Implementar clase
 	
+	
+	//------------------------------------------------------------------------------------------------------//
+	//-----------------------------------------ATRIBUTOS----------------------------------------------------//
+	//------------------------------------------------------------------------------------------------------//
+	
+	/*
+	* Representa el login del usuario
+	*/	
+	private $login;
+	
+	/*
+	* Representa los horarios del usuario
+	*/	
+	private $horarios;
+	
+	
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------METODOS---------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//
+	
 	/**
 	 * Constructor de la clase
 	 * Puede recibir un string en formato json con la representación del objeto. Si recibe el objeto en representación json se encarga 
@@ -14,8 +34,8 @@ class Usuario {
 	 * @param $json representacion del objeto en formato json (string). Puede ser o no pasado como parametro.
 	 */
 	function __construct($json = false) {
-		if ($json)
-			$this -> set(json_decode($json, true));
+		if ($json) $this -> set(json_decode($json, true));
+		else $this -> horarios = array();
 	}
 	
 	/**
@@ -32,6 +52,22 @@ class Usuario {
 			}
 			$this -> ${llave} = $valor;
 		}
+	}
+	
+	function getLogin(){
+		return $this -> login;
+	}
+	
+	function setLogin($nlogin){
+		$this -> login = $nlogin;
+	}
+	
+	function getHorarios(){
+		return $this -> $horarios;
+	}
+	
+	function setHorarios($nhorarios){
+		$this ->horarios = $nhorarios;
 	}
 }
 

@@ -30,13 +30,13 @@ function consultarHorariosPorUsuario() {
 /**
  * Crea un nuevo horario vacio asociado al usuario que lo solicitó
  * @param $nombre string indicando el nombre que el usuario le ha dado a ese horario
- * @return boolean indicando si el nuevo horario fue creado exitosamente
+ * @return echo boolean indicando si el nuevo horario fue creado exitosamente
  */
 function crearNuevoHorario($nombre) {
 	//TODO REVISION
 	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
 	
-	$horario = new Horario();
+	$horario = new Horario;
 	$horario -> setUsuario($usuario);
 	$horario -> setCreditosTotales(0);
 	$horario -> setNumCursos(0);
@@ -55,7 +55,7 @@ function crearNuevoHorario($nombre) {
 /**
  * Elimina un horario dado su identificador
  * @param $id_hor string indicando el identificador del horario a eliminar
- * @return boolean indicando si el horario fue eliminado exitosamente
+ * @return echo boolean indicando si el horario fue eliminado exitosamente
  */
 function eliminarHorario($id_hor) {
 	//TODO REVISION
@@ -74,11 +74,21 @@ function eliminarHorario($id_hor) {
 /**
  * Guarda un horario asociado a un usuario de forma permanente. Se asume que el horario ya existe en la base de datos.
  * @param $horario objeto de tipo Horario, en formato json, que será guardado
+ * @return echo boolean indicando si el horario fue eliminado exitosamente
  */
 function guardarHorario($horario){
 	//TODO
 	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
-
+	
+	try{
+		$horobj = new Horario($horario);
+		$horobj -> setUsuario($usuario);
+		$dao -> actualizarHorario($horobj);
+		echo TRUE;
+	} catch(Exception $e){
+		echo FALSE;
+		echo $e -> getMessage();
+	}
 }
 
 

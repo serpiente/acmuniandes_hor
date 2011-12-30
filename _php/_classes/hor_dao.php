@@ -160,7 +160,7 @@ class Hor_Dao {
 	}
 	
 	private function insertInto($nombre_tabla, $valores){
-		
+		//TODO
 		$vals = "";
 		$flag = TRUE;	
 		foreach ($valores as $valor) {
@@ -324,22 +324,25 @@ class Hor_Dao {
 	 */
 	function actualizarHorario($horario){
 		//TODO REVISION
-		if(!($horario instanceof Horario)){
-			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");			
-		}
-		else{
+		if($horario instanceof Horario){
 			$colums_valores = array('Creditos_Totales' => $horario -> getCreditosTotales(),'Num_Cursos' => $horario -> getNumCursos(), 'Nombre' => $horario -> getNombre());
 			$query = $this -> updateSetWhere("Horarios", $colums_valores, "Id_Horario=".$horario -> getIdHorario());
 			$query.= $this -> deleteFromWhereMysql('Cursos_Horarios', "Id_Horario=".$horario -> getIdHorario());
 			
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
-				if (!($curso instanceof Curso)) {
+				if ($curso instanceof Curso) {
+					$query.= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (".$horario -> getIdHorario().",".$curso -> getCrn().");";
+				}
+				else{
 					throw new Exception("El objeto no es una instancia de Curso", 1);					
 				}
-				$query.= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (".$horario -> getIdHorario().",".$curso -> getCRN().");";
+				
 			}
 			$this -> queryMysql($query);
+		}
+		else{
+			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");			
 		}
 	}
 	

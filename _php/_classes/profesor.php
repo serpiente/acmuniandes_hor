@@ -26,14 +26,31 @@ class Profesor {
 	*/
 	
          private $cursos;
-	/*
-	*Construye un nuevo profesor
-	*/
+	//---------------------------------------------------------------------------------------------------//
+	//-----------------------------------------METODOS-------------------------------------------------//
+	//---------------------------------------------------------------------------------------------------//
+	
 	
 	function __construct($napellido, $nnombre) {
 	$apellido=$napellido;
 	$nombre=$nnombre;
 	$cursos=new array();
+	}
+	
+	function getapellido(){
+		return $apellido;
+	}
+	
+	function setapellido($napellido){
+		$apellido=$napellido;
+	}
+	
+	function getnombre(){
+		return $nombre;
+	}
+	
+	function setnombre($nnombre){
+		$nombre=$nnombre;
 	}
 }
 

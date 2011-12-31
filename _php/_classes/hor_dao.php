@@ -1,5 +1,5 @@
 <?php
-foreach (glob("../_classes/*.php") as $filename)
+foreach (glob("./*.php") as $filename)
 {
     require_once $filename;
 }

@@ -105,8 +105,35 @@ class Hor_Dao {
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de select from where
 	 */
 	private function selectFromWhereMysql($selects,$froms,$where){
-		//TODO
 		
+		$sql = "SELECT ";
+		$bool = FALSE;
+		foreach ($selects as $column) {
+			
+			if(!$bool)
+			{
+				$sql.="$column";
+				$bool = TRUE;
+			}else
+				$sql.= ", $column";
+		}
+		
+		$sql.= " FROM ";
+		
+		$bool = FALSE;
+		foreach ($froms as $tabla => $alias) {
+				
+			if(!$bool)
+			{
+			$sql.= "$tabla as $alias";
+			$bool = TRUE;
+			}else
+				$sql.= ", $tabla as $alias";
+		}
+		
+		$sql.= " WHERE $where";
+		
+		return $sql;
 	}
 	
 	/**
@@ -182,7 +209,10 @@ class Hor_Dao {
 	 */
 	function consultarCursosPorNombreProfesor($profesor, $cbuflag) {
 		//TODO
-
+			
+		$array;
+		
+		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
 
@@ -195,6 +225,9 @@ class Hor_Dao {
 	function consultarCursosPorNombreCurso($curso, $cbuflag) {
 		//TODO
 
+		$array;
+		
+		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
 
@@ -207,6 +240,9 @@ class Hor_Dao {
 	function consultarCursosPorNombreDepartamento($depto, $cbuflag) {
 		//TODO
 
+		$array;
+		
+		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
 
@@ -253,6 +289,9 @@ class Hor_Dao {
 	function consultarCursosPorCBU($tipo) {
 		//TODO
 
+		$array;
+		
+		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
 	

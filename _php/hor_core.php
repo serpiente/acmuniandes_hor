@@ -1,8 +1,7 @@
 <?php
 require_once 'utils.php';
-foreach (glob("_classes/*.php") as $filename)
-{
-    require_once $filename;
+foreach (glob("_classes/*.php") as $filename){
+	require_once $filename;
 }
 
 //NOTA IMPORTANTE: echo es la manera de imprimir información al cliente web

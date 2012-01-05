@@ -75,7 +75,7 @@ function poblarArregloObjetos($arr, $nombreobj) {
  * Redirige al usuario a la página de login
  */
 function redirigirLoginPage(){
-	//TODO
+	header("Location: /index.html");
 }
 
 

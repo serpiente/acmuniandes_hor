@@ -3,10 +3,7 @@
 /**
  * Representa un Usuario
  */
-class Usuario {
-	
-	//TODO Implementar clase
-	
+class Usuario {	
 	
 	//------------------------------------------------------------------------------------------------------//
 	//-----------------------------------------ATRIBUTOS----------------------------------------------------//
@@ -67,7 +64,7 @@ class Usuario {
 	}
 	
 	function setHorarios($nhorarios){
-		$this ->horarios = $nhorarios;
+		$this -> horarios = $nhorarios;
 	}
 }
 

@@ -1,6 +1,5 @@
 <?php
-foreach (glob("./*.php") as $filename)
-{
+foreach (glob("./*.php") as $filename){
     require_once $filename;
 }
 
@@ -154,6 +153,7 @@ class Hor_Dao {
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $colums_valores arreglo asociativo de key-value pairs donde cada llave del arreglo (o posicion del arreglo) es el nombre de cada columnda de la tabla a actualizar, y el valor asociado a cada columna es el valor a actualizar.
 	 * @param $where string que indica las condiciones de la sentencia
+	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura del update
 	 */
 	private function updateSetWhere($nombre_tabla, $colums_valores, $where){
 		$query = "UPDATE $nombre_tabla SET ";	
@@ -172,6 +172,7 @@ class Hor_Dao {
 	 * Retorna un string con la sentencia sql de mysql para hacer un delete en una table dado el nombre de la tabla y un string indicando la condicion del where
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $where string que indica las condiciones de la sentencia
+	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de delete para mysql
 	 */
 	private function deleteFromWhereMysql($nombre_tabla, $where){
 		return "DELETE FROM $nombre_tabla WHERE $where;";
@@ -181,11 +182,18 @@ class Hor_Dao {
 	 * Retorna un string con la sentencia sql de oracle para hacer un delete en una tabla dado el nombre de la tabla y un string indicando la condicion del where
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $where string que indica las condiciones de la sentencia
+	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de delete para oracle
 	 */
 	private function deleteFromWhereOracle($nombre_tabla, $where){
 		return "DELETE FROM $nombre_tabla WHERE $where;";
 	}
 	
+	/**
+	 * Retorna un string con la sentencia sql para hacer un insert en una tabla dado el nombre de la tabal y los valores a insertar
+	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
+	 * @param $valores arreglo con los valores a insertar en la tabla. Debens eguri el mismo orden de las columnas en la tabla
+	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de insert
+	 */
 	private function insertInto($nombre_tabla, $valores){
 		//TODO
 		$vals = "";
@@ -301,15 +309,6 @@ class Hor_Dao {
 	 * @return objeto de la clase Horario
 	 */
 	function consultarHorarioPorId($id_hor) {
-		//TODO
-	}
-
-	/**
-	 * Retorna un curso, dado su id
-	 * @param $crn_cur string indicando el identificador unico de un curso
-	 * @return objeto de la clase Curso
-	 */
-	function consultarCursoPorCRN($crn_cur) {
 		//TODO
 	}
 

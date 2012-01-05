@@ -1,8 +1,6 @@
 <?php
-
 require_once 'utils.php';
-foreach (glob("_classes/*.php") as $filename)
-{
+foreach (glob("_classes/*.php") as $filename){
     require_once $filename;
 }
 

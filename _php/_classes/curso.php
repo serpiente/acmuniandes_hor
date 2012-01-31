@@ -72,6 +72,11 @@ class Curso {
 	 */
 	private $profesores;
 	
+	/**
+	 * String representando los días que ocurre éste curso
+	 */
+	private $dias;
+	
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -161,6 +166,10 @@ class Curso {
 	function getProfesores(){
 		return $this -> profesores;
 	}
+	
+	function getDias(){
+		return $this -> dias;
+	}
 		
 	function setCapacidad_Total($ncapacidad_Total){
 		 $this -> capacidad_Total = $ncapacidad_Total;
@@ -208,6 +217,10 @@ class Curso {
 
 	function setProfesores($nprofesores){
 		$this -> profesores = $nprofesores;
+	}
+	
+	function setDias($ndias){
+		$this -> dias = $ndias; 
 	}
 
 }

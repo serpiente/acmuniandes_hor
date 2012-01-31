@@ -20,6 +20,11 @@ class Ocurrencia {
 	private $horaInicio;
 	
 	/**
+	* Representa la hora de inicio del curso
+	*/	
+	private $horaFin;
+	
+	/**
 	* Representa el salon del curso
 	*/	
 	private $salon;
@@ -69,6 +74,14 @@ class Ocurrencia {
 	
 	function setHoraInicio($nhoraInicio){
 		$this -> horaInicio = $nhoraInicio;
+	}
+	
+	function getHoraFin(){
+		return $this -> horaFin;
+	}
+	
+	function setHoraFin($nhoraFin){
+		$this -> horaFino = $nhoraFin;
 	}
 	
 	function getSalon(){

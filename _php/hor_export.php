@@ -1,5 +1,7 @@
 <?php
 require_once 'utils.php';
+require_once "_lib/src/apiClient.php";
+require_once "_lib/src/contrib/apiCalendarService.php";
 foreach (glob("_classes/*.php") as $filename){
     require_once $filename;
 }
@@ -13,7 +15,6 @@ if (!isset($usuario)) {
 	//Redirigir a la página de login
 	redirigirLoginPage();
 }
-$dao = new Hor_Dao(); //instanciación del dao
 
 /**
  * Exporta los horarios a formato de texto dado un objeto de tipo Horario en formato json
@@ -22,7 +23,7 @@ $dao = new Hor_Dao(); //instanciación del dao
 function exportarCRNSHorario($horario){
 	//TODO
 	//Aca se debe investigar sobre la forma de enviar el archivo generado al usuario en el cliente web
-	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
+	
 }
 
 /**
@@ -32,8 +33,39 @@ function exportarCRNSHorario($horario){
 function exportarHorarioAFormatoGoogleCal($horario){
 	//TODO
 	//Aca se debe investigar sobre la forma de enviar el archivo generado al usuario en el cliente web
-	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
 	
+	$miHorario = new Horario($horario);
+	//Mi codigo empieza con session_start() que no se pone aca ;
+	$apiClient = new apiClient();
+	$apiClient->setUseObjects(true);
+	$service=new apiCalendarService($apiClient);
+	if(isset($_SESSION['oauth_access_token'])){
+		$apiClient->setAccessToken($_SESSION['oauth_access_token']);
+	}else{
+		$token =  $apiClient->authenticate();
+		$_SESSION['oauth_access_token']=$token;
+	}
+
+	$cursos = $miHorario->getCursos();
+	foreach ($cursos as $curso) {
+		$nombreCurso = $curso->getNombre();
+		$ocurrencias = $curso->getOcurrencias();
+		foreach ($ocurrencias as $ocurrencia) {
+			$horaInicio = $ocurrencia->getHoraInicio();
+			$horaFin = $ocurrencia->getHoraFin();
+			
+			$event = new Event();
+			$event->setSummary($nombreCurso);
+			// $event->setLocation('Somewhere');
+			$start = new EventDateTime();
+			$start->setDateTime('2012-01-12T10:00:00.000-05:00');
+			$event->setStart($start);
+			$end = new EventDateTime();
+			$end->setDateTime('2012-01-12T10:25:00.000-05:00');
+			$event->setEnd($end);
+			$createdEvent = $service->events->insert('primary',$event);
+		}
+	}
 }
 
 /**
@@ -43,8 +75,56 @@ function exportarHorarioAFormatoGoogleCal($horario){
 function exportarHorarioAFormatoICal($horario){
 	//TODO
 	//Aca se debe investigar sobre la forma de enviar el archivo generado al usuario en el cliente web
-	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
 	
+	header("Content-Type: text/Calendar");
+	header("Content-Disposition: inline; filename=filename.ics");//Modificar nombre
+	echo "BEGIN:VCALENDAR\n";
+	echo "METHOD:PUBLISH\n";
+	echo "VERSION:2.0\n";
+	echo "PRODID:-//Apple Inc.//iCal 5.0.1\n";
+	echo "X-APPLE-CALENDAR-COLOR:#0E61B9\n";
+	echo "X-WR-TIMEZONE:America/Bogota\n";
+	echo "CALSCALE:GREGORIAN\n";
+	echo "BEGIN:VTIMEZONE\n";
+	echo "TZID:America/Bogota\n";
+	echo "BEGIN:DAYLIGHT\n";
+	echo "TZOFFSETFROM:-0500\n";
+	echo "DTSTART:19920503T000000\n";
+	echo "TZNAME:COT\n";
+	echo "TZOFFSETTO:-0400\n";
+	echo "RDATE:19920503T000000\n";
+	echo "END:DAYLIGHT\n";
+	echo "BEGIN:STANDARD\n";
+	echo "TZOFFSETFROM:-0400\n";
+	echo "DTSTART:19930404T000000\n";
+	echo "TZNAME:COT\n";
+	echo "TZOFFSETTO:-0500\n";
+	echo "RDATE:19930404T000000\n";
+	echo "END:STANDARD\n";
+	echo "END:VTIMEZONE\n";
+	echo "BEGIN:VEVENT\n";
+	echo "CLASS:PUBLIC\n";
+	echo "CREATED:20120115T201454Z\n"; //Cambiar por la date del dia o cualquier cosa
+	
+	$cursos = $miHorario->getCursos();
+	foreach ($cursos as $curso) {
+		$nombreCurso = $curso->getNombre();
+		$ocurrencias = $curso->getOcurrencias();
+		foreach ($ocurrencias as $ocurrencia) {
+			$horaInicio = $ocurrencia->getHoraInicio();
+			$horaFin = $ocurrencia->getHoraFin();
+			echo "DESCRIPTION:Evento nuevo\\n\\n\\nbla bla bla\\n\\nbla bla vla\n";
+			echo "DTEND;TZID=America/Bogota:20120115T180000\n";//Revisar esta fecha
+			echo "RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=20121011T000000Z;BYDAY=MO,TU,WE,TH,FR,SA,SU;WKST=MO\n";//Revisar ocurrencias y eso
+			echo "TRANSP:OPAQUE\n";
+			echo "SUMMARY:Evento\n";
+			echo "DTSTART;TZID=America/Bogota:20120115T170000\n";
+			echo "DTSTAMP:20120115T201641Z\n";
+			echo "SEQUENCE:0\n";
+			echo "END:VEVENT\n";
+		}
+	}
+	echo "END:VCALENDAR\n";
 }
 
 /**
@@ -54,8 +134,7 @@ function exportarHorarioAFormatoICal($horario){
 function exportarHorarioAFormatoPDF($horario){
 	//TODO
 	//Aca se debe investigar sobre la forma de enviar el archivo generado al usuario en el cliente web
-	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
-	
+		
 }
 
 

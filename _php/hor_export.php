@@ -16,6 +16,61 @@ if (!isset($usuario)) {
 	redirigirLoginPage();
 }
 
+
+/////////////UTILS FORMATOS DE FECHA GOOGLECAL Y ICAL///////////////
+
+/**
+ * Retorna un arreglo asociativo con dos(2) strings que representan las fechas de inicio y fin de una ocurrencia en formato Google Calendar
+ * @param ocur objeto de tipo Ocurrencia
+ * @return arreglo asociativo conteniendo las fechas de inicio y fin en formato Google Calendar. Las posiciones del arreglo son 'ini' y 'fin'
+ */
+function darFechasGoogleCal($ocur){
+	if($ocur instanceof Ocurrencia){
+		$dia = $ocur -> getDia();
+		$ini = $ocur -> getHoraInicio();
+		$fin = $ocur -> getHoraFin();
+		//Hardcoded for now
+		$semana = $arrayName = array('L' =>"2012-07-30", 'M' =>"2012-07-31",'I' =>"2012-08-01",'J' =>"2012-08-02",'V' =>"2012-08-03",'S' =>"2012-08-04");
+		$fechas = array();
+		$fechas['ini']=${semana}[$dia].'T'.${ini}.'.000';
+		$fechas['fin']=${semana}[$dia].'T'.${fin}.'.000';
+		
+		return $fechas;
+		
+	}else{
+		throw new Exception("El parametro no es una ocurrencia");
+	}
+}
+
+/**
+ * Retorna un arreglo asociativo con dos(2) strings que representan las fechas de inicio y fin de una ocurrencia en formato Google Calendar
+ * @param ocur objeto de tipo Ocurrencia
+ * @return arreglo asociativo conteniendo las fechas de inicio y fin en formato Google Calendar. Las posiciones del arreglo son 'ini' y 'fin'
+ */
+function darFechasICal($ocur){
+	if($ocur instanceof Ocurrencia){
+		$dia = $ocur -> getDia();
+		$ini = $ocur -> getHoraInicio();
+		$fin = $ocur -> getHoraFin();
+		//Hardcoded for now
+		$semana = $arrayName = array('L' =>"20120730", 'M' =>"20120731",'I' =>"20120801",'J' =>"20120802",'V' =>"20120803",'S' =>"20120804");
+		$fechas = array();
+		$ini = str_replace(':', "");
+		$fin = str_replace(':', "");
+		$fechas['ini']=${semana}[$dia].'T'.${ini}.'00';
+		$fechas['fin']=${semana}[$dia].'T'.${fin}.'00';
+		
+		return $fechas;
+		
+	}else{
+		throw new Exception("El parametro no es una ocurrencia");
+	}
+}
+
+//////////////////////////////////////
+
+
+
 /**
  * Exporta los horarios a formato de texto dado un objeto de tipo Horario en formato json
  * @param $horario objeto de tipo horario en formato json que contiene la informacion del horario a exportar

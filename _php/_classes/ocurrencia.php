@@ -15,12 +15,12 @@ class Ocurrencia {
 	private $dia;
 	
 	/**
-	* Representa la hora de inicio del curso. Formato HHMM 24 horas ej. 1300
+	* Representa la hora de inicio del curso. Formato HH:MM 24 horas ej. 13:00
 	*/	
 	private $horaInicio;
 	
 	/**
-	* Representa la hora de inicio del curso. Formato HHMM 24 horas ej. 1300
+	* Representa la hora de inicio del curso. Formato HH:MM 24 horas ej. 13:00
 	*/	
 	private $horaFin;
 	

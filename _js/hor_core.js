@@ -1,5 +1,7 @@
 $(function() {
 	var date = new Date();
+	var calendar = $('#scheduleContainer');
+	var resultGrid = $("#searchResults");
 	var mapaDias = {
 		L : darFecha(1),
 		M : darFecha(2),
@@ -8,6 +10,22 @@ $(function() {
 		V : darFecha(5),
 		S : darFecha(6)
 	}
+	var myData = [
+		{nombre:"APO1",cod:"ISIS-1501",sec:"1",prof:"Juan Tejada",disp:"12",salon:"ML505",depto:"Ing. Sistemas",crn:"44001",cred:"3",tipo:"ord"},
+		{nombre:"Introduccion",cod:"IIND-1101",sec:"1",prof:"Carlos Ballen",disp:"9",salon:"LL101",depto:"Ing. Industrial",crn:"22332",cred:"3",tipo:"ord"}
+	];
+	function Horario(){
+		this.id_horario;
+		this.usuario;
+		this.creditos_Totales = 0;
+		this.fechaCreacion;
+		this.guardado;
+		this.nombre;
+		this.numCursos = 0;
+		this.cursos = [];
+	}
+	var horarioActual = new Horario();
+	
 	
 	/**
 	 * Retorna la fecha (i.e. Feb 22/2012) de la semana actual que corresponde al dia de la semana dado por parametro
@@ -23,48 +41,54 @@ $(function() {
 	 */
 	function obtenerResultados(input){
 		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
-		
+		resultGrid.jqGrid('clearGridData',this);
+		for(var i=0;i<=myData.length;i++)
+            resultGrid.jqGrid('addRowData',i + 1, myData[i]);
+        
+        inicializarResultadosDraggable();
 	}
 	
-	$("#searchButton").click(function(){
-		obtenerResultados($("#searchInputText").val());
-	});
-	
-	$("#searchInputText").keypress(function(event){
-		if ( event.which == 13 ){
-			obtenerResultados($("#searchInputText").val());
-		}
-	});
-	
-	
-	$("#searchResults").jqGrid({
-		dataType : "json",
-		colNames : ["Nombre","CRN","Profesor"],
+	/**
+	 * Inicializa la interacción de draggable en los nuevos elementos recibidos del servidor
+	 */
+	function inicializarResultadosDraggable(){
+		$("#1").draggable({
+			addClasses : true,
+			revert : true,
+			helper: function(event) {
+				return $('<div class="ui-widget-content jqgrow ui-row-ltr  ui-draggable"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().appendTo('body');
+			},
+			start: function(event, ui) {
+				$(this).hide();
+			},
+			stop: function(event) {
+               	$(this).show();
+        	}
+		});	
+	}
+
+	//---------INICIALIZACION DE GRID Y CALENDAR---------------
+	resultGrid.jqGrid({
+		datatype: "local",
+		colNames : ["Nombre","Cod.","Sec.","Profesor","Disp.","Salon","Depto.","CRN","Creds.","Tipo"],
 		colModel : [	
-			{name:'nombre', index:'nombre', width:90, sortable:false},
-			{name:'crn', index:'crn', width:90, sortable:false}, 
-        	{name:'prof', index:'prof', width:80, sortable:false}, 
+			{name:'nombre',index:'nombre',width:70},
+			{name:'cod',index:'cod',width:70},
+			{name:'sec',index:'sec',width:70},
+        	{name:'prof',index:'prof',width:70},
+        	{name:'disp',index:'disp',width:70},
+        	{name:'salon',index:'salon',width:70},
+        	{name:'depto',index:'depto',width:70},
+        	{name:'crn',index:'crn',width:70}, 
+        	{name:'cred',index:'cred',width:70},
+        	{name:'tipo',index:'tipo',width:70}
     	],
 		gridview: true,
-    	caption: "Resultados"
+    	caption: "Resultados",
+    	shrinkToFit: false,
+    	width: 315,
+    	height : "100%"
 	});
-	
-	var data = { 
-  	"total": "1", 
-  	"page": "1", 
-  	"records": "2",
-  	"rows" : [
-    		{"nombre" :"Juan", "crn" : "2008", "prof": "Tejada"},
-    		{"nombre" :"Carlos", "crn" : "20087888", "prof": "Ed"}
-    	]
-	};
-	
-	console.log(data);
-	console.log($("#searchResults"));
-	//$("#searchResults")[0].addJSONData(data);
-	//console.log(mapaDias['L']);
-		
-		
 	
 	// var eventData = {
 		// events : [
@@ -75,7 +99,6 @@ $(function() {
 		   // {"id":5, "start": new Date(year, month, day + 1, 14), "end": new Date(year, month, day + 1, 15),"title":"Product showcase"}
 		// ]
 	// };
-	var calendar = $('#scheduleContainer');
 	calendar.weekCalendar({
 		timeslotsPerHour : 2,
 		firstDayOfWeek : 1,
@@ -92,8 +115,21 @@ $(function() {
 		dateFormat : '',
 		readonly : true,
 		height : function($calendar) {
-			return 700;
+			return 1000;
      	},
+     	displayOddEven : true
 		//data : eventData
+	});
+	
+	
+	//---------INICIALIZACION DE EVENTOS---------------
+	$("#searchButton").click(function(){
+		obtenerResultados($("#searchInputText").val());
+	});
+	
+	$("#searchInputText").keypress(function(event){
+		if ( event.which == 13 ){
+			obtenerResultados($("#searchInputText").val());
+		}
 	});
 });

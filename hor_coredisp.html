@@ -11,21 +11,37 @@
 		<script type="text/javascript" src="_js/_lib/jquery.jqGrid.min.js"></script>
 		<script type="text/javascript" src="_js/hor_core.js"></script>
 		<title>Horario Uniandes</title>
+		<style type="text/css">
+			#bodyContent{
+				overflow: hidden;
+			}
+			#searchContainer {
+				width: 30%;
+				float:left;
+			}
+			#searchResults{
+				width: 100%;
+			}
+			#scheduleContainer {
+				width: 70%;
+				float:left;
+				height:100%;
+			}
+		</style>
 	</head>
 	<body>
 		<div id="helper"></div>
 		<div id="header"><h1>HorarioLab</h1> </div>
 		<div id="bodyContent">
-			<div id="searchContainer">
-				<div id="searchInput">
+			<div id="searchInput">
 					<input type="text" id="searchInputText" class="ui-autocomplete-input" value="type anything"/>
 					<button id="searchButton" type="button" class="ui-button"><span class="ui-button-text">Go</span></button>
-				</div>
+			</div>
+			<div id="searchContainer" align="center">
 				<table id="searchResults">
 				</table>
 			</div>
 			<div id="scheduleContainer">
-				
 			</div>	
 		</div>
 	</body>

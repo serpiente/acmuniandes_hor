@@ -10,27 +10,27 @@ class Ocurrencia {
 	//------------------------------------------------------------------------------------------------------//
 	
 	/**
-	* Representa el dia de la ocurrencia del curso
+	* Representa el dia de la ocurrencia del curso char perteneciente a {L,M,I,J,V,S}
 	*/	
 	private $dia;
 	
 	/**
-	* Representa la hora de inicio del curso
+	* Representa la hora de inicio del curso. Formato HHMM 24 horas ej. 1300
 	*/	
 	private $horaInicio;
 	
 	/**
-	* Representa la hora de inicio del curso
+	* Representa la hora de inicio del curso. Formato HHMM 24 horas ej. 1300
 	*/	
 	private $horaFin;
 	
 	/**
-	* Representa el salon del curso
+	* Representa el salon del curso. Puede ser null.
 	*/	
 	private $salon;
 	
 	/**
-	* Representa la duración del curso
+	* Representa la duración del curso en unidades de media hora. Ej. 3 unidades = 1.5 horas. Mínimo valor: 2.
 	*/	
 	private $unidades_Duracion;
 	

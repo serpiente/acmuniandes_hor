@@ -73,7 +73,7 @@ class Curso {
 	private $profesores;
 	
 	/**
-	 * String representando los días que ocurre éste curso
+	 * String representando los días que ocurre éste curso ej:(LMIJVS)
 	 */
 	private $dias;
 	

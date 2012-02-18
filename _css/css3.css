@@ -1,0 +1,64 @@
+/* 
+    Document   : css3
+    Created on : Sep 23, 2011, 3:28:05 PM
+    Author     : julianespinel
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+body {
+    
+    font-family: sans-serif;
+}
+
+#logo {
+    
+    margin-right: 700px;
+    
+    font-size: 48px;
+}
+
+#loginForm {
+    
+    font-size: 18px;
+}
+
+.inputForm {
+    
+    font-size: 18px;
+    width: 220px;
+}
+
+.inputComboBox {
+    font-size: 18px;
+    width: 226px;
+}
+
+td {
+    
+    text-align: center;
+}
+
+.button1 {
+    
+    font-size: 18px;
+    width: 90px;
+    height: 60px;
+}
+
+.button2 {
+    
+    font-size: 18px;
+    width: 90px;
+    height: 30px;
+}
+
+#registerForm {
+    
+    margin-top: 100px;
+}

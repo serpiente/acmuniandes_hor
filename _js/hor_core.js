@@ -56,7 +56,8 @@ $(function() {
 			addClasses : true,
 			revert : true,
 			helper: function(event) {
-				return $('<div class="ui-widget-content jqgrow ui-row-ltr  ui-draggable"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().appendTo('body');
+				console.log($(event.target));
+				return $('<div class="helper"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().appendTo('body');
 			},
 			start: function(event, ui) {
 				$(this).hide();
@@ -87,7 +88,7 @@ $(function() {
     	caption: "Resultados",
     	shrinkToFit: false,
     	width: 315,
-    	height : "100%"
+    	height : 525
 	});
 	
 	// var eventData = {
@@ -115,9 +116,14 @@ $(function() {
 		dateFormat : '',
 		readonly : true,
 		height : function($calendar) {
-			return 1000;
+			return 600;
      	},
-     	displayOddEven : true
+     	displayOddEven : true,
+     	eventRender : function(calEvent, $event) {
+         if (calEvent.end.getTime() < new Date().getTime()) {
+            $event.css("opacity", "0.5");
+         }
+      }
 		//data : eventData
 	});
 	
@@ -130,6 +136,19 @@ $(function() {
 	$("#searchInputText").keypress(function(event){
 		if ( event.which == 13 ){
 			obtenerResultados($("#searchInputText").val());
+		}
+	});
+	
+	calendar.droppable({
+		//accept: ".helper",
+		over: function(){
+			calendar.weekCalendar("updateEvent",{id:1, start: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12), end: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 13, 35),title:"Lunch with Mike"});
+		},
+		out: function(){
+			calendar.weekCalendar("removeEvent",1);
+		},
+		drop: function(){
+			calendar.weekCalendar("updateEvent",{id:1});
 		}
 	});
 });

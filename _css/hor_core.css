@@ -1,0 +1,22 @@
+#bodyContent {
+	overflow: hidden;
+}
+#searchContainer {
+	width: 30%;
+	float: left;
+}
+#searchResults {
+	width: 300px;
+}
+#scheduleContainer {
+	width: 70%;
+	float: left;
+}
+.helper {
+	border-radius: 8px 8px 8px 8px;
+	background-color: #444444;
+	color: #D2E0E6;
+	font-size: small;
+	cursor: move;
+	font-family: Courier;
+}

@@ -30,7 +30,7 @@ function darFechasGoogleCal($ocur){
 		$ini = $ocur -> getHoraInicio();
 		$fin = $ocur -> getHoraFin();
 		//Hardcoded for now
-		$semana = $arrayName = array('L' =>"2012-07-30", 'M' =>"2012-07-31",'I' =>"2012-08-01",'J' =>"2012-08-02",'V' =>"2012-08-03",'S' =>"2012-08-04");
+		$semana = array('L' =>"2012-07-30", 'M' =>"2012-07-31",'I' =>"2012-08-01",'J' =>"2012-08-02",'V' =>"2012-08-03",'S' =>"2012-08-04");
 		$fechas = array();
 		$fechas['ini']=${semana}[$dia].'T'.${ini}.'.000';
 		$fechas['fin']=${semana}[$dia].'T'.${fin}.'.000';
@@ -53,7 +53,7 @@ function darFechasICal($ocur){
 		$ini = $ocur -> getHoraInicio();
 		$fin = $ocur -> getHoraFin();
 		//Hardcoded for now
-		$semana = $arrayName = array('L' =>"20120730", 'M' =>"20120731",'I' =>"20120801",'J' =>"20120802",'V' =>"20120803",'S' =>"20120804");
+		$semana = array('L' =>"20120730", 'M' =>"20120731",'I' =>"20120801",'J' =>"20120802",'V' =>"20120803",'S' =>"20120804");
 		$fechas = array();
 		$ini = str_replace(':', "");
 		$fin = str_replace(':', "");
@@ -159,6 +159,7 @@ function exportarHorarioAFormatoICal($horario){
 	echo "END:VTIMEZONE\n";
 	echo "BEGIN:VEVENT\n";
 	echo "CLASS:PUBLIC\n";
+	//current date echo
 	echo "CREATED:20120115T201454Z\n"; //Cambiar por la date del dia o cualquier cosa
 	
 	$cursos = $miHorario->getCursos();

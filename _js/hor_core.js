@@ -1,4 +1,5 @@
 $(function() {
+	var sel = -1;
 	var date = new Date();
 	var calendar = $('#scheduleContainer');
 	var resultGrid = $("#searchResults");
@@ -11,21 +12,70 @@ $(function() {
 		S : darFecha(6)
 	}
 	var myData = [
-		{nombre:"APO1",cod:"ISIS-1501",sec:"1",prof:"Juan Tejada",disp:"12",salon:"ML505",depto:"Ing. Sistemas",crn:"44001",cred:"3",tipo:"ord"},
-		{nombre:"Introduccion",cod:"IIND-1101",sec:"1",prof:"Carlos Ballen",disp:"9",salon:"LL101",depto:"Ing. Industrial",crn:"22332",cred:"3",tipo:"ord"}
+		{nombre:"APO1",cod:"ISIS-1501",sec:"1",prof:"Juan Tejada",disp:"12",depto:"Ing. Sistemas",crn:"44001",cred:"3",tipo:"ord"},
+		{nombre:"Introduccion",cod:"IIND-1101",sec:"1",prof:"Carlos Ballen",disp:"9",depto:"Ing. Industrial",crn:"22332",cred:"3",tipo:"ord"}
 	];
+	var resultados = [{
+		"capacidad_Total" : 25,
+		"codigo_Curso" : "ISIS2203",
+		"creditos" : 3,
+		"crn" : "45663",
+		"cupos_Disponibles" : 15,
+		"departamento" : "Ingenieria de Sistemas",
+		"nombre" : "Lenguajes y Maquinas",
+		"seccion" : 1,
+		"tipo" : null,
+		"complementarias" : [],
+		"ocurrencias" : [{
+			"dia" : "L",
+			"horaInicio" : "10:00",
+			"horaFin" : "11:20",
+			"salon" : "O201",
+			"unidades_Duracion" : 3
+		}],
+		"profesores" : ["Rodrigo Cardoso"],
+		"dias" : "LMI"
+	}];
 	function Horario(){
-		this.id_horario;
-		this.usuario;
+		this.id_horario = "";
+		this.usuario = "";
 		this.creditos_Totales = 0;
-		this.fechaCreacion;
-		this.guardado;
-		this.nombre;
+		this.fechaCreacion = "";
+		this.guardado = "";
+		this.nombre = "";
 		this.numCursos = 0;
 		this.cursos = [];
 	}
-	var horarioActual = new Horario();
-	
+	function CursoGrid(curso, i){
+		this.nombre = curso.nombre;
+		this.cod = curso.codigo_Curso;
+		this.sec = curso.seccion;
+		this.prof = curso.profesores[0];
+		this.disp = curso.cupos_Disponibles;
+		this.depto = curso.departamento;
+		this.crn = curso.crn;
+		this.cred = curso.creditos;
+		if(curso.tipo) this.tipo = curso.tipo;
+		else this.tipo = "N/A";
+		this.i=i;
+	}
+	function OcurCalendar(ocur,i,j){
+		console.log(i);
+		this.id = ""+i+""+j;
+		
+		var hmi = ocur.horaInicio.split(":");
+		var fecha = mapaDias[ocur.dia];
+		this.start = fecha.setHours(hmi[0],hmi[1]);
+		console.log(this.start);
+		
+		var hmf = ocur.horaFin.split(":");
+		this.end = fecha.setHours(hmf[0],hmf[1]);
+		console.log(this.end);
+		
+		this.title = resultados[i].nombre+"\n"+ocur.salon;
+		this.opac = "0.5";
+	}
+	var horarioActual = new Horario();	
 	
 	/**
 	 * Retorna la fecha (i.e. Feb 22/2012) de la semana actual que corresponde al dia de la semana dado por parametro
@@ -42,8 +92,8 @@ $(function() {
 	function obtenerResultados(input){
 		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
 		resultGrid.jqGrid('clearGridData',this);
-		for(var i=0;i<=myData.length;i++)
-            resultGrid.jqGrid('addRowData',i + 1, myData[i]);
+		for(var i=0;i<resultados.length;i++)
+            resultGrid.jqGrid('addRowData',i + 1, new CursoGrid(resultados[i],i));
         
         inicializarResultadosDraggable();
 	}
@@ -55,10 +105,12 @@ $(function() {
 		$("#1").draggable({
 			addClasses : true,
 			revert : true,
-			helper: function(event) {
-				console.log($(event.target));
-				return $('<div class="helper"><table></table></div>').find('table').append($(event.target).closest('tr').clone()).end().appendTo('body');
-			},
+			helper: "clone",
+			appendTo: "#helper",
+			// helper: function(event) {
+				// console.log(sel);
+				// return $('#helper').append(resultados[sel].nombre);
+			// },
 			start: function(event, ui) {
 				$(this).hide();
 			},
@@ -71,14 +123,13 @@ $(function() {
 	//---------INICIALIZACION DE GRID Y CALENDAR---------------
 	resultGrid.jqGrid({
 		datatype: "local",
-		colNames : ["Nombre","Cod.","Sec.","Profesor","Disp.","Salon","Depto.","CRN","Creds.","Tipo"],
+		colNames : ["Nombre","Cod.","Sec.","Profesor","Disp.","Depto.","CRN","Creds.","Tipo"],
 		colModel : [	
 			{name:'nombre',index:'nombre',width:70},
 			{name:'cod',index:'cod',width:70},
 			{name:'sec',index:'sec',width:70},
         	{name:'prof',index:'prof',width:70},
         	{name:'disp',index:'disp',width:70},
-        	{name:'salon',index:'salon',width:70},
         	{name:'depto',index:'depto',width:70},
         	{name:'crn',index:'crn',width:70}, 
         	{name:'cred',index:'cred',width:70},
@@ -88,7 +139,12 @@ $(function() {
     	caption: "Resultados",
     	shrinkToFit: false,
     	width: 315,
-    	height : 525
+    	height : 525,
+		onSelectRow: function(id) {
+			console.log(id);
+			sel = id-1;
+		}
+
 	});
 	
 	// var eventData = {
@@ -120,10 +176,8 @@ $(function() {
      	},
      	displayOddEven : true,
      	eventRender : function(calEvent, $event) {
-         if (calEvent.end.getTime() < new Date().getTime()) {
-            $event.css("opacity", "0.5");
-         }
-      }
+     		$event.css("opacity", calEvent.opac);
+      	}
 		//data : eventData
 	});
 	
@@ -142,13 +196,26 @@ $(function() {
 	calendar.droppable({
 		//accept: ".helper",
 		over: function(){
-			calendar.weekCalendar("updateEvent",{id:1, start: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12), end: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 13, 35),title:"Lunch with Mike"});
+			//TODO
+			for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
+				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k],sel,k);
+				console.log(ocur);
+				calendar.weekCalendar("updateEvent",ocur);
+			};
 		},
 		out: function(){
-			calendar.weekCalendar("removeEvent",1);
+			for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
+				calendar.weekCalendar("removeEvent",""+sel+""+k);
+			};
+			
 		},
-		drop: function(){
-			calendar.weekCalendar("updateEvent",{id:1});
+		drop: function(event,ui){
+			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+				ocur.opac = "1";
+				calendar.weekCalendar("updateEvent",ocur);
+			}
+			ui.helper.hide();
 		}
 	});
 });

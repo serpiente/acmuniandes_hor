@@ -1,5 +1,5 @@
 <?php
-
+require_once 'utils.php';
 /**
  * Representa un Usuario
  */
@@ -12,12 +12,12 @@ class Usuario {
 	/*
 	* Representa el login del usuario
 	*/	
-	private $login;
+	public $login;
 	
 	/*
 	* Representa los horarios del usuario
 	*/	
-	private $horarios;
+	public $horarios;
 	
 	
 	//---------------------------------------------------------------------------------------------------//

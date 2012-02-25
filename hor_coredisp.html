@@ -14,24 +14,39 @@
 		<title>Horario Uniandes</title>
 	</head>
 	<body>
-		<div id="helper"></div>
-		<div id="header">
-			<h1>HorarioLab</h1>
-		</div>
-		<div id="bodyContent">
-			<div id="searchInput">
-				<input type="text" id="searchInputText" class="ui-autocomplete-input" value="type anything"/>
-				<button id="searchButton" type="button" class="ui-button"><span class="ui-button-text">Go</span></button>
-			</div>
-			<div id="searchContainer" align="center">
-				<table id="searchResults"></table>
-			</div>
-			<div id="scheduleContainer"></div>
-		</div>
-		<div id="footer" style="float: right">
-			<button id="saveButton" type="button" class="ui-button"><span class="ui-button-text">Guardar Horario</span></button>
-			<button id="expCRNButton" type="button" class="ui-button"><span class="ui-button-text">Exportar CRNs</span></button>
-			<button id="expButton" type="button" class="ui-button"><span class="ui-button-text">Exportar</span></button>
-		</div>
+		<div id="helper" 	class="helper"></div>
+		<table border="0px" width="1500" height="1000" cellspacing="10" align="center">
+			<!-- Header-->
+			<tr height="50">
+				<td colspan="2"><h1>HorarioLab</h1></td>
+			</tr>
+			<tr height="50">
+				<td colspan="2">
+				<div id="searchInput">
+					<input type="text" id="searchInputText" class="ui-autocomplete-input" value="type anything"/>
+					<button id="searchButton" type="button" class="ui-button">
+						<span class="ui-button-text">Go</span>
+					</button>
+				</div></td>
+			</tr>
+			<!-- tabla con links y contenido-->
+			<tr height="800" >
+				<td class="tabla" width="25%" style="position: relative;" valign="top" align="center"><table id="searchResults" style="width:100%"></table></td>
+				<td class="tabla" width="75%" valign="top" align="center" ><div id="scheduleContainer"></div></td>
+			</tr>
+			<!-- Footer-->
+			<tr height="100">
+				<td colspan="2" >
+				<button id="saveButton" type="button" class="ui-button">
+					<span class="ui-button-text">Guardar Horario</span>
+				</button>
+				<button id="expCRNButton" type="button" class="ui-button">
+					<span class="ui-button-text">Exportar CRNs</span>
+				</button>
+				<button id="expButton" type="button" class="ui-button">
+					<span class="ui-button-text">Exportar</span>
+				</button></td>
+			</tr>
+		</table>
 	</body>
 </html>

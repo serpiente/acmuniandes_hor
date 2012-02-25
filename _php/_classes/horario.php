@@ -1,5 +1,5 @@
 <?php
-require_once '../utils.php';
+require_once 'utils.php';
 /**
  * Representa un horario
  */
@@ -12,42 +12,42 @@ class Horario {
 	/**
 	 * Representa el identificador unico del horario asignado por la base de datos
 	 */
-	private $id_horario;
+	public $id_horario;
 	
 	/**
 	 * Login del usuario que es duenio de este horario
 	 */
-	private $usuario;
+	public $usuario;
 	
 	/**
 	* Representa los creditos totales del horario
 	*/
-	private $creditos_Totales;
+	public $creditos_Totales;
 	
 	/**
 	* Representa la fecha de creación del horario
 	*/
-	private $fechaCreacion;
+	public $fechaCreacion;
 	
 	/**
 	* Indica si el horario ha sido o no guardado
 	*/
-	private $guardado;
+	public $guardado;
 	
 	/**
 	* Representa el nombre del Horario
 	*/
-	private $nombre;
+	public $nombre;
 	
 	/**
 	* Representa el numero de cursos que tiene el horario
 	*/
-	private $num_Cursos;
+	public $num_Cursos;
 	
 	/**
 	* Representa los cursos que posee el horario
 	*/
-	private $cursos;
+	public $cursos;
 	
 	
 	//---------------------------------------------------------------------------------------------------//

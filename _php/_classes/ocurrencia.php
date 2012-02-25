@@ -12,27 +12,27 @@ class Ocurrencia {
 	/**
 	* Representa el dia de la ocurrencia del curso char perteneciente a {L,M,I,J,V,S}
 	*/	
-	private $dia;
+	public $dia;
 	
 	/**
 	* Representa la hora de inicio del curso. Formato HH:MM 24 horas ej. 13:00
 	*/	
-	private $horaInicio;
+	public $horaInicio;
 	
 	/**
 	* Representa la hora de inicio del curso. Formato HH:MM 24 horas ej. 13:00
 	*/	
-	private $horaFin;
+	public $horaFin;
 	
 	/**
 	* Representa el salon del curso. Puede ser null.
 	*/	
-	private $salon;
+	public $salon;
 	
 	/**
 	* Representa la duración del curso en unidades de media hora. Ej. 3 unidades = 1.5 horas. Mínimo valor: 2.
 	*/	
-	private $unidades_Duracion;
+	public $unidades_Duracion;
 	
 	
 	//---------------------------------------------------------------------------------------------------//
@@ -81,7 +81,7 @@ class Ocurrencia {
 	}
 	
 	function setHoraFin($nhoraFin){
-		$this -> horaFino = $nhoraFin;
+		$this -> horaFin = $nhoraFin;
 	}
 	
 	function getSalon(){

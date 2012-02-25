@@ -1,17 +1,19 @@
-#bodyContent {
-	overflow: hidden;
-}
-#searchContainer {
-	width: 30%;
-	float: left;
-}
-#searchResults {
-	width: 300px;
-}
-#scheduleContainer {
-	width: 70%;
-	float: left;
-}
+/*
+ #bodyContent {
+ overflow: hidden;
+ }
+ #searchContainer {
+ width: 30%;
+ float: left;
+ }
+ #searchResults {
+ width: 300px;
+ }
+ #scheduleContainer {
+ width: 70%;
+ float: left;
+ }
+ */
 .helper {
 	border-radius: 8px 8px 8px 8px;
 	background-color: #444444;
@@ -19,4 +21,20 @@
 	font-size: small;
 	cursor: move;
 	font-family: Courier;
+	z-index: 100;
+}
+.tabla {
+	background-color: #FFFFFF;
+	-webkit-box-shadow: 0 2px 8px 3px black;
+	-moz-box-shadow: 0 2px 8px 3px black;
+	box-shadow: 0 2px 8px 3px black;
+}
+.box {
+	background-color: #F4F4F4;
+	border: 1px solid #CCC;
+	height: 100px;
+	width: 200px;
+	padding: 5px;
+	display: none;
+	position: absolute;
 }

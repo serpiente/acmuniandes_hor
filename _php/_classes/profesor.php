@@ -12,12 +12,12 @@ class Profesor {
 	/**
 	* Representa el apellido del profesor
 	*/	
-	private $apellido;
+	public $apellido;
 	
 	/**
 	* Representa el nombre del profesor
 	*/	
-	private $nombre;
+	public $nombre;
 	
 	
 	//---------------------------------------------------------------------------------------------------//

@@ -29,8 +29,8 @@ function autenticar($usuario, $contrasenia) {
 			//redirigue a la página principal
 			header("Location: /hor_cordisp.html");
 		} else {
-			//en caso de que la autenticación falle se devuelve a la página inicial
-			header("Location: /index.html");
+			//en caso de que la autenticación falle se devuelve a la página donde específica el mensaje de error
+			header("Location: /index2.html");
 		}
 	}
 }

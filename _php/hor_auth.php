@@ -27,7 +27,7 @@ function autenticar($usuario, $contrasenia) {
 			//Guarda el nombre de usuario en la variable de sesión
 			$_SESSION['usuario'] = $usuario;
 			//redirigue a la página principal
-			header("Location: /hor_cordisp.html");
+			header("Location: /hor_admin.html");
 		} else {
 			//en caso de que la autenticación falle se devuelve a la página donde específica el mensaje de error
 			header("Location: /index2.html");

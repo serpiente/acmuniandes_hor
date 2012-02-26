@@ -29,6 +29,26 @@
 	-moz-box-shadow: 0 2px 8px 3px black;
 	box-shadow: 0 2px 8px 3px black;
 }
+.boton{
+	background-color:#9B9999;
+	border-radius: 5px;
+	height:30px;
+	border: 1px solid #9B9999;
+	font-family: tahoma;
+	font-size: 14px;
+	font-weight: normal;
+	color: #FFFFFF;
+}
+
+.textoBusqueda{
+	border-radius: 5px;
+	height:25px;
+	width:80%;
+	font-family: tahoma;
+	font-size: 14px;
+	color: #000000;
+	padding-left:10px;
+}
 .box {
 	background-color: #F4F4F4;
 	border: 1px solid #CCC;

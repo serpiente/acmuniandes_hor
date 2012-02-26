@@ -92,8 +92,10 @@ $(function() {
 	function obtenerResultados(input){
 		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
 		resultGrid.jqGrid('clearGridData',this);
-		for(var i=0;i<resultados.length;i++)
+		for (var j=0; j < 60; j++) {
+		  for(var i=0;i<resultados.length;i++)
             resultGrid.jqGrid('addRowData',i + 1, new CursoGrid(resultados[i],i));
+		};
         
         inicializarResultadosDraggable();
 	}
@@ -105,12 +107,12 @@ $(function() {
 		$("#1").draggable({
 			addClasses : true,
 			revert : true,
-			helper: "clone",
-			appendTo: "#helper",
-			// helper: function(event) {
-				// console.log(sel);
-				// return $('#helper').append(resultados[sel].nombre);
-			// },
+			// helper: "clone",
+			// appendTo: "#helper",
+			helper: function(event) {
+				console.log(sel);
+				return $('#helper').append(resultados[sel].nombre);
+			},
 			start: function(event, ui) {
 				$(this).hide();
 			},
@@ -136,10 +138,10 @@ $(function() {
         	{name:'tipo',index:'tipo',width:70}
     	],
 		gridview: true,
-    	caption: "Resultados",
+    	caption: "Cursos Disponibles",
     	shrinkToFit: false,
-    	width: 315,
-    	height : 525,
+    	width: 375,
+    	height : 536,
 		onSelectRow: function(id) {
 			console.log(id);
 			sel = id-1;
@@ -147,15 +149,6 @@ $(function() {
 
 	});
 	
-	// var eventData = {
-		// events : [
-		   // {"id":1, "start": new Date(year, month, day, 12), "end": new Date(year, month, day, 13, 35),"title":"Lunch with Mike"},
-		   // {"id":2, "start": new Date(year, month, day, 14), "end": new Date(year, month, day, 14, 45),"title":"Dev Meeting"},
-		   // {"id":3, "start": new Date(year, month, day + 1, 18), "end": new Date(year, month, day + 1, 18, 45),"title":"Hair cut"},
-		   // {"id":4, "start": new Date(year, month, day - 1, 8), "end": new Date(year, month, day - 1, 9, 30),"title":"Team breakfast"},
-		   // {"id":5, "start": new Date(year, month, day + 1, 14), "end": new Date(year, month, day + 1, 15),"title":"Product showcase"}
-		// ]
-	// };
 	calendar.weekCalendar({
 		timeslotsPerHour : 2,
 		firstDayOfWeek : 1,

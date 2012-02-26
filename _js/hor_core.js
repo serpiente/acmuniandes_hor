@@ -74,6 +74,7 @@ $(function() {
 		
 		this.title = resultados[i].nombre+"\n"+ocur.salon;
 		this.opac = "0.5";
+		console.log(mapaDias);
 	}
 	var horarioActual = new Horario();	
 	
@@ -83,6 +84,9 @@ $(function() {
 	 * @param diaSem dia de la semana del cual se quiere conocer la fecha en la semana actual {1,2,3,4,5,6}
 	 */
 	function darFecha(diaSem){
+		if(date.getDay()==0){
+			return new Date(date.getFullYear(), date.getMonth(), (date.getDate()-(date.getDay()-diaSem))-7);
+		}
 		return new Date(date.getFullYear(), date.getMonth(), date.getDate()-(date.getDay()-diaSem));
 	}	
 	
@@ -92,10 +96,10 @@ $(function() {
 	function obtenerResultados(input){
 		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
 		resultGrid.jqGrid('clearGridData',this);
-		for (var j=0; j < 60; j++) {
+		// for (var j=0; j < 60; j++) {
 		  for(var i=0;i<resultados.length;i++)
             resultGrid.jqGrid('addRowData',i + 1, new CursoGrid(resultados[i],i));
-		};
+		// };
         
         inicializarResultadosDraggable();
 	}
@@ -169,7 +173,9 @@ $(function() {
      	},
      	displayOddEven : true,
      	eventRender : function(calEvent, $event) {
-     		$event.css("opacity", calEvent.opac);
+     		$event.animate({
+               	opacity:calEvent.opac
+            }, 500);
       	}
 		//data : eventData
 	});

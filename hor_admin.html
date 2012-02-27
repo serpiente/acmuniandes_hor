@@ -1,277 +1,119 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
-	
-<head>
-	
-<style>
-	/* Crea el estilo de los cuadros que contienen la información relevante de cada horario */
-	p { font-weight:bold; background-color:#fcd; display:none; height:100px; width: 1055px; margin: 10px;}
-</style>
-  
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-
-  <title>Horario</title>
-  
-<link rel="stylesheet" type="text/css" href="_css/style.css" />
-<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
-
-<!-- Template que maneja el dinamismo de los botones -->
-<script type="text/javascript">
-(function($){
-    $(function(){
- 
-    $('#button-container.demo').hover(
-              function () {
-                $('#button-container.demo #arrow-container').addClass('rotate');
-                $('#button-container.demo #arrow-triangle').addClass('change');
-                $('#button-container.demo #arrow-rectangle').addClass('widen');
-              },
-              function () {
-                $('#button-container.demo #arrow-container').removeClass('rotate');
-                $('#button-container.demo #arrow-triangle').removeClass('change');
-                $('#button-container.demo #arrow-rectangle').removeClass('widen');
-              }
-    );
- 
-    $('#button-container.download').hover(
-              function () {
-                $('#button-container.download #arrow-container').addClass('rotateDown');
-              },
-              function () {
-                $('#button-container.download #arrow-container').removeClass('rotateDown');
-              }
-    );
- 
-    $('#button-container.digg').hover(
-              function () {
-                $('#button-container.digg #arrow-container').addClass('rotateDownMore');
-                $('#button-container.digg #arrow-rectangle-handle').addClass('donut');
-                $('#button-container.digg #arrow-rectangle-staff').addClass('skinny');
-                $('#button-container.digg #arrow-triangle').addClass('shovel');
-              },
-              function () {
-                $('#button-container.digg #arrow-container').removeClass('rotateDownMore');
-                $('#button-container.digg #arrow-rectangle-handle').removeClass('donut');
-                $('#button-container.digg #arrow-rectangle-staff').removeClass('skinny');
-                $('#button-container.digg #arrow-triangle').removeClass('shovel');
-             }
-    );
- 
-    $('#button-container.email').hover(
-              function () {
-                $('#button-container.email #arrow-triangle').addClass('emailRotate');
-                $('#button-container.email #arrow-rectangle').addClass('emailTranslate');
-              },
-              function () {
-                $('#button-container.email #arrow-triangle').removeClass('emailRotate');
-                $('#button-container.email #arrow-rectangle').removeClass('emailTranslate');
-             }
-    );
- 
-    $('#button-container.rss').hover(
-              function () {
-                $('#button-container.rss #arrow-triangle').addClass('rss');
-                $('#button-container.rss #arrow-rectangle').addClass('rssDot');
-              },
-              function () {
-                $('#button-container.rss #arrow-triangle').removeClass('rss');
-                $('#button-container.rss #arrow-rectangle').removeClass('rssDot');
-             }
-    );
- 
-    }); // end of document ready
-})(jQuery); // end of jQuery name space
-
-</script>
-</head>
-
-<body>
-	
-
-    <!-- Tabla que organiza la totalidad de la página -->
-	<table border="1px" width="100%"  height="1000">
-	<!-- Header-->
-	<tr height="150 px">
-		<td colspan="2">
-			<!--<img src="_images/gradient.jpg" width="1400 px" height="150 px"/>-->
-		</td>
-	</tr>
-	<!-- tabla con links y contenido, los botones estan sacados de un template por lo tanto tienen clases en el CSS.-->
-	<tr height="800" >
-		<td class="tabla" width="10%">
-			<table width="80%" height="100%">
-				<tr>
-					<td width="100%">
+	<head>
+		<style>
+			/* Crea el estilo de los cuadros que contienen la información relevante de cada horario */
+			p {
+				font-weight: bold;
+				background-color: #fcd;
+				display: none;
+				height: 100px;
+				width: 1055px;
+				margin: 10px;
+			}
+		</style>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<title>Horario</title>
+		<link rel="stylesheet" type="text/css" href="_css/style.css" />
+		<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="_js/hor_admin.js"></script>
+	</head>
+	<body>
+		<!-- Tabla que organiza la totalidad de la página -->
+		<table border="1px" width="100%"  height="1000">
+			<!-- Header-->
+			<tr height="150 px">
+				<td colspan="2"><!--<img src="_images/gradient.jpg" width="1400 px" height="150 px"/>--></td>
+			</tr>
+			<!-- tabla con links y contenido, los botones estan sacados de un template por lo tanto tienen clases en el CSS.-->
+			<tr height="800" >
+				<td class="tabla" width="10%">
+				<table width="80%" height="100%">
+					<tr>
+						<td width="100%">
 						<div id="button-container" class="demo">
 							<a id="button" onclick="mostrarHorarios()">Consultar Horario</a>
 							<div id="arrow-container">
-								 <div id="arrow-rectangle">
-								 	
-								 </div>
-								  <div id="arrow-triangle" >
-								  	
-								  </div>
-						    </div>
-						</div>
-				    </td>
-				</tr>
-			    <tr>
-			    	<td width="100%">
-			    		<div id="button-container" class="download">
-			    			<a  id="button" onclick="crearHorario()">Crear Horario</a>
-			    			<div id="arrow-container">
-			    				<div id="arrow-rectangle">
-			    					
-			    				</div>
-			    				<div id="arrow-triangle" >
-			    					
-			    				</div>
-			    			</div>
-			    		</div>
-                     </td>
-				</tr>
-				<tr>
-					<td width="100%">
+								<div id="arrow-rectangle"></div>
+								<div id="arrow-triangle" ></div>
+							</div>
+						</div></td>
+					</tr>
+					<tr>
+						<td width="100%">
+						<div id="button-container" class="download">
+							<a  id="button" onclick="crearHorario()">Crear Horario</a>
+							<div id="arrow-container">
+								<div id="arrow-rectangle"></div>
+								<div id="arrow-triangle" ></div>
+							</div>
+						</div></td>
+					</tr>
+					<tr>
+						<td width="100%">
 						<div id="button-container" class="digg">
 							<a  id="button">Abrir Horario</a>
 							<div id="arrow-container">
-								<div id="arrow-rectangle">
-									
-								</div>
-								<div id="arrow-triangle" >
-									
-								</div>
+								<div id="arrow-rectangle"></div>
+								<div id="arrow-triangle" ></div>
 							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>                        
-					<td width="100%">
+						</div></td>
+					</tr>
+					<tr>
+						<td width="100%">
 						<div id="button-container" class="email">
 							<a  id="button" onclick="eliminarHorario()">Eliminar Horario</a>
 							<div id="arrow-container">
-								<div id="arrow-rectangle">
-									
-								</div>
-								<div id="arrow-triangle" >
-									
-								</div>
+								<div id="arrow-rectangle"></div>
+								<div id="arrow-triangle" ></div>
 							</div>
-						</div>
-					</td>
-				</tr>
-				<tr>
-					<td height="500"></td>
-				</tr>
-			</table>
-		</td>
-		
-		<!-- Muestra el contenido principal de la pagina -->
-		
-		<td class="tabla" width="100%">
-			<table>
-				<tr>
-					<td><p id="horario0"> <br> Nombre: <br> Numero de Creditos: <br> Fecha Creacion: </p></td>
-					<script type="text/javascript">
-					function mostrarHorarios()
-					{
-						/*Conexión AJAX */
-						parametros= {
-							'tipsol': 0
-						}
-						var horarios;
-						$.ajax({url: '_php/hor_core.php',data:parametros,type: 'get',
-						success: function(response){
-							
-						}
-						});
-						/*Permite visualizar uno a uno los nuevos horarios */
-						for (var i=0; i <  horarios.lenght ; i++) {
-							var nombreHorario=horarios[i].nombre;
-							var creditosHorario=horarios[i].creditos_Totales;
-							var fecha=horarios[i].fechaCreacion;
-							var numeroCursos=horarios[i].num_Cursos;
-							var cursosHorario=horarios[i].cursos;
-							visualizarHorario(nombreHorario, creditosHorario, fecha, numeroCursos, cursosHorario, i); 
-							};
-					}
-			/*Permite visualizar cada uno de los horarios que el usuario posee */
-			
-			function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, i)
-			{
-             	$('#horario'+i).show("slow");
-             
-                        }
-             </script>
-             
+						</div></td>
+					</tr>
+					<tr>
+						<td height="500"></td>
+					</tr>
+				</table></td>
+				<!-- Muestra el contenido principal de la pagina -->
+				<td class="tabla" width="100%">
+				<table id="resultados">
+					<tr>
+						<td>
+						<p id="horario0">
+							<br>
+							Nombre:
+							<br>
+							Numero de Creditos:
+							<br>
+							Fecha Creacion:
+						</p></td
+					</tr>
+					<tr>
+						<td>
+						<p id="horario1">
+							<br>
+							Nombre:
+							<br>
+							Numero de Creditos:
+							<br>
+							Fecha Creacion:
+						</p></td>
+					</tr>
+					<tr>
+						<td>
+						<p id="horario2">
+							<br>
+							Nombre:
+							<br>
+							Numero de Creditos:
+							<br>
+							Fecha Creacion:
+						</p></td>
+					</tr>
+				</table></td>
 			</tr>
-			<tr>
-				<td><p id="horario1"> <br> Nombre: <br> Numero de Creditos: <br> Fecha Creacion:</p></td>
-			</tr>
-			<tr>
-				<td><p id="horario2"> <br> Nombre: <br> Numero de Creditos: <br> Fecha Creacion:</p></td>
-			</tr>
-			
-		</table>		
-		</td>
-		</tr>
-		<!-- Footer-->
-		<tr height="100" bgcolor="#FAF8CC">
-			<td colspan="2" >
-				footer
-			</td>
+			<!-- Footer-->
+			<tr height="100" bgcolor="#FAF8CC">
+				<td colspan="2" > footer </td>
 			</tr>
 		</table>
-		
-		
-		<script type="text/javascript">
-		
-		function crearHorario(){
-			/* Genera un dialogo para escribir el nombre del horario */
-		   	/*Conexión AJAX */
-		   	var horariocreado=false;
-						parametros= {
-							'tipsol': '1'
-						};
-						$.ajax({url: '_php/hor_core.php',data:parametros,type: 'get',
-						success: function(response){
-							horariocreado=true;
-						}
-						});
-						
-					if (horariocreado) {
-						/*Codigo que permite modificar y crear el nuevo horario */
-					};
-		
-		}	
-		
-		/*Metodo que eliminar un horario */
-		
-		var j=0;
-		function eliminarHorario(){
-			
-			var horarioeliminado=false;
-			parametros= {
-							'tipsol': '2'
-						};
-						$.ajax({url: '_php/hor_core.php',data:parametros,type: 'get',
-						success: function(response){
-							horarioeliminado=true;
-						}
-						});
-						
-						if (horarioeliminado) {
-							/*Elimina el horario de la visualizacíón */
-					
-							
-						};
-						
-						for (var i=0; i < horarios.lenght; i++) {
-						 $('#horario'+i).hide("slow");
-						};
-					
-		}
-		</script>
-
-
-</body>
+	</body>
 </html>

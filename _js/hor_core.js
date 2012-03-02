@@ -1,4 +1,5 @@
 $(function() {
+	var dropped = false;
 	var sel = -1;
 	var date = new Date();
 	var calendar = $('#scheduleContainer');
@@ -32,9 +33,41 @@ $(function() {
 			"horaFin" : "11:20",
 			"salon" : "O201",
 			"unidades_Duracion" : 3
+		},{
+			"dia" : "I",
+			"horaInicio" : "10:00",
+			"horaFin" : "11:20",
+			"salon" : "O201",
+			"unidades_Duracion" : 3
 		}],
 		"profesores" : ["Rodrigo Cardoso"],
-		"dias" : "LMI"
+		"dias" : "LI"
+	},{
+		"capacidad_Total" : 30,
+		"codigo_Curso" : "IIND3306",
+		"creditos" : 3,
+		"crn" : "33321",
+		"cupos_Disponibles" : 15,
+		"departamento" : "Ingenieria Industrial",
+		"nombre" : "Finanzas",
+		"seccion" : 1,
+		"tipo" : null,
+		"complementarias" : [],
+		"ocurrencias" : [{
+			"dia" : "M",
+			"horaInicio" : "10:00",
+			"horaFin" : "11:20",
+			"salon" : "R209",
+			"unidades_Duracion" : 3
+		},{
+			"dia" : "J",
+			"horaInicio" : "10:00",
+			"horaFin" : "11:20",
+			"salon" : "R209",
+			"unidades_Duracion" : 3
+		}],
+		"profesores" : ["Julio Villareal"],
+		"dias" : "MJ"
 	}];
 	function Horario(){
 		this.id_horario = "";
@@ -46,22 +79,9 @@ $(function() {
 		this.numCursos = 0;
 		this.cursos = [];
 	}
-	function CursoGrid(curso, i){
-		this.nombre = curso.nombre;
-		this.cod = curso.codigo_Curso;
-		this.sec = curso.seccion;
-		this.prof = curso.profesores[0];
-		this.disp = curso.cupos_Disponibles;
-		this.depto = curso.departamento;
-		this.crn = curso.crn;
-		this.cred = curso.creditos;
-		if(curso.tipo) this.tipo = curso.tipo;
-		else this.tipo = "N/A";
-		this.i=i;
-	}
 	function OcurCalendar(ocur,i,j){
 		console.log(i);
-		this.id = ""+i+""+j;
+		this.id = ""+i+"-"+j;
 		
 		var hmi = ocur.horaInicio.split(":");
 		var fecha = mapaDias[ocur.dia];
@@ -72,11 +92,13 @@ $(function() {
 		this.end = fecha.setHours(hmf[0],hmf[1]);
 		console.log(this.end);
 		
-		this.title = resultados[i].nombre+"\n"+ocur.salon;
+		this.title = resultados[i].nombre+"<br>"+ocur.salon;
 		this.opac = "0.5";
 		console.log(mapaDias);
 	}
 	var horarioActual = new Horario();	
+	
+	
 	
 	/**
 	 * Retorna la fecha (i.e. Feb 22/2012) de la semana actual que corresponde al dia de la semana dado por parametro
@@ -96,59 +118,120 @@ $(function() {
 	function obtenerResultados(input){
 		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
 		resultGrid.jqGrid('clearGridData',this);
-		// for (var j=0; j < 60; j++) {
-		  for(var i=0;i<resultados.length;i++)
-            resultGrid.jqGrid('addRowData',i + 1, new CursoGrid(resultados[i],i));
-		// };
-        
-        inicializarResultadosDraggable();
+		
+		for(var i=0;i<resultados.length;i++){
+			resultados[i].profesor = resultados[i].profesores[0];
+			resultGrid.jqGrid('addRowData',i, resultados[i]);			
+		}
+        inicializarResultados();
 	}
 	
 	/**
-	 * Inicializa la interacción de draggable en los nuevos elementos recibidos del servidor
+	 * Inicializa todos los eventos necesarios sobre los nuevos resultados
 	 */
-	function inicializarResultadosDraggable(){
-		$("#1").draggable({
-			addClasses : true,
+
+	function inicializarResultados() {
+		$('.jqgrow').draggable({
+			addClasses : false,
 			revert : true,
-			// helper: "clone",
-			// appendTo: "#helper",
-			helper: function(event) {
-				console.log(sel);
-				return $('#helper').append(resultados[sel].nombre);
+			//helper: "clone",
+			//appendTo: "#helper",
+			helper : function(event) {
+				sel = $(this).attr('id');
+				return $(this).clone().appendTo('#helper');
 			},
-			start: function(event, ui) {
+			start : function(event, ui) {
+				dropped = false;
 				$(this).hide();
 			},
-			stop: function(event) {
-               	$(this).show();
-        	}
-		});	
+			stop : function(event) {
+				if(!dropped) {
+					$(this).show();
+				}
+			},
+			zIndex : 100
+		});
+
+		//TODO Fix This!!
+		$('.jqgrow').hover(function() {
+			sel = $(this).attr('id');
+			agregarCursoCalendar(true);
+			//setTimeout(agregarCursoCalendar,'500');
+		}, function() {
+			removerCursoCalendar(true);
+		});
+
+		$('.jqgrow').poshytip({
+			content : contenidoTTip,
+			className : 'tip-twitter',
+			showTimeout : 500,
+			alignTo : 'cursor',
+			alignX : 'center',
+			offsetY : 20,
+			allowTipHover : false,
+			fade : false,
+			slide : true
+		});
 	}
+
+
+	/**
+	 * Agrega un curso al jq-week-calendar con todas sus ocurrencias respectivas
+	 * @param opac La opacidad que deben tener las ocurrencias del curso al agregarlas al calendar
+	 */
+	function agregarCursoCalendar(vistaprevia){
+		for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
+				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k],sel,k);
+				if(!vistaprevia){
+					ocur.opac = 1;
+				}				
+				calendar.weekCalendar("updateEvent",ocur);
+		};
+	}
+	
+	/**
+	 * Remueve un curso del jq-week-calendar con todas sus ocurrencias respectivas
+	 */
+	function removerCursoCalendar(vistaprevia){
+		for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
+				calendar.weekCalendar("removeEvent",""+sel+"-"+k);
+		};
+		if(!vistaprevia){
+			//TODO define time
+			$('#'+sel).show(500);
+		}
+	}
+	
+	/**
+	 * Retorna el contenido del curso actualmente seleccionado al tooltip para ser mostrado
+	 */
+	function contenidoTTip(){
+		return $("<span>Seccion: "+resultados[sel].seccion + "<br>" +"Codigo: "+resultados[sel].codigo_Curso + "<br>" + "Creditos: "+resultados[sel].creditos + "<br>" + "Departamento: "+resultados[sel].departamento + "<br>" + "Capacidad: "+resultados[sel].capacidad_Total+ "</span>");
+	}
+	
 
 	//---------INICIALIZACION DE GRID Y CALENDAR---------------
 	resultGrid.jqGrid({
 		datatype: "local",
-		colNames : ["Nombre","Cod.","Sec.","Profesor","Disp.","Depto.","CRN","Creds.","Tipo"],
+		cmTemplate:{title: false, sortable: false},
+		colNames : ["Nombre","Profesor","Disp.","CRN"],
 		colModel : [	
-			{name:'nombre',index:'nombre',width:70},
-			{name:'cod',index:'cod',width:70},
-			{name:'sec',index:'sec',width:70},
-        	{name:'prof',index:'prof',width:70},
-        	{name:'disp',index:'disp',width:70},
-        	{name:'depto',index:'depto',width:70},
-        	{name:'crn',index:'crn',width:70}, 
-        	{name:'cred',index:'cred',width:70},
-        	{name:'tipo',index:'tipo',width:70}
+			{name:'nombre',width:100},
+        	{name:'profesor',width:100}, 
+        	{name:'cupos_Disponibles',width:30},
+        	{name:'crn',width:30}
     	],
 		gridview: true,
-    	caption: "Cursos Disponibles",
-    	shrinkToFit: false,
+    	caption: "Cursos Encontrados",
+    	shrinkToFit: true,
     	width: 375,
     	height : 536,
-		onSelectRow: function(id) {
-			console.log(id);
-			sel = id-1;
+    	scrollOffset: 0,
+		// onSelectRow: function(id) {
+			// sel = id;
+		// },
+		beforeSelectRow: function() {
+			return false;
 		}
 
 	});
@@ -173,11 +256,32 @@ $(function() {
      	},
      	displayOddEven : true,
      	eventRender : function(calEvent, $event) {
-     		$event.animate({
-               	opacity:calEvent.opac
-            }, 500);
+     		// console.log($event);
+     		$event.css({
+     			'opacity': calEvent.opac
+     			// 'background-color': '#F53400'
+     		});
+     		$event.attr('id',calEvent.id);
+     		
+     		$event.prepend($('<div class="icon"><img alt="close" src="_images/close.png" /></div>').hide().click(function(){
+     			removerCursoCalendar(false);
+     		}));
+     		// $event.find('.wc-time').css({
+     			// 'background-color': '#F53400'
+     		// });
+     		// animate({
+               	// opacity:calEvent.opac
+            // }, 500);
+            $event.hover(function(){
+      			sel = calEvent.id.charAt(0);
+      			console.log(sel);
+      			console.log('[id|="'+sel+'"]');
+      			console.log(calendar.find('[id|='+sel+']'));
+      			calendar.find('[id|="'+sel+'"]').find('.icon').show();
+      		},function(){
+      			calendar.find('[id|="'+sel+'"]').find('.icon').hide();
+      		});
       	}
-		//data : eventData
 	});
 	
 	
@@ -192,29 +296,38 @@ $(function() {
 		}
 	});
 	
+	$("#searchInputText").focus(function(){
+		$(this).val('');
+		$(this).css({
+			color: 'black',
+			fontStyle: 'normal'
+		});
+	});
+	
+	$("#searchInputText").focusout(function(){
+		if(!$(this).val()){
+			$(this).val('ingrese cualquier busqueda');
+			$(this).css({
+			color: '#B3B3B3',
+			fontStyle: 'italic'
+		});
+		}
+	});
+	
 	calendar.droppable({
-		//accept: ".helper",
+		accept: ".jqgrow",
 		over: function(){
-			//TODO
-			for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
-				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k],sel,k);
-				console.log(ocur);
-				calendar.weekCalendar("updateEvent",ocur);
-			};
+			agregarCursoCalendar(true);
 		},
 		out: function(){
-			for (var k=0; k < resultados[sel].ocurrencias.length; k++) {
-				calendar.weekCalendar("removeEvent",""+sel+""+k);
-			};
+			removerCursoCalendar(true);
 			
 		},
 		drop: function(event,ui){
-			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
-				ocur.opac = "1";
-				calendar.weekCalendar("updateEvent",ocur);
-			}
-			ui.helper.hide();
+			dropped = true;
+			$.ui.ddmanager.current.cancelHelperRemoval = false;
+            ui.helper.hide();
+			agregarCursoCalendar(false);
 		}
 	});
 });

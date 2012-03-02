@@ -134,3 +134,10 @@ tr.ui-search-toolbar select {margin: 1px 0px 0px 0px}
 .ui-jqgrid .tree-wrap-ltr {float: left;}
 .ui-jqgrid .tree-wrap-rtl {float: right;}
 .ui-jqgrid .ui-ellipsis {text-overflow:ellipsis; -moz-binding:url('ellipsis-xbl.xml#ellipsis');}
+/*Extension*/
+.ui-jqgrid tr.jqgrow td {
+    white-space: normal !important;
+    height:auto;
+    vertical-align:text-top;
+    padding-top:2px;
+}

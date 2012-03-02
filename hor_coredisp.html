@@ -4,17 +4,21 @@
 		<link rel='stylesheet' type='text/css' href='_css/jquery.weekcalendar.css' />
 		<link rel='stylesheet' type='text/css' href='_css/ui.jqgrid.css' />
 		<link rel='stylesheet' type='text/css' href='_css/hor_core.css' />
+		<link rel="stylesheet" type="text/css" href="_css/tip-twitter.css" />
+
 		<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
 		<script type="text/javascript" src="_js/_lib/jquery-ui-1.8.14.custom.min.js" ></script>
-		<script type="text/javascript" src="_js/_lib/date.js"></script>
+		<script type="text/javascript" src="_js/_lib/jquery.chromatable.js" ></script>
 		<script type="text/javascript" src="_js/_lib/jquery.weekcalendar.js"></script>
 		<script type="text/javascript" src="_js/_lib/grid.locale-en.js"></script>
 		<script type="text/javascript" src="_js/_lib/jquery.jqGrid.min.js"></script>
+		<script type="text/javascript" src="_js/_lib/jquery.poshytip.min.js"></script>
 		<script type="text/javascript" src="_js/hor_core.js"></script>
+
 		<title>Horario Uniandes</title>
 	</head>
 	<body>
-		<div id="helper" 	class="helper"></div>
+		<div id="helper" class="helper"></div>
 		<table border="0px" width="1500" cellspacing="10" align="center">
 			<!-- Header-->
 			<tr height="50">
@@ -27,7 +31,7 @@
 						<tr height="50">
 							<td align="center">
 								<div id="searchInput">
-									<input type="text" id="searchInputText" class="textoBusqueda" value="type anything"/>
+									<input type="text" id="searchInputText" class="textoBusqueda" value="ingrese cualquier busqueda"/>
 									<button id="searchButton" type="button" class="boton"><span class="ui-button-text">Buscar</span></button>
 								</div>
 							</td>
@@ -35,6 +39,16 @@
 						<tr>
 							<td>
 								<table id="searchResults">
+									<!--<thead>
+										<tr>
+											<th>Seccion</th>
+											<th>Nombre</th>
+											<th>Disponibles</th>
+										</tr>
+									</thead>
+									<tbody>
+										
+									</tbody>-->
 								</table>
 							</td>
 						</tr>

@@ -1,5 +1,8 @@
 $(function() {
 
+		var horarios;
+		var sel= "";
+		
 	$('#button-container.demo').hover(function() {
 		$('#button-container.demo #arrow-container').addClass('rotate');
 		$('#button-container.demo #arrow-triangle').addClass('change');
@@ -43,39 +46,67 @@ $(function() {
 		$('#button-container.rss #arrow-triangle').removeClass('rss');
 		$('#button-container.rss #arrow-rectangle').removeClass('rssDot');
 	});
+	
+	$('#buttonCons').click(mostrarHorarios);
 		
 	function mostrarHorarios() {
 		/*Conexión AJAX */
 		parametros = {
 			'tipsol' : 0
 		}
-		var horarios;
+
 		$.ajax({
-			url : '_php/hor_core.php',
+			/*url : '_php/hor_core.php',*/
+			url : '_php/testhoradmin.php',
 			data : parametros,
 			type : 'get',
 			success : function(response) {
+				horarios = $.parseJSON(response);
+				for(var i = 0; i < 1; i++) {
+					var nombreHorario = horarios[i].nombre;
+					var creditosHorario = horarios[i].creditos_Totales;
+					var fecha = horarios[i].fechaCreacion;
+					var numeroCursos = horarios[i].num_Cursos;
+					var cursosHorario = horarios[i].cursos;
+					visualizarHorario(nombreHorario, creditosHorario, fecha, numeroCursos, cursosHorario, i);
+				};
+				inicilializar();
 			}
 		});
-		/*Permite visualizar uno a uno los nuevos horarios */
-		for(var i = 0; i < horarios.lenght; i++) {
-			var nombreHorario = horarios[i].nombre;
-			var creditosHorario = horarios[i].creditos_Totales;
-			var fecha = horarios[i].fechaCreacion;
-			var numeroCursos = horarios[i].num_Cursos;
-			var cursosHorario = horarios[i].cursos;
-			visualizarHorario(nombreHorario, creditosHorario, fecha, numeroCursos, cursosHorario, i);
-		};
 	}
 
 	/*Permite visualizar cada uno de los horarios que el usuario posee */
 
 	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, i) {
 		//$('#horario' + i).show("slow");
-		$("#resultados").append("<tr><td><p id=horario"+i+"> <br> Nombre: <br> Numero de Creditos: <br> Fecha Creacion: </p></td></tr>").show("slow");
+		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <br>" +nombre+"</br></td></tr>");
 
 	}
+	
+	function inicilializar(){
+		$('.horarioResultado').poshytip({
+			content : contenidoTTip,
+			className : 'tip-twitter',
+			showTimeout : 20,
+			alignTo : 'cursor',
+			alignX : 'center',
+			offsetY : 20,
+			allowTipHover : false,
+			fade : true,
+			slide : true
+		});
+		
+		$('.horarioResultado').hover(function() {
+			sel = ($(this).attr('id'));
+		});
+	}
 
+	function contenidoTTip(){
+		if(sel){
+			return $("<span>Creditos: "+horarios[sel].creditos_Totales + "<br>" +"Numero de Cursos: "+horarios[sel].num_Cursos 
+			+"<br> Fecha de Creacion: "+horarios[sel].fechaCreacion +"</span>");
+		}
+	}
 	function crearHorario() {
 		/* Genera un dialogo para escribir el nombre del horario */
 		/*Conexión AJAX */

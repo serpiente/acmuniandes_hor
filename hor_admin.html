@@ -14,7 +14,9 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<title>Horario</title>
 		<link rel="stylesheet" type="text/css" href="_css/style.css" />
+		<link rel="stylesheet" type="text/css" href="_css/tip-twitter.css" />
 		<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="_js/_lib/jquery.poshytip.min.js"></script>
 		<script type="text/javascript" src="_js/hor_admin.js"></script>
 	</head>
 	<body>
@@ -31,7 +33,7 @@
 					<tr>
 						<td width="100%">
 						<div id="button-container" class="demo">
-							<a id="button" onclick="mostrarHorarios()">Consultar Horario</a>
+							<button id="buttonCons">Consultar Horario</button>
 							<div id="arrow-container">
 								<div id="arrow-rectangle"></div>
 								<div id="arrow-triangle" ></div>
@@ -41,7 +43,7 @@
 					<tr>
 						<td width="100%">
 						<div id="button-container" class="download">
-							<a  id="button" onclick="crearHorario()">Crear Horario</a>
+							<button  id="button" onclick="crearHorario()">Crear Horario</button>
 							<div id="arrow-container">
 								<div id="arrow-rectangle"></div>
 								<div id="arrow-triangle" ></div>
@@ -51,7 +53,7 @@
 					<tr>
 						<td width="100%">
 						<div id="button-container" class="digg">
-							<a  id="button">Abrir Horario</a>
+							<button  id="button">Abrir Horario</button>
 							<div id="arrow-container">
 								<div id="arrow-rectangle"></div>
 								<div id="arrow-triangle" ></div>
@@ -61,7 +63,7 @@
 					<tr>
 						<td width="100%">
 						<div id="button-container" class="email">
-							<a  id="button" onclick="eliminarHorario()">Eliminar Horario</a>
+							<button  id="button" onclick="eliminarHorario()">Eliminar Horario</button>
 							<div id="arrow-container">
 								<div id="arrow-rectangle"></div>
 								<div id="arrow-triangle" ></div>
@@ -73,42 +75,10 @@
 					</tr>
 				</table></td>
 				<!-- Muestra el contenido principal de la pagina -->
-				<td class="tabla" width="100%">
-				<table id="resultados">
-					<tr>
-						<td>
-						<p id="horario0">
-							<br>
-							Nombre:
-							<br>
-							Numero de Creditos:
-							<br>
-							Fecha Creacion:
-						</p></td
-					</tr>
-					<tr>
-						<td>
-						<p id="horario1">
-							<br>
-							Nombre:
-							<br>
-							Numero de Creditos:
-							<br>
-							Fecha Creacion:
-						</p></td>
-					</tr>
-					<tr>
-						<td>
-						<p id="horario2">
-							<br>
-							Nombre:
-							<br>
-							Numero de Creditos:
-							<br>
-							Fecha Creacion:
-						</p></td>
-					</tr>
-				</table></td>
+				<td class="tabla"  valign="top" width="100%">
+				<table id="result">
+				</table>
+				</td>
 			</tr>
 			<!-- Footer-->
 			<tr height="100" bgcolor="#FAF8CC">

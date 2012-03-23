@@ -77,6 +77,4 @@ function poblarArregloObjetos($arr, $nombreobj) {
 function redirigirLoginPage(){
 	header("Location: /index.html");
 }
-
-
 ?>

@@ -77,6 +77,17 @@ class Curso {
 	 */
 	public $dias;
 	
+	/**
+	 * Numero de complementarias que tiene el curso
+	 */
+	public $numcompl;
+	
+	/**
+	 * Representa el índice del curso padre de la clase dentro de un arreglo de cursos a ser retornado al cliente.
+	 * Se maneja dentro del conexto de servicios al cliente.
+	 */
+	public $inpadre;
+	
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//

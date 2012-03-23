@@ -23,7 +23,6 @@ function consultarCursosPorNombreProfesor($profesor, $cbuflag) {
 	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
 
 	try {
-
 		echo $dao -> consultarCursosPorNombreProfesor($profesor, $cbuflag);
 	} catch(Exception $e) {
 		echo $e -> getMessage();

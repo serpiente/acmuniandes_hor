@@ -104,21 +104,21 @@ $(function() {
 	}
 
 	function OcurCalendar(ocur, i, j) {
-		console.log(i);
+		// console.log(i);
 		this.id = "" + i + "-" + j;
 
 		var hmi = ocur.horaInicio.split(":");
 		var fecha = mapaDias[ocur.dia];
 		this.start = fecha.setHours(hmi[0], hmi[1]);
-		console.log(this.start);
+		// console.log(this.start);
 
 		var hmf = ocur.horaFin.split(":");
 		this.end = fecha.setHours(hmf[0], hmf[1]);
-		console.log(this.end);
+		// console.log(this.end);
 
 		this.title = resultados[i].nombre + "<br>" + ocur.salon;
 		this.opac = "0.5";
-		console.log(mapaDias);
+		// console.log(mapaDias);
 	}
 
 	var horarioActual = new Horario();
@@ -175,10 +175,11 @@ $(function() {
 			// },
 			// zIndex : 100
 		// });
-
+		$('.jqgrow').attr('addbl','true');
+		
 		$('.jqgrow').dblclick(function(){
-			console.log("sel: "+sel);
 			$(this).hide();
+			$(this).attr('out','true');
 			agregarCursoCalendar(false);
 		});
 		
@@ -188,7 +189,8 @@ $(function() {
 			agregarCursoCalendar(true);
 			//setTimeout(agregarCursoCalendar,'500');
 		}, function() {
-			removerCursoCalendar(true);
+			if(!$(this).attr('out'))
+				removerCursoCalendar(true);
 		});
 
 		$('.jqgrow').poshytip({
@@ -209,13 +211,36 @@ $(function() {
 	 * @param opac La opacidad que deben tener las ocurrencias del curso al agregarlas al calendar
 	 */
 	function agregarCursoCalendar(vistaprevia) {
-		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-			var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
-			if(!vistaprevia) {
-				ocur.opac = 1;
+		if(!vistaprevia){
+			if($('#' + sel).attr('addbl') == 'false') {
+				alert("Se debe agregar una de las clases complementarias de la magistral, o la clase magistral correspondiente")
 			}
-			calendar.weekCalendar("updateEvent", ocur);
-		};
+			else{
+				if(resultados[sel].inpadre >= 0) {
+					console.log('here this be');
+					console.log('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')')
+					console.log($('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')'));
+					$('.jqgrow:gt(' + resultados[sel].inpadre + '),.jqgrow:lt(' + resultados[sel].inpadre + ')').attr('addbl', 'false');
+				} else if(resultados[sel].numcompl > 0) {
+					$('.jqgrow:lt(' + sel + '),.jqgrow:gt(' + (sel + resultados[sel].numcompl) + ')').attr('addbl', 'false');
+				}
+				for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+				ocur.opac = 1;
+				
+				calendar.weekCalendar("updateEvent", ocur);
+			};
+			}
+		}
+		else{
+			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+				if(!vistaprevia) {
+					ocur.opac = 1;
+				}
+				calendar.weekCalendar("updateEvent", ocur);
+			};			
+		}
 	}
 
 	/**
@@ -311,9 +336,9 @@ $(function() {
 			// }, 500);
 			$event.hover(function() {
 				sel = calEvent.id.charAt(0);
-				console.log(sel);
-				console.log('[id|="' + sel + '"]');
-				console.log(calendar.find('[id|=' + sel + ']'));
+				// console.log(sel);
+				// console.log('[id|="' + sel + '"]');
+				// console.log(calendar.find('[id|=' + sel + ']'));
 				calendar.find('[id|="' + sel + '"]').find('.icon').show();
 			}, function() {
 				calendar.find('[id|="' + sel + '"]').find('.icon').hide();

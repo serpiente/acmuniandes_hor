@@ -100,7 +100,7 @@ $(function() {
 		this.guardado = "";
 		this.nombre = "";
 		this.numCursos = 0;
-		this.cursos = [];
+		this.cursos = new Array();
 	}
 
 	function OcurCalendar(ocur, i, j) {
@@ -178,9 +178,7 @@ $(function() {
 		$('.jqgrow').attr('addbl','true');
 		
 		$('.jqgrow').dblclick(function(){
-			$(this).hide();
-			$(this).attr('out','true');
-			agregarCursoCalendar(false);
+			agregarCursoCalendar(false, $(this));
 		});
 		
 		//TODO Fix This!!
@@ -210,37 +208,68 @@ $(function() {
 	 * Agrega un curso al jq-week-calendar con todas sus ocurrencias respectivas
 	 * @param opac La opacidad que deben tener las ocurrencias del curso al agregarlas al calendar
 	 */
-	function agregarCursoCalendar(vistaprevia) {
+	function agregarCursoCalendar(vistaprevia, row) {
 		if(!vistaprevia){
 			if($('#' + sel).attr('addbl') == 'false') {
-				alert("Se debe agregar una de las clases complementarias de la magistral, o la clase magistral correspondiente")
+				alert("Se debe agregar una de las clases complementarias de la magistral, o la clase magistral correspondiente");
+				removerCursoCalendar(true);
 			}
 			else{
 				if(resultados[sel].inpadre >= 0) {
-					console.log('here this be');
-					console.log('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')')
-					console.log($('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')'));
+					// console.log('here this be');
+					// console.log('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')')
+					// console.log($('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')'));
 					$('.jqgrow:gt(' + resultados[sel].inpadre + '),.jqgrow:lt(' + resultados[sel].inpadre + ')').attr('addbl', 'false');
 				} else if(resultados[sel].numcompl > 0) {
 					$('.jqgrow:lt(' + sel + '),.jqgrow:gt(' + (sel + resultados[sel].numcompl) + ')').attr('addbl', 'false');
 				}
 				for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
-				ocur.opac = 1;
+					var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+					ocur.opac = 1;
 				
-				calendar.weekCalendar("updateEvent", ocur);
-			};
+					calendar.weekCalendar("updateEvent", ocur);
+				};
+				row.hide();
+				row.attr('out','true');
 			}
 		}
 		else{
 			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
 				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
-				if(!vistaprevia) {
-					ocur.opac = 1;
-				}
+
 				calendar.weekCalendar("updateEvent", ocur);
 			};			
 		}
+	}
+	
+	/**
+	 * Agrega un curso al horario del usuario
+	 */
+	function agregarCursoHorario(curso){
+		
+		horarioActual.cursos[horarioActual.numCursos]=curso;
+		horarioActual.numCursos++;
+		horarioActual.creditos_Totales += curso.creditos;
+	}
+	
+	/**
+	 * Remover un curso del horario del usuario
+	 */
+	function removerCursoHorario(curso){
+		
+		var encontro = false;
+		var pos = 0;
+		while(!encontro)
+		{
+			if(horarioActual.cursos[pos].crn == curso.crn)
+				encontro = true;
+			else
+				pos++;
+		}
+		
+		horarioActual.cursos.splice(pos,1);
+		horarioActual.numCursos--;
+		horarioActual.creditos_Totales -= curso.creditos;
 	}
 
 	/**
@@ -253,6 +282,7 @@ $(function() {
 		if(!vistaprevia) {
 			//TODO define time
 			$('#' + sel).show(500);
+			$('#' + sel).removeAttr('out');
 		}
 	}
 

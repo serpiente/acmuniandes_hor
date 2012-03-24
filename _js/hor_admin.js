@@ -48,9 +48,14 @@ $(function() {
 	});
 	
 	$('#buttonCons').click(mostrarHorarios);
+	$('#buttonCreate').click(vizualizacionCreacion);
+	$('#buttonEliminar').click(vizualizacionEliminacion);
+	
+
 		
 	function mostrarHorarios() {
 		/*Conexión AJAX */
+		vaciarTablaHorarios();
 		parametros = {
 			'tipsol' : 0
 		}
@@ -75,12 +80,43 @@ $(function() {
 		});
 	}
 
+	
+	function vizualizacionCreacion ()
+	{
+		vaciarTablaHorarios();
+		$("#result").append("<tr><td>&nbsp</td></tr>");
+		$("#result").append("<tr> <td> Nombre del Horario: </td> <td> <input type='text' id ='nombreHorario'> </input> </td> </tr>  ");
+		$("#result").append("<tr> <td></td><td><button id='buttonCreateHorario'> Crear Nuevo Horario</button></td> </tr>");
+		$('#buttonCreateHorario').click(crearHorario);	
+	}
+	
+	function vizualizacionEliminacion ()
+	{
+		vaciarTablaHorarios();
+		$("#result").append("<tr><td>&nbsp</td></tr>");
+		$("#result").append("<tr> <td> Nombre del Horario: </td> <td> <input type='text' id ='nombreHorario'> </input> </td> </tr>  ");
+		$("#result").append("<tr> <td></td><td><button id='buttonElimateHorario'> Elminar horario</button></td> </tr>");
+		$('#buttonElimateHorario').click(eliminarHorario);	
+	}
+	
+	function vaciarTablaHorarios() {
+		$("#result").find("tr").remove();
+	}
+
 	/*Permite visualizar cada uno de los horarios que el usuario posee */
 
 	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, i) {
-		//$('#horario' + i).show("slow");
-		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <br>" +nombre+"</br></td></tr>");
-
+		$("#result").append("<tr><td>&nbsp</td></tr>");
+		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <button id=btn"+(i)+" >" +nombre+"</button></td></tr>");
+		console.log($("#btn"+i))
+		$("#btn"+i).click(function(){
+			abrirHorario(''+i)
+		});
+	}
+	
+	function abrirHorario(id)
+	{
+		alert('abrir '+id);
 	}
 	
 	function inicilializar(){
@@ -110,6 +146,7 @@ $(function() {
 	function crearHorario() {
 		/* Genera un dialogo para escribir el nombre del horario */
 		/*Conexión AJAX */
+		alert("hola");
 		var horariocreado = false;
 		parametros = {
 			'tipsol' : '1'
@@ -133,7 +170,7 @@ $(function() {
 
 	var j = 0;
 	function eliminarHorario() {
-
+	alert("elminar");
 		var horarioeliminado = false;
 		parametros = {
 			'tipsol' : '2'

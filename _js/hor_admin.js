@@ -68,12 +68,7 @@ $(function() {
 			success : function(response) {
 				horarios = $.parseJSON(response);
 				for(var i = 0; i < 1; i++) {
-					var nombreHorario = horarios[i].nombre;
-					var creditosHorario = horarios[i].creditos_Totales;
-					var fecha = horarios[i].fechaCreacion;
-					var numeroCursos = horarios[i].num_Cursos;
-					var cursosHorario = horarios[i].cursos;
-					visualizarHorario(nombreHorario, creditosHorario, fecha, numeroCursos, cursosHorario, i);
+					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i);
 				};
 				inicilializar();
 			}

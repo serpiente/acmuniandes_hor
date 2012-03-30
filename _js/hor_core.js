@@ -39,12 +39,13 @@ $(function() {
 		"profesores" : ["Rodrigo Cardoso"],
 		"dias" : "LI",
 		"numcompl": 1,
-		"inpadre": null
+		"inpadre": null,
+		"indiceEnResultados": 0
 	},{
 		"capacidad_Total" : 15,
 		"codigo_Curso" : "ISIS2203",
 		"creditos" : 0,
-		"crn" : "45663",
+		"crn" : "55555",
 		"cupos_Disponibles" : 5,
 		"departamento" : "Ingenieria de Sistemas",
 		"nombre" : "Compl. L y M",
@@ -61,7 +62,8 @@ $(function() {
 		"profesores" : ["Jaime Beltran"],
 		"dias" : "V",
 		"numcompl": 0,
-		"inpadre": 0	
+		"inpadre": 0,
+		"indiceEnResultados": 1	
 	},{
 		"capacidad_Total" : 30,
 		"codigo_Curso" : "IIND3306",
@@ -89,7 +91,8 @@ $(function() {
 		"profesores" : ["Julio Villareal"],
 		"dias" : "MJ",
 		"numcompl": 0,
-		"inpadre": null
+		"inpadre": null,
+		"indiceEnResultados": 2
 	}];
 	
 	function Horario() {
@@ -100,7 +103,7 @@ $(function() {
 		this.guardado = "";
 		this.nombre = "";
 		this.numCursos = 0;
-		this.cursos = new Array();
+		this.cursos = [];
 	}
 
 	function OcurCalendar(ocur, i, j) {
@@ -179,6 +182,7 @@ $(function() {
 		
 		$('.jqgrow').dblclick(function(){
 			agregarCursoCalendar(false, $(this));
+			agregarCursoHorario(resultados[sel]);
 		});
 		
 		//TODO Fix This!!
@@ -208,42 +212,40 @@ $(function() {
 	 * Agrega un curso al jq-week-calendar con todas sus ocurrencias respectivas
 	 * @param opac La opacidad que deben tener las ocurrencias del curso al agregarlas al calendar
 	 */
-	function agregarCursoCalendar(vistaprevia, row) {
-		if(!vistaprevia){
-			if($('#' + sel).attr('addbl') == 'false') {
-				alert("Se debe agregar una de las clases complementarias de la magistral, o la clase magistral correspondiente");
-				removerCursoCalendar(true);
-			}
-			else{
-				if(resultados[sel].inpadre >= 0) {
-					// console.log('here this be');
-					// console.log('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')')
-					// console.log($('.jqgrow:gt(' + resultados[sel].inpadre + '):lt(' + resultados[sel].inpadre + ')'));
-					$('.jqgrow:gt(' + resultados[sel].inpadre + '),.jqgrow:lt(' + resultados[sel].inpadre + ')').attr('addbl', 'false');
-				} else if(resultados[sel].numcompl > 0) {
-					$('.jqgrow:lt(' + sel + '),.jqgrow:gt(' + (sel + resultados[sel].numcompl) + ')').attr('addbl', 'false');
-				}
-				for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-					var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
-					ocur.opac = 1;
-				
-					calendar.weekCalendar("updateEvent", ocur);
-				};
-				row.hide();
-				row.attr('out','true');
-			}
-		}
-		else{
-			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-				var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
 
-				calendar.weekCalendar("updateEvent", ocur);
-			};			
+	function agregarCursoCalendar(vistaprevia, row) {
+
+		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+			var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+			
+			if(!vistaprevia) ocur.opac = 1;
+
+			calendar.weekCalendar("updateEvent", ocur);
+		};
+		if(!vistaprevia){
+			row.hide();
+			row.attr('out', 'true');
+		}
+	}
+
+
+	/**
+	 * Remueve un curso del jq-week-calendar con todas sus ocurrencias respectivas
+	 */
+	function removerCursoCalendar(vistaprevia) {
+		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+			calendar.weekCalendar("removeEvent", "" + sel + "-" + k);
+		};
+		if(!vistaprevia) {
+			//TODO define time
+			$('#' + sel).show(500);
+			$('#' + sel).removeAttr('out');
 		}
 	}
 	
 	/**
 	 * Agrega un curso al horario del usuario
+	 * @param curso el objeto de tipo curso a ser agregado
 	 */
 	function agregarCursoHorario(curso){
 		
@@ -254,6 +256,7 @@ $(function() {
 	
 	/**
 	 * Remover un curso del horario del usuario
+	 * @param curso el objeto de tipo curso a ser removido
 	 */
 	function removerCursoHorario(curso){
 		
@@ -271,19 +274,87 @@ $(function() {
 		horarioActual.numCursos--;
 		horarioActual.creditos_Totales -= curso.creditos;
 	}
-
+	
 	/**
-	 * Remueve un curso del jq-week-calendar con todas sus ocurrencias respectivas
+	 * Guarda el horario actual de un usuario en el servidor. Si encuentra problemas de complementarias envía una alerta.
 	 */
-	function removerCursoCalendar(vistaprevia) {
-		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-			calendar.weekCalendar("removeEvent", "" + sel + "-" + k);
-		};
-		if(!vistaprevia) {
-			//TODO define time
-			$('#' + sel).show(500);
-			$('#' + sel).removeAttr('out');
+	function guardarHorario(){
+		var probs = verificarHorario()
+		if(probs.length > 0){
+			
+			var info = "El horario a guardar contiene las seguientes secciones inscritas sin sus respectivas complementarias o magistrales: <br>"
+			
+			for(var i=0,j=probs.length; i<j; i++){
+			  info += "<li>"+probs[i]+"</li>";
+			};
+			
+			info += "</ul><br>"
+			info += "Desea continuar guardando su horario?"
+			
+			$("#dialogConf").append(info);
+			$("#dialogConf").dialog({
+				modal: true,
+				buttons: {
+					"Si": function(){
+						$(this).dialog("close")
+						// $.ajax({
+							// /*url : '_php/hor_core.php',*/
+							// url : '_php/hor_core.php',
+							// data : {'tipsol':'5','horario':horarioActual},
+							// type : 'POST',
+							// success : function(response) {
+								// if(response == 1){
+									// alert("El horario ha sido guardado correctamente.")
+								// }
+								// else{
+									// alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
+								// }
+							// }
+						// });
+					},
+					"No": function(){ $(this).dialog("close")}
+				}				
+			});
+			//alert('trouble');
 		}
+		
+		
+	}
+	
+	/**
+	 * Verifica que en el horario actual esten inscritas las complementarias para los cursos que los requieran y
+	 * que esten las magistrales de los cursos complementarios inscritos.
+	 * @return arreglo con los nombres de los cursos que presentan problemas
+	 */
+	function verificarHorario(){
+		var probs = [];
+		
+		for(var i=0,j=horarioActual.cursos.length; i<j; i++){
+			if(horarioActual.cursos[i].numcompl > 0){
+		  		var encontro = false;
+		  		for(var k=horarioActual.cursos[i].indiceEnResultados+1,l=k+horarioActual.cursos[i].numcompl; k<l && !encontro; k++){
+					for(var m=0,n=horarioActual.cursos.length; m<n; m++){
+				  		if(horarioActual.cursos[m].crn == resultados[k].crn && m!=i){
+				  			encontro = true;
+				  		}
+					}	
+				}
+				if(!encontro){
+					probs[probs.length] = horarioActual.cursos[i].nombre;
+				}
+		  	} else if(horarioActual.cursos[i].inpadre != null){
+		  		var encontro = false;
+		  		for(var k=0,l=horarioActual.cursos.length; k<l; k++){
+					if(k!=i && horarioActual.cursos[k].crn == resultados[horarioActual.cursos[i].inpadre].crn){
+						encontro = true
+					}
+				}
+				if(!encontro){
+					probs[probs.length] = horarioActual.cursos[i].nombre;
+				}
+		 	}
+		}
+		return probs;
 	}
 
 	/**
@@ -357,6 +428,8 @@ $(function() {
 
 			$event.prepend($('<div class="icon"><img alt="close" src="_images/close.png" /></div>').hide().click(function() {
 				removerCursoCalendar(false);
+				removerCursoHorario(resultados[sel]);
+				console.log(horarioActual)
 			}));
 			// $event.find('.wc-time').css({
 			// 'background-color': '#F53400'
@@ -365,7 +438,7 @@ $(function() {
 			// opacity:calEvent.opac
 			// }, 500);
 			$event.hover(function() {
-				sel = calEvent.id.charAt(0);
+				sel = calEvent.id.substring(0,calEvent.id.indexOf("-"));
 				// console.log(sel);
 				// console.log('[id|="' + sel + '"]');
 				// console.log(calendar.find('[id|=' + sel + ']'));
@@ -403,6 +476,11 @@ $(function() {
 				fontStyle : 'italic'
 			});
 		}
+	});
+	
+	$("#saveButton").click(function(){
+		console.log(horarioActual);
+		guardarHorario();
 	});
 
 	// calendar.droppable({

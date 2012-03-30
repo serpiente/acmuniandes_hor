@@ -88,6 +88,12 @@ class Curso {
 	 */
 	public $inpadre;
 	
+	/**
+	 * Indica la posivión del curso dentro de un arreglo de resultados obtenido por una consulta.
+	 * Para ser utilizado en el front-end
+	 */
+	public $indiceEnResultados;
+	
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -181,7 +187,19 @@ class Curso {
 	function getDias(){
 		return $this -> dias;
 	}
-		
+	
+	function getNumCompl(){
+		return $this -> numcompl;
+	}
+	
+	function getInPadre(){
+		return $this -> inpadre;
+	}
+	
+	function getIndiceEnResultados(){
+		return $this -> indiceEnResultados;
+	}
+			
 	function setCapacidad_Total($ncapacidad_Total){
 		 $this -> capacidad_Total = $ncapacidad_Total;
 	}
@@ -232,6 +250,18 @@ class Curso {
 	
 	function setDias($ndias){
 		$this -> dias = $ndias; 
+	}
+	
+	function setNumCompl($nNumCompl){
+		$this -> numcompl = $nNumCompl;
+	}
+	
+	function setInPadre($nInPadre){
+		$this -> inpadre = $nInPadre;
+	}
+	
+	function setIndiceEnResultados($nIndiceEnResultados){
+		$this -> indiceEnResultados = $nIndiceEnResultados;
 	}
 
 }

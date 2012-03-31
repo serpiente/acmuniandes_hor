@@ -49,9 +49,6 @@ $(function() {
 	
 	$('#buttonCons').click(mostrarHorarios);
 	$('#buttonCreate').click(vizualizacionCreacion);
-	$('#buttonEliminar').click(vizualizacionEliminacion);
-	
-
 		
 	function mostrarHorarios() {
 		/*Conexión AJAX */
@@ -68,7 +65,7 @@ $(function() {
 			success : function(response) {
 				horarios = $.parseJSON(response);
 				for(var i = 0; i < 1; i++) {
-					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, horarios[i].id_horario);
+					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
 				};
 				inicilializar();
 			}
@@ -93,11 +90,11 @@ $(function() {
 
 	/*Permite visualizar cada uno de los horarios que el usuario posee */
 
-	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, i) {
+	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, id,i) {
 		$("#result").append("<tr><td>&nbsp</td></tr>");
-		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <button id=btn"+(i)+" >" +nombre+"</button></td><td width=\"88%\"></td><td> <button id=eli"+(i)+" > X</button></td></tr>");
-		console.log($("#btn"+i))
-		$("#btn"+i).click(function(){
+		$("#result").append("<tr class=\"celda1\" id=cell"+(i)+"><td width=\"12%\"> <span class='horarioResultado' id="+(id)+" >" +nombre+"</span></td><td width=\"88%\"></td><td width=\"3%\"> <button id=eli"+(i)+" > X</button></td></tr>");
+		console.log($("#"+id))
+		$("#"+id).click(function(){
 			abrirHorario(''+i)
 		});
 		$("#eli"+i).click(function(){
@@ -137,6 +134,9 @@ $(function() {
 		
 		$('.horarioResultado').hover(function() {
 			sel = ($(this).attr('id'));
+			document.body.style.cursor = 'pointer';
+		}, function(){
+			document.body.style.cursor = 'auto';
 		});
 	}
 

@@ -68,7 +68,7 @@ $(function() {
 			success : function(response) {
 				horarios = $.parseJSON(response);
 				for(var i = 0; i < 1; i++) {
-					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i);
+					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, horarios[i].id_horario);
 				};
 				inicilializar();
 			}
@@ -81,17 +81,10 @@ $(function() {
 		vaciarTablaHorarios();
 		$("#result").append("<tr><td>&nbsp</td></tr>");
 		$("#result").append("<tr> <td> Nombre del Horario: </td> <td> <input type='text' id ='nombreHorario'> </input> </td> </tr>  ");
-		$("#result").append("<tr> <td></td><td><button id='buttonCreateHorario'> Crear Nuevo Horario</button></td> </tr>");
-		$('#buttonCreateHorario').click(crearHorario);	
-	}
-	
-	function vizualizacionEliminacion ()
-	{
-		vaciarTablaHorarios();
-		$("#result").append("<tr><td>&nbsp</td></tr>");
-		$("#result").append("<tr> <td> Nombre del Horario: </td> <td> <input type='text' id ='nombreHorario'> </input> </td> </tr>  ");
-		$("#result").append("<tr> <td></td><td><button id='buttonElimateHorario'> Elminar horario</button></td> </tr>");
-		$('#buttonElimateHorario').click(eliminarHorario);	
+		$("#result").append("<tr> <td></td><td><button id='buttonCreateHorario'> Crear Nuevo Horario</button></td> </tr>");	
+		$("#buttonCreateHorario").click(function(){
+			crearHorario($('#nombreHorario').val())
+		});
 	}
 	
 	function vaciarTablaHorarios() {
@@ -102,10 +95,13 @@ $(function() {
 
 	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, i) {
 		$("#result").append("<tr><td>&nbsp</td></tr>");
-		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <button id=btn"+(i)+" >" +nombre+"</button></td></tr>");
+		$("#result").append("<tr class='horarioResultado' id="+(i)+"><td> <button id=btn"+(i)+" >" +nombre+"</button></td><td width=\"88%\"></td><td> <button id=eli"+(i)+" > X</button></td></tr>");
 		console.log($("#btn"+i))
 		$("#btn"+i).click(function(){
 			abrirHorario(''+i)
+		});
+		$("#eli"+i).click(function(){
+			eliminarHorario(''+i)
 		});
 	}
 	
@@ -138,12 +134,13 @@ $(function() {
 			+"<br> Fecha de Creacion: "+horarios[sel].fechaCreacion +"</span>");
 		}
 	}
-	function crearHorario() {
+	function crearHorario(nombre) {
 		/* Genera un dialogo para escribir el nombre del horario */
 		/*Conexión AJAX */
-		alert("hola");
+		alert("hola"+nombre);
 		var horariocreado = false;
 		parametros = {
+			'nomhor' : nombre,
 			'tipsol' : '1'
 		};
 		$.ajax({
@@ -151,12 +148,17 @@ $(function() {
 			data : parametros,
 			type : 'get',
 			success : function(response) {
-				horariocreado = true;
+				horariocreado = response;
 			}
 		});
 
 		if(horariocreado) {
-			/*Codigo que permite modificar y crear el nuevo horario */
+			alert("Creado");
+			vaciarTablaHorarios();
+		};
+		if(!horarioeliminado){
+			alert("Error al crear el horario");
+			vaciarTablaHorarios();
 		};
 
 	}
@@ -164,29 +166,32 @@ $(function() {
 	/*Metodo que eliminar un horario */
 
 	var j = 0;
-	function eliminarHorario() {
-	alert("elminar");
+	function eliminarHorario(id) {
+	alert("elminar "+id);
 		var horarioeliminado = false;
 		parametros = {
-			'tipsol' : '2'
+			'tipsol' : '2',
+			'id_hor':id
 		};
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
 			type : 'get',
 			success : function(response) {
-				horarioeliminado = true;
+				horarioeliminado = response;
 			}
 		});
 
 		if(horarioeliminado) {
 			/*Elimina el horario de la visualizacíón */
-
+			alert("Eliminado");
+			vaciarTablaHorarios();
+		};
+		if(!horarioeliminado){
+			alert("Error al eliminar el horario");
+			vaciarTablaHorarios();
 		};
 
-		for(var i = 0; i < horarios.lenght; i++) {
-			$('#horario' + i).hide("slow");
-		};
 
 	}
 

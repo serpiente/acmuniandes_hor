@@ -32,6 +32,7 @@ class TiposSolicitud {
 	const TipoAutenticar = '3';
 	const TipoLogout = '4';
 	const TipoGuardarHorario = '5';
+	const TipoAbrirHorario = '6';
 }
 
 /**

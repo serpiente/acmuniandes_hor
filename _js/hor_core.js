@@ -93,6 +93,29 @@ $(function() {
 		"numcompl": 0,
 		"inpadre": null,
 		"indiceEnResultados": 2
+	},{
+		"capacidad_Total" : 15,
+		"codigo_Curso" : "ISIS2603",
+		"creditos" : 0,
+		"crn" : "66666",
+		"cupos_Disponibles" : 5,
+		"departamento" : "Ingenieria de Sistemas",
+		"nombre" : "Infracomm",
+		"seccion" : 1,
+		"tipo" : null,
+		"complementarias" : [],
+		"ocurrencias" : [{
+			"dia" : "V",
+			"horaInicio" : "10:00",
+			"horaFin" : "11:20",
+			"salon" : "O301",
+			"unidades_Duracion" : 3
+		}],
+		"profesores" : ["Jaime Beltran"],
+		"dias" : "V",
+		"numcompl": 0,
+		"inpadre": null,
+		"indiceEnResultados": 1	
 	}];
 	
 	function Horario() {
@@ -148,6 +171,9 @@ $(function() {
 		for(var i = 0; i < resultados.length; i++) {
 			resultados[i].profesor = resultados[i].profesores[0];
 			resultGrid.jqGrid('addRowData', i, resultados[i]);
+			// if(resultados[i].inpadre != null){
+				// $('#'+i).css({'background':'#BDEDFF'});
+			// }
 		}
 				
 		inicializarResultados();
@@ -181,18 +207,31 @@ $(function() {
 		$('.jqgrow').attr('addbl','true');
 		
 		$('.jqgrow').dblclick(function(){
-			agregarCursoCalendar(false, $(this));
-			agregarCursoHorario(resultados[sel]);
+			if(!$("#"+sel).attr('confl')){
+				agregarCursoCalendar(false, $(this));
+				agregarCursoHorario(resultados[sel]);
+			}
 		});
 		
 		//TODO Fix This!!
 		$('.jqgrow').hover(function() {
 			sel = $(this).attr('id');
-			agregarCursoCalendar(true);
+			if(verificarConflictoHorario(resultados[sel])){
+				agregarCursoCalendar(true);
+			}
+			else{
+				$("#"+sel).attr('confl','true');
+				$("#"+sel).css({'background':'#E42217','opacity': 0.9});
+			}
 			//setTimeout(agregarCursoCalendar,'500');
 		}, function() {
 			if(!$(this).attr('out'))
+			{
+				$("#"+sel).removeAttr('confl');
+				$("#"+sel).css({'background':'', 'opacity':1});
 				removerCursoCalendar(true);
+			}
+				
 		});
 
 		$('.jqgrow').poshytip({
@@ -282,7 +321,7 @@ $(function() {
 		var probs = verificarHorario()
 		if(probs.length > 0){
 			
-			var info = "El horario a guardar contiene las seguientes secciones inscritas sin sus respectivas complementarias o magistrales: <br>"
+			var info = "El horario actual contiene los siguientes cursos inscritas sin sus respectivas complementarias o magistrales: <br>"
 			
 			for(var i=0,j=probs.length; i<j; i++){
 			  info += "<li>"+probs[i]+"</li>";
@@ -356,6 +395,57 @@ $(function() {
 		}
 		return probs;
 	}
+	
+	/**
+	 * Verifica si el curso seleccionado (al calendario de)que será agregado como evento al calendario de eventos)
+	 * presenta un conflicto de horario con un curso ya existente dentro del horario.
+	 * @param curso objeto tipo Curso que será agregado al calendario.
+	 * @return si es valido agregar el curso seleccionado o no
+	 */
+	function verificarConflictoHorario(curso){
+		
+		agregar = true;
+		nuevasOcurrencias = curso.ocurrencias;
+		
+		for(i = 0; agregar && i < horarioActual.cursos.length; i++)
+		{
+			ocurrenciasActuales = horarioActual.cursos[i].ocurrencias;
+			for(j = 0; agregar && j < ocurrenciasActuales.length; j++)
+			{
+				ocurrenciaActual = ocurrenciasActuales[j];
+				for(k = 0; agregar && k < nuevasOcurrencias.length; k++)
+				{
+					ocurrenciaNueva = nuevasOcurrencias[k];
+					if(ocurrenciaNueva.dia == ocurrenciaActual.dia)
+					{
+						inicioOcurrenciaNueva = darNumeroHora(ocurrenciaNueva.horaInicio);
+						finOcurrenciaNueva = darNumeroHora(ocurrenciaNueva.horaFin);
+						inicioOcurrenciaActual = darNumeroHora(ocurrenciaNueva.horaInicio);
+						finOcurrenciaActual = darNumeroHora(ocurrenciaNueva.horaFin);
+						
+						if(inicioOcurrenciaNueva >= inicioOcurrenciaActual && inicioOcurrenciaNueva <= finOcurrenciaActual)
+							agregar = false;
+						else if(inicioOcurrenciaActual >= inicioOcurrenciaNueva && finOcurrenciaActual <= inicioOcurrenciaNueva)
+							agregar = false;
+					}
+				}
+			}
+		}
+		
+		return agregar;
+		
+	}
+	
+	
+	/**
+	 * Retorna la version numerica de una hora de una ocurrencia
+	 * @return double con la hora de la ocurrencia
+	 */
+	function darNumeroHora(hora)
+	{
+		temp = hora.split(':');
+		return temp[0] + (temp[1]/60);
+	}
 
 	/**
 	 * Retorna el contenido del curso actualmente seleccionado al tooltip para ser mostrado
@@ -386,6 +476,7 @@ $(function() {
 			width : 30
 		}],
 		gridview : true,
+		hoverrows:true,
 		caption : "Cursos Encontrados",
 		shrinkToFit : true,
 		width : 375,
@@ -410,6 +501,7 @@ $(function() {
 		daysToShow : 6,
 		longDays : ['Domingo', 'Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado'],
 		allowCalEventOverlap : false,
+		overlapEventsSeparate: true,
 		buttons : false,
 		title : '',
 		dateFormat : '',

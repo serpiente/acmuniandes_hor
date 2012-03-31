@@ -108,6 +108,18 @@ $(function() {
 	function abrirHorario(id)
 	{
 		alert('abrir '+id);
+		parametros = {
+			'tipsol' : '6',
+			'id_hor' : id
+		};
+		$.ajax({
+			url : '_php/hor_core.php',
+			data : parametros,
+			type : 'get',
+			success : function(response) {
+				
+			}
+		});
 	}
 	
 	function inicilializar(){

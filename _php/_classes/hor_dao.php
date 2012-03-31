@@ -1,14 +1,14 @@
 <?php
 require_once 'utils.php';
-foreach (glob("_classes/*.php") as $filename){
-    require_once $filename;
+foreach (glob("_classes/*.php") as $filename) {
+	require_once $filename;
 }
 
 /**
  * Clase que encapsula la funcionalidad para manejar las bases de datos
  */
 class Hor_Dao {
-		
+
 	//Datos de la conexion a base de datos propia Wayu
 	private $dbhost_mysql = 'mysqlhostingdti.uniandes.edu.co:3308';
 	private $dbname_mysql = 'dbcrearhorario';
@@ -96,7 +96,7 @@ class Hor_Dao {
 	private function darNumeroResultadosOracle($tabla_resultado) {
 		return oci_num_rows($tabla_resultado);
 	}
-	
+
 	/**
 	 * Retorna un string con el query de mysql dado un arreglo de selects, unarreglos de froms, un arreglo de as y un string indicando la condición del update.
 	 * @param $selects arreglo que contiene los selects
@@ -104,38 +104,36 @@ class Hor_Dao {
 	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de select from where
 	 */
-	private function selectFromWhereMysql($selects,$froms,$where){
-		
+	private function selectFromWhereMysql($selects, $froms, $where) {
+
 		$sql = "SELECT ";
 		$bool = FALSE;
 		foreach ($selects as $column) {
-			
-			if(!$bool)
-			{
-				$sql.="$column";
+
+			if (!$bool) {
+				$sql .= "$column";
 				$bool = TRUE;
-			}else
-				$sql.= ", $column";
+			} else
+				$sql .= ", $column";
 		}
-		
-		$sql.= " FROM ";
-		
+
+		$sql .= " FROM ";
+
 		$bool = FALSE;
 		foreach ($froms as $tabla => $alias) {
-				
-			if(!$bool)
-			{
-			$sql.= "$tabla as $alias";
-			$bool = TRUE;
-			}else
-				$sql.= ", $tabla as $alias";
+
+			if (!$bool) {
+				$sql .= "$tabla as $alias";
+				$bool = TRUE;
+			} else
+				$sql .= ", $tabla as $alias";
 		}
-		
-		$sql.= " WHERE $where";
-		
+
+		$sql .= " WHERE $where";
+
 		return $sql;
 	}
-	
+
 	/**
 	 * Retorna un string con el query de oracle dado un arreglo de selects, unarreglos de froms, un arreglo de as y un string indicando la condición del update.
 	 * @param $selects arreglo que contiene los selects
@@ -143,71 +141,71 @@ class Hor_Dao {
 	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de select from where
 	 */
-	private function selectFromWhereOracle($selects,$froms,$where){
+	private function selectFromWhereOracle($selects, $froms, $where) {
 		//TODO
-		
+
 	}
-	
+
 	/**
-	 * Retorna un string con la sentencia sql tanto para mysql como para oracle para hacer un update en una tabala dado el nombre de la tabla, un arregla associativa de las columnas 
+	 * Retorna un string con la sentencia sql tanto para mysql como para oracle para hacer un update en una tabala dado el nombre de la tabla, un arregla associativa de las columnas
 	 * a actualizar con sus respectivos valores y un string indicando la condición del update.
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $colums_valores arreglo asociativo de key-value pairs donde cada llave del arreglo (o posicion del arreglo) es el nombre de cada columnda de la tabla a actualizar, y el valor asociado a cada columna es el valor a actualizar.
 	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura del update
 	 */
-	private function updateSetWhere($nombre_tabla, $colums_valores, $where){
-		$query = "UPDATE $nombre_tabla SET ";	
-		$flag = TRUE;	
+	private function updateSetWhere($nombre_tabla, $colums_valores, $where) {
+		$query = "UPDATE $nombre_tabla SET ";
+		$flag = TRUE;
 		foreach ($colums_valores as $colum => $valor) {
-			if($flag){
-				$query.="$colum=$valor";
+			if ($flag) {
+				$query .= "$colum=$valor";
 				$flag = FALSE;
 			}
-			$query.=", $colum=$valor";
+			$query .= ", $colum=$valor";
 		}
-		$query.= " WHERE $where;";
+		$query .= " WHERE $where;";
 	}
-	
+
 	/**
 	 * Retorna un string con la sentencia sql de mysql para hacer un delete en una table dado el nombre de la tabla y un string indicando la condicion del where
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de delete para mysql
 	 */
-	private function deleteFromWhereMysql($nombre_tabla, $where){
+	private function deleteFromWhereMysql($nombre_tabla, $where) {
 		return "DELETE FROM $nombre_tabla WHERE $where;";
 	}
-	
+
 	/**
 	 * Retorna un string con la sentencia sql de oracle para hacer un delete en una tabla dado el nombre de la tabla y un string indicando la condicion del where
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $where string que indica las condiciones de la sentencia
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de delete para oracle
 	 */
-	private function deleteFromWhereOracle($nombre_tabla, $where){
+	private function deleteFromWhereOracle($nombre_tabla, $where) {
 		return "DELETE FROM $nombre_tabla WHERE $where;";
 	}
-	
+
 	/**
 	 * Retorna un string con la sentencia sql para hacer un insert en una tabla dado el nombre de la tabal y los valores a insertar
 	 * @param $nombre_tabla string indicando el nombre de la tabla a actualizar
 	 * @param $valores arreglo con los valores a insertar en la tabla. Debens eguri el mismo orden de las columnas en la tabla
 	 * @return string que contiene la sentencia para ser ejecutada siguiendo una estructura basica de insert
 	 */
-	private function insertInto($nombre_tabla, $valores){
+	private function insertInto($nombre_tabla, $valores) {
 		//TODO
 		$vals = "";
-		$flag = TRUE;	
+		$flag = TRUE;
 		foreach ($valores as $valor) {
-			if($flag){
-				$vals.="$valor";
+			if ($flag) {
+				$vals .= "$valor";
 				$flag = FALSE;
 			}
 			$vals .= ", $valor";
 		}
 		$query = "INSERT INTO $nombre_tabla VALUES ($vals)";
-		
+
 	}
 
 	/**
@@ -218,9 +216,9 @@ class Hor_Dao {
 	 */
 	function consultarCursosPorNombreProfesor($profesor, $cbuflag) {
 		//TODO
-			
+
 		$array;
-		
+
 		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
@@ -235,7 +233,7 @@ class Hor_Dao {
 		//TODO
 
 		$array;
-		
+
 		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
@@ -250,7 +248,7 @@ class Hor_Dao {
 		//TODO
 
 		$array;
-		
+
 		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
@@ -299,11 +297,11 @@ class Hor_Dao {
 		//TODO
 
 		$array;
-		
+
 		return json_encode($array);
 		//return del arreglo con objetos Curso, json encoded
 	}
-	
+
 	/**
 	 * Retorna un horario, dado su id
 	 * @param $id_hor string indicando el identificador unico de un horario
@@ -337,79 +335,162 @@ class Hor_Dao {
 
 		//return del arreglo con objetos Horario, json encoded
 	}
-	
+
 	/**
 	 * Persiste un nuevo horario dentro de la(s) base(s) de datos
 	 * @param $horario objeto de tipo Horario
 	 */
-	function persistirHorario($horario){
+	function persistirHorario($horario) {
 		//TODO REVISION
-		$query = "INSERT INTO Horarios (Login_Usuario, Creditos_Totales, Num_Cursos, Fecha_Creacion, Nombre) VALUES (".$horario -> getUsuario().", ".$horario -> getCreditosTotales().", ".$horario -> getNumCursos().", NOW(), ".$horario -> getNombre().")";
+		$query = "INSERT INTO Horarios (Login_Usuario, Creditos_Totales, Num_Cursos, Fecha_Creacion, Nombre) VALUES (" . $horario -> getUsuario() . ", " . $horario -> getCreditosTotales() . ", " . $horario -> getNumCursos() . ", NOW(), " . $horario -> getNombre() . ")";
 		$this -> queryMysql($query);
 	}
-	
+
 	/**
 	 * Persiste un nuevo curso dentro de la(s) base(s) de datos
- 	 * Funcion inutil, nunca sera utilizada
+	 * Funcion inutil, nunca sera utilizada
 	 * @param $curso objeto de tipo Curso
 	 */
-	function persistirCurso($curso){
+	function persistirCurso($curso) {
 		//TODO
 	}
-	
+
 	/**
 	 * Actualiza un horario dentro de la(s) base(s) de datos
 	 * @param $horario objeto de tipo Horario
 	 */
-	function actualizarHorario($horario){
+	function actualizarHorario($horario) {
 		//TODO REVISION
-		if($horario instanceof Horario){
-			$colums_valores = array('Creditos_Totales' => $horario -> getCreditosTotales(),'Num_Cursos' => $horario -> getNumCursos(), 'Nombre' => $horario -> getNombre());
-			$query = $this -> updateSetWhere("Horarios", $colums_valores, "Id_Horario=".$horario -> getIdHorario());
-			$query.= $this -> deleteFromWhereMysql('Cursos_Horarios', "Id_Horario=".$horario -> getIdHorario());
-			
+		if ($horario instanceof Horario) {
+			$colums_valores = array('Creditos_Totales' => $horario -> getCreditosTotales(), 'Num_Cursos' => $horario -> getNumCursos(), 'Nombre' => $horario -> getNombre());
+			$query = $this -> updateSetWhere("Horarios", $colums_valores, "Id_Horario=" . $horario -> getIdHorario());
+			$query .= $this -> deleteFromWhereMysql('Cursos_Horarios', "Id_Horario=" . $horario -> getIdHorario());
+
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
 				if ($curso instanceof Curso) {
-					$query.= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (".$horario -> getIdHorario().",".$curso -> getCrn().");";
+					$query .= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
+				} else {
+					throw new Exception("El objeto no es una instancia de Curso", 1);
 				}
-				else{
-					throw new Exception("El objeto no es una instancia de Curso", 1);					
-				}
-				
+
 			}
 			$this -> queryMysql($query);
-		}
-		else{
-			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");			
+		} else {
+			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");
 		}
 	}
-	
+
 	/**
 	 * Actualiza un curso dentro de la(s) base(s) de datos
 	 * Funcion inutil, nunca sera utilizada
 	 * @param $curso objeto de tipo Curso
-	 */	
-	function actualizarCurso($curso){
+	 */
+	function actualizarCurso($curso) {
 		//TODO
 	}
-	
+
 	/**
 	 * Elimina un horario y todos sus cursos dentro de la(s) base(s) de datos
 	 * @param $id_hor el id del horario a eliminar
 	 */
-	function eliminarHorario($id_hor){
+	function eliminarHorario($id_hor) {
 		//TODO REVISION
 		$this -> queryMysql($this -> deleteFromWhereMysql("Horarios", "Id_Horario=$id_hor"));
 	}
-	
+
 	/**
 	 * Elimina un curso dentro de la(s) base(s) de datos
 	 * Funcion inutil, nunca sera utilizada
 	 * @param $id_curso el id del curso a eliminar
 	 */
-	function eliminarCurso($id_curso){
+	function eliminarCurso($id_curso) {
 		//TODO
+	}
+
+	/**
+	 * Función que construye un objeto curso a partir
+	 * de un arreglo asociativo como resultado.
+	 * Asigna sus complementarias y lo retorna con sus atributos asignados
+	 */
+
+	function construirCursoDeArrAsoc($arr_asoc) {
+		$curso = new Curso();
+		$curso . setCapacidad_Total($arr_asoc["cupo"]);
+		$curso . setCodigo_Curso($arr_asoc["subj_code"] + $arr_asoc["crse_number"]);
+		$curso . setCreditos($arr_asoc["creditos"]);
+		$curso . setCrn($arr_asoc["crn_key"]);
+		$curso . setCupos_Disponibles($curso . getcapacidad_Total() - $arr_asoc["inscritos"]);
+		$curso . setDepartamento($arr_asoc["subj_code"]);
+		$curso . setNombre($arr_asoc["title"]);
+		$curso . setSeccion($arr_asoc["seq_number_key"]);
+		//TODO
+		//$curso.setTipo($)
+		$array_compl = array();
+		$arr_Strings = $arr_asoc["COMPLEMENTARIAS"];
+		$num = 0;
+		if (!empty($arr_Strings)) {
+			$crn_comps = explode(":", $arr_Strings);
+			foreach ($crn_comps as $compActual) {
+				$ret = consultarCursosPorCRN($crn_comps);
+				array_push($array_compl, $ret);
+				$num++;
+			}
+		}
+
+		$curso . setComplementarias($array_compl);
+		$curso . setNumCompl($num);
+
+		$beginTime = "begin_time";
+		$endTime = "end_time";
+		$mon = "monday_ind";
+		$tus = "tuesday_ind";
+		$wed = "wednesday_ind";
+		$thus = "thursday_ind";
+		$frid = "friday_ind";
+		$sat = "saturday_ind";
+		$sun = "sunday_ind";
+		$ffecha = "ffecha_ini";
+		$ffecha = "ffecha_fin";
+
+		$ocurrencias = array();
+
+		for ($i = 1; $i < 11; $i++) {
+
+			$beginTimeI = $arr_asoc["begin_time" . i];
+			$endTimeI = $arr_asoc["end_time" . i];
+			$ffechaI = $arr_asoc["ffecha_ini" . i];
+			$ffechaI = $arr_asoc["ffecha_fin" . i];
+
+			$monI = $arr_asoc["monday_ind" . i];
+			$tusI = $arr_asoc["tuesday_ind" . i];
+			$wedI = $arr_asoc["wednesday_ind" . i];
+			$thusI = $arr_asoc["thursday_ind" . i];
+			$fridI = $arr_asoc["friday_ind" . i];
+			$satI = $arr_asoc["saturday_ind" . i];
+			$sunI = $arr_asoc["sunday_ind" . i];
+
+			// TODO terminar occurencias.
+			if ($monI == "L") {
+			
+			}
+			if ($tusI == "M") {
+			}
+			if ($wedI == "I") {
+			}
+			if ($thusI == "J") {
+			}
+			if ($fridI == "V") {
+			}
+			if ($satI == "S") {
+
+			}
+			if ($sunI == "D") {
+			}
+
+			$curso . setOcurrencias();
+
+		}
 	}
 
 }

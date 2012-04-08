@@ -8,7 +8,7 @@ $hor = new Horario();
 
 $hor -> setCreditosTotales(3);
 $hor -> setFechaCreacion("05-05-05");
-$hor -> setIdHorario("0");
+$hor -> setIdHorario("50");
 $hor -> setCursos(array());
 $hor -> setNombre("Mi horario");
 $hor -> setNumCursos(1);

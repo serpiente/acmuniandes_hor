@@ -129,7 +129,7 @@ $(function() {
 		this.cursos = [];
 	}
 
-	function OcurCalendar(ocur, i, j) {
+	function OcurCalendar(curso, ocur, i, j) {
 		// console.log(i);
 		this.id = "" + i + "-" + j;
 
@@ -142,12 +142,40 @@ $(function() {
 		this.end = fecha.setHours(hmf[0], hmf[1]);
 		// console.log(this.end);
 
-		this.title = resultados[i].nombre + "<br>" + ocur.salon;
+		this.title = curso.nombre + "<br>" + ocur.salon;
 		this.opac = "0.5";
 		// console.log(mapaDias);
 	}
 
-	var horarioActual = new Horario();
+	var horarioActual;
+	abrirHorario();
+	
+	/**
+	 * Hace un llamado al servidor para abrir un horario seleccionado previemanente por el usuario.
+	 * Si no hay un horario para abrir inicializa un nuevo horario vacio
+	 */
+	function abrirHorario() {
+		$.ajax({
+			/*url : '_php/hor_core.php',*/
+			url : '_php/testhorcoredisp.php',
+			dataType : 'json',
+			data : {
+				'tipsol' : '7',
+			},
+			type : 'POST',
+			success : function(response) {
+				if(response) {
+					horarioActual =  response;
+					for(var i=0,j=horarioActual.cursos.length; i<j; i++){
+					  agregarCursoCalendar(horarioActual.cursos[i], false, null)
+					}
+				} else {
+					horarioActual = new Horario();
+				}
+			}
+		});
+	}
+
 
 	/**
 	 * Retorna la fecha (i.e. Feb 22/2012) de la semana actual que corresponde al dia de la semana dado por parametro
@@ -208,7 +236,7 @@ $(function() {
 		
 		$('.jqgrow').dblclick(function(){
 			if(!$("#"+sel).attr('confl')){
-				agregarCursoCalendar(false, $(this));
+				agregarCursoCalendar(null, false, $(this));
 				agregarCursoHorario(resultados[sel]);
 			}
 		});
@@ -217,7 +245,7 @@ $(function() {
 		$('.jqgrow').hover(function() {
 			sel = $(this).attr('id');
 			if(verificarConflictoHorario(resultados[sel])){
-				agregarCursoCalendar(true);
+				agregarCursoCalendar(null, true, null);
 			}
 			else{
 				$("#"+sel).attr('confl','true');
@@ -249,21 +277,34 @@ $(function() {
 
 	/**
 	 * Agrega un curso al jq-week-calendar con todas sus ocurrencias respectivas
-	 * @param opac La opacidad que deben tener las ocurrencias del curso al agregarlas al calendar
+	 * @param curso objeto curso a ser agregado. Si es nulo se agrega el curso que este actualmente seleccionado dentro del arreglo de resultados con el indice sel.
+	 * @param vistaprevia booleano indicando si el curso se va a agregar al calendario como vista previa o no
+	 * @param row el objeto gráfico (del DOM) que representa la fila dentro de la lista de resultados que muestra la informacion del curso
 	 */
 
-	function agregarCursoCalendar(vistaprevia, row) {
+	function agregarCursoCalendar(curso, vistaprevia, row) {
+		
+		var cursoAAgregar;
+		
+		if(curso != null){
+			cursoAAgregar = curso;
+		}
+		else{
+			cursoAAgregar = resultados[sel];
+		}
 
-		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-			var ocur = new OcurCalendar(resultados[sel].ocurrencias[k], sel, k);
+		for(var k = 0; k < cursoAAgregar.ocurrencias.length; k++) {
+			var ocur = new OcurCalendar(cursoAAgregar, cursoAAgregar.ocurrencias[k], sel, k);
 			
 			if(!vistaprevia) ocur.opac = 1;
 
 			calendar.weekCalendar("updateEvent", ocur);
 		};
 		if(!vistaprevia){
-			row.hide();
-			row.attr('out', 'true');
+			if(row != null){
+				row.hide();
+				row.attr('out', 'true');
+			}
 		}
 	}
 

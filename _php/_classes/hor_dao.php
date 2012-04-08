@@ -28,8 +28,8 @@ class Hor_Dao {
 	 * Constructor de la clase
 	 */
 	function __construct() {
-		mysql_connect($dbhost_mysql, $dbuser_mysql, $dbpass_mysql) or die(mysql_error());
-		mysql_select_db($dbname_mysql) or die(mysql_error());
+		//mysql_connect($dbhost_mysql, $dbuser_mysql, $dbpass_mysql) or die(mysql_error());
+		//mysql_select_db($dbname_mysql) or die(mysql_error());
 
 		//TODO
 		//Establecer conexion con NIFE
@@ -305,10 +305,11 @@ class Hor_Dao {
 	/**
 	 * Retorna un horario, dado su id
 	 * @param $id_hor string indicando el identificador unico de un horario
-	 * @return objeto de la clase Horario
+	 * @return objeto de la clase Horario, json encoded
 	 */
 	function consultarHorarioPorId($id_hor) {
 		//TODO
+		return null;
 	}
 
 	/**
@@ -413,7 +414,6 @@ class Hor_Dao {
 	 * de un arreglo asociativo como resultado.
 	 * Asigna sus complementarias y lo retorna con sus atributos asignados
 	 */
-
 	function construirCursoDeArrAsoc($arr_asoc) {
 		$curso = new Curso();
 		$curso . setCapacidad_Total($arr_asoc["cupo"]);

@@ -194,7 +194,7 @@ function exportarHorarioAFormatoPDF($horario){
 }
 
 
-$horario_json = sanitizeString($_POST['horaro']);
+$horario_json = sanitizeString($_POST['horario']);
 if (!isset($horario_json)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No se recibio el horario");

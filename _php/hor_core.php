@@ -15,8 +15,9 @@ $dao = new Hor_Dao(); //instanciación del dao
 
 
 /**
- * Consulta los horarios del usuario que se encuentra loggeado para ser mostrados
- * @return echo arreglo de objetos de la clase Horario, json encoded
+ * Consulta los horarios del usuario que se encuentra loggeado para ser listados
+ * Estos horarios contienen todos sus atributos básicos, pero su arreglo de cursos se encuentra vacío
+ * @return echo arreglo de objetos de la clase Horario, json encoded, sin los objetos Curso
  */
 function consultarHorariosPorUsuario() {
 	//TODO
@@ -49,6 +50,32 @@ function crearNuevoHorario($nombre) {
 		echo $e -> getMessage();
 	}
 	//return echo boolean
+}
+
+/**
+ * Asigna en la sesión del usuario el id del horario que desea abrir
+ * y redirige a la página de horario
+ * @param $id_hor el id del horario que se desea abrir.
+ */
+function asignarHorarioAbrir($id_hor){
+	$_SESSION['hor_abrir'] = $id_hor;
+	header("Location: /acmuniandes_hor/hor_coredisp.html");
+}
+
+/**
+ * Retorna al cliente el horario que se desea abrir para ser visualizado
+ * @return echo de un objeto Horario completo con todos sus cursos, json encoded. Este corresponde al horario que se desea abrir.
+ */
+function abrirHorario(){
+	global $dao; //Permite utilizar estas variables declaradas fuera de la funcion
+	$horario = $dao -> consultarHorarioPorId($_SESSION['hor_abrir']);
+	
+	if($horario != null){
+		echo $horario;
+	}
+	else{
+		echo FALSE;
+	}
 }
 
 /**
@@ -91,7 +118,7 @@ function guardarHorario($horario){
 }
 
 
-$tipo_solicitud = sanitizeString($_GET['tipsol']);
+$tipo_solicitud = sanitizeString($_POST['tipsol']);
 if (!isset($tipo_solicitud)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No se indico el tipo de solicitud", 1);
@@ -104,7 +131,7 @@ switch ($tipo_solicitud) {
 		consultarHorariosPorUsuario();
 		break;
 	case TiposSolicitud::TipoCrearHorario :
-		$nombre = sanitizeString($_GET['nomhor']);
+		$nombre = sanitizeString($_POST['nomhor']);
 		if (!isset($nombre)) {
 			throw new Exception("No se indico el nombre del horario");
 		} else {
@@ -112,7 +139,7 @@ switch ($tipo_solicitud) {
 		}
 		break;
 	case TiposSolicitud::TipoElimHorario :
-		$id_hor = sanitizeString($_GET['id_hor']);
+		$id_hor = sanitizeString($_POST['id_hor']);
 		if (!isset($id_hor)) {
 			throw new Exception("No se indico el id del horario a eliminar");
 		} else {
@@ -125,8 +152,18 @@ switch ($tipo_solicitud) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se recibio el horario");
 		} else {
-			guardarHorario($horario);
-		}		
+			guardarHorario($horario_json);
+		}
+	case TiposSolicitud::TipoAsignarHorarioAbrir:
+		$id_hor = sanitizeString($_POST['id_hor']);
+		if (!isset($id_hor)) {
+			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
+			throw new Exception("No se indico el id del horario a eliminar");
+		} else {
+			asignarHorarioAbrir($id_hor);
+		}
+	case TiposSolicitud::TipoAbrirHorario:
+		abrirHorario();
 	default :
 		throw new Exception("El tipo de solicitud no es valido");
 		break;

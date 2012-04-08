@@ -32,7 +32,8 @@ class TiposSolicitud {
 	const TipoAutenticar = '3';
 	const TipoLogout = '4';
 	const TipoGuardarHorario = '5';
-	const TipoAbrirHorario = '6';
+	const TipoAsignarHorarioAbrir = '6;';
+	const TipoAbrirHorario = '7';
 }
 
 /**
@@ -76,6 +77,6 @@ function poblarArregloObjetos($arr, $nombreobj) {
  * Redirige al usuario a la página de login
  */
 function redirigirLoginPage(){
-	header("Location: /index.html");
+	header("Location: /acmuniandes_hor/index.html");
 }
 ?>

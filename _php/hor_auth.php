@@ -27,10 +27,10 @@ function autenticar($usuario, $contrasenia) {
 			//Guarda el nombre de usuario en la variable de sesión
 			$_SESSION['usuario'] = $usuario;
 			//redirigue a la página principal
-			header("Location: /hor_admin.html");
+			header("Location: /acmuniandes_hor/hor_admin.html");
 		} else {
 			//en caso de que la autenticación falle se devuelve a la página donde específica el mensaje de error
-			header("Location: /index2.html");
+			header("Location: /acmuniandes_hor/index2.html");
 		}
 	}
 }
@@ -44,7 +44,7 @@ function logout() {
 	redirigirLoginPage(); //Redirigir a la página de login
 }
 
-$tipo_solicitud = sanitizeString($_GET['tipsol']);
+$tipo_solicitud = sanitizeString($_POST['tipsol']);
 if (!isset($tipo_solicitud)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No se indico el tipo de solicitud");

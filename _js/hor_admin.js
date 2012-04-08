@@ -54,16 +54,17 @@ $(function() {
 		/*Conexión AJAX */
 		vaciarTablaHorarios();
 		parametros = {
-			'tipsol' : 0
+			'tipsol' : '0'
 		}
 
 		$.ajax({
 			/*url : '_php/hor_core.php',*/
 			url : '_php/testhoradmin.php',
+			dataType : 'json', //hace que se evalue el json que retorna el servidor como un objeto
 			data : parametros,
-			type : 'get',
+			type : 'POST',
 			success : function(response) {
-				horarios = $.parseJSON(response);
+				horarios = response;
 				for(var i = 0; i < 1; i++) {
 					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
 				};
@@ -112,7 +113,7 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
-			type : 'get',
+			type : 'post',
 			success : function(response) {
 				
 			}
@@ -158,7 +159,7 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
-			type : 'get',
+			type : 'POST',
 			success : function(response) {
 				horariocreado = response;
 			}
@@ -188,7 +189,7 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
-			type : 'get',
+			type : 'POST',
 			success : function(response) {
 				horarioeliminado = response;
 			}

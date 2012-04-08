@@ -9,47 +9,39 @@ require_once 'utils.php';
  * @param $contrasenia string indicando la contraseña del usuario
  */
 function autenticar($usuario, $contrasenia) {
-	
+
 	//Se inicia la sesión
 	session_start();
 
 	$ldapconn = ldap_connect("ldap.uniandes.edu.co", "389") or die("Could not connect to LDAP server.");
 
+	if (ldap_bind($ldapconn)) {
 
-if (ldap_bind($ldapconn)) {
+		$busqueda = "(uid=" . trim($usuario) . ")";
 
-$busqueda = "(uid=" . trim($usuario) . ")";
+		$sr = ldap_search($ldapconn, "ou=people, dc=uniandes,dc=edu,dc=co", $busqueda);
+		$info = ldap_get_entries($ldapconn, $sr);
+		$dist_name = $info[0]["dn"];
 
-$sr = ldap_search($ldapconn, "ou=people, dc=uniandes,dc=edu,dc=co", $busqueda);
-$info = ldap_get_entries($ldapconn, $sr);
-$dist_name = $info[0]["dn"];
+		if (strlen($dist_name) > 0) {
+			if (ldap_bind($ldapconn, $dist_name, $contrasenia)) {
+				//Guarda el nombre de usuario en la variable de sesión
+				$_SESSION['usuario'] = $usuario;
+				//Redirige a la pagina correspondiente en caso exitoso
+				header("Location: /acmuniandes_hor/hor_admin.html");
 
-      if (strlen($dist_name) > 0) {
-               if (ldap_bind($ldapconn, $dist_name, $contrasenia)) {
-//Guarda el nombre de usuario en la variable de sesión
-                    $_SESSION['usuario'] = $usuario;
-					//Redirige a la pagina correspondiente en caso exitoso
-                    header("Location: /hor_admin.html");
-                  
-                     ldap_close($ds);
-                                                                   }
+				ldap_close($ds);
+			} else {
+				//Redirigue a la pagina de error en caso contrario
+				header("Location: /acmuniandes_hor/index2.html");
+			}
 
+		} else {
+			//Redirigue a la pagina de error en caso contrario
+			header("Location: /index2.html");
+		}
 
-              else     
-	             {
-	  			//Redirigue a la pagina de error en caso contrario
-	  			header("Location: /index2.html"); }             
-
-
-                                   }
-	  
-	               
-	  	  else     
-	             {
-	  			//Redirigue a la pagina de error en caso contrario
-	  			header("Location: /index2.html"); }             
-	  	
-	  	}
+	}
 }
 
 /**
@@ -58,7 +50,8 @@ $dist_name = $info[0]["dn"];
 function logout() {
 	//TODO
 	destroySession();
-	redirigirLoginPage(); //Redirigir a la página de login
+	redirigirLoginPage();
+	//Redirigir a la página de login
 }
 
 $tipo_solicitud = sanitizeString($_POST['tipsol']);

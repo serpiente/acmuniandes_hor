@@ -13,26 +13,43 @@ function autenticar($usuario, $contrasenia) {
 	//Se inicia la sesión
 	session_start();
 
-	// conexión al servidor LDAP
-	$ldapconn = ldap_connect("ldap.example.com") or die("Could not connect to LDAP server.");
+	$ldapconn = ldap_connect("ldap.uniandes.edu.co", "389") or die("Could not connect to LDAP server.");
 
-	if ($ldapconn) {
 
-		// realizando la autenticación
-		//TODO
-		$ldapbind = ldap_bind($ldapconn, $usuario, $contrasenia);
+if (ldap_bind($ldapconn)) {
 
-		// verificación del enlace
-		if ($ldapbind) {
-			//Guarda el nombre de usuario en la variable de sesión
-			$_SESSION['usuario'] = $usuario;
-			//redirigue a la página principal
-			header("Location: /acmuniandes_hor/hor_admin.html");
-		} else {
-			//en caso de que la autenticación falle se devuelve a la página donde específica el mensaje de error
-			header("Location: /acmuniandes_hor/index2.html");
-		}
-	}
+$busqueda = "(uid=" . trim($usuario) . ")";
+
+$sr = ldap_search($ldapconn, "ou=people, dc=uniandes,dc=edu,dc=co", $busqueda);
+$info = ldap_get_entries($ldapconn, $sr);
+$dist_name = $info[0]["dn"];
+
+      if (strlen($dist_name) > 0) {
+               if (ldap_bind($ldapconn, $dist_name, $contrasenia)) {
+//Guarda el nombre de usuario en la variable de sesión
+                    $_SESSION['usuario'] = $usuario;
+					//Redirige a la pagina correspondiente en caso exitoso
+                    header("Location: /hor_admin.html");
+                  
+                     ldap_close($ds);
+                                                                   }
+
+
+              else     
+	             {
+	  			//Redirigue a la pagina de error en caso contrario
+	  			header("Location: /index2.html"); }             
+
+
+                                   }
+	  
+	               
+	  	  else     
+	             {
+	  			//Redirigue a la pagina de error en caso contrario
+	  			header("Location: /index2.html"); }             
+	  	
+	  	}
 }
 
 /**

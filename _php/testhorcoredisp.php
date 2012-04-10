@@ -18,7 +18,14 @@ $ocur -> setHoraInicio("10:00");
 $ocur -> setSalon("R210");
 $ocur -> setUnidadesDuracion(3);
 
-$curso -> setOcurrencias(array($ocur));
+$ocur2 = new Ocurrencia();
+$ocur2 -> setDia("M");
+$ocur2 -> setHoraFin("18:20");
+$ocur2 -> setHoraInicio("17:00");
+$ocur2 -> setSalon("R310");
+$ocur2 -> setUnidadesDuracion(3);
+
+$curso -> setOcurrencias(array($ocur, $ocur2));
 
 $curso -> setCapacidad_Total(100);
 $curso -> setCodigo_Curso("ADMI1523");

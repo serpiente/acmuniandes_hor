@@ -144,6 +144,8 @@ $(function() {
 
 		this.title = curso.nombre + "<br>" + ocur.salon;
 		this.opac = "0.5";
+		if(curso.persistido) this.persistido = curso.persistido;
+		else this.persistido = false;
 		// console.log(mapaDias);
 	}
 
@@ -167,7 +169,9 @@ $(function() {
 				if(response) {
 					horarioActual =  response;
 					for(var i=0,j=horarioActual.cursos.length; i<j; i++){
-					  agregarCursoCalendar(horarioActual.cursos[i], false, null)
+						sel = "p"+i;
+						horarioActual.cursos[i].persistido = true;
+						agregarCursoCalendar(horarioActual.cursos[i], false, null)
 					}
 				} else {
 					horarioActual = new Horario();
@@ -295,11 +299,9 @@ $(function() {
 
 		for(var k = 0; k < cursoAAgregar.ocurrencias.length; k++) {
 			var ocur = new OcurCalendar(cursoAAgregar, cursoAAgregar.ocurrencias[k], sel, k);
-			
 			if(!vistaprevia) ocur.opac = 1;
-
 			calendar.weekCalendar("updateEvent", ocur);
-		};
+		}
 		if(!vistaprevia){
 			if(row != null){
 				row.hide();
@@ -312,10 +314,19 @@ $(function() {
 	/**
 	 * Remueve un curso del jq-week-calendar con todas sus ocurrencias respectivas
 	 */
-	function removerCursoCalendar(vistaprevia) {
-		for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
-			calendar.weekCalendar("removeEvent", "" + sel + "-" + k);
-		};
+	function removerCursoCalendar(vistaprevia, persistido) {
+		
+		if(persistido){
+			for(var k = 0; k < horarioActual.cursos[sel.substring(1,sel.length)].ocurrencias.length; k++) {
+				calendar.weekCalendar("removeEvent", "" + sel + "-" + k);
+			}
+		}
+		else{
+			for(var k = 0; k < resultados[sel].ocurrencias.length; k++) {
+				calendar.weekCalendar("removeEvent", "" + sel + "-" + k);
+			}	
+		}
+		
 		if(!vistaprevia) {
 			//TODO define time
 			$('#' + sel).show(500);
@@ -461,8 +472,8 @@ $(function() {
 					{
 						inicioOcurrenciaNueva = darNumeroHora(ocurrenciaNueva.horaInicio);
 						finOcurrenciaNueva = darNumeroHora(ocurrenciaNueva.horaFin);
-						inicioOcurrenciaActual = darNumeroHora(ocurrenciaNueva.horaInicio);
-						finOcurrenciaActual = darNumeroHora(ocurrenciaNueva.horaFin);
+						inicioOcurrenciaActual = darNumeroHora(ocurrenciaActual.horaInicio);
+						finOcurrenciaActual = darNumeroHora(ocurrenciaActual.horaFin);
 						
 						if(inicioOcurrenciaNueva >= inicioOcurrenciaActual && inicioOcurrenciaNueva <= finOcurrenciaActual)
 							agregar = false;
@@ -560,8 +571,13 @@ $(function() {
 			$event.attr('id', calEvent.id);
 
 			$event.prepend($('<div class="icon"><img alt="close" src="_images/close.png" /></div>').hide().click(function() {
-				removerCursoCalendar(false);
-				removerCursoHorario(resultados[sel]);
+				if(calEvent.persistido){
+					removerCursoCalendar(true, true);
+					removerCursoHorario(horarioActual.cursos[sel.substring(1,sel.length)]);
+				} else {
+					removerCursoCalendar(false, false);
+					removerCursoHorario(resultados[sel]);
+				}
 				console.log(horarioActual)
 			}));
 			// $event.find('.wc-time').css({

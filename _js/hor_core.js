@@ -118,15 +118,23 @@ $(function() {
 		"indiceEnResultados": 1	
 	}];
 	
-	function Horario() {
-		this.id_horario = "";
-		this.usuario = "";
-		this.creditos_Totales = 0;
-		this.fechaCreacion = "";
-		this.guardado = "";
-		this.nombre = "";
-		this.numCursos = 0;
-		this.cursos = [];
+	function Horario(obj) {
+		if(obj){
+			for (var i in obj) {
+        		if (!obj.hasOwnProperty(i)) continue;
+        		this[i] = obj[i];
+    		}
+		}
+		else{
+			this.id_horario = "";
+			this.usuario = "";
+			this.creditos_Totales = 0;
+			this.fechaCreacion = "";
+			this.guardado = "";
+			this.nombre = "";
+			this.num_Cursos = 0;
+			this.cursos = [];
+		}
 	}
 
 	function OcurCalendar(curso, ocur, i, j) {
@@ -167,7 +175,7 @@ $(function() {
 			type : 'POST',
 			success : function(response) {
 				if(response) {
-					horarioActual =  response;
+					horarioActual =  new Horario(response);
 					for(var i=0,j=horarioActual.cursos.length; i<j; i++){
 						sel = "p"+i;
 						horarioActual.cursos[i].persistido = true;
@@ -176,6 +184,7 @@ $(function() {
 				} else {
 					horarioActual = new Horario();
 				}
+				// console.log(horarioActual);
 			}
 		});
 	}
@@ -340,9 +349,11 @@ $(function() {
 	 */
 	function agregarCursoHorario(curso){
 		
-		horarioActual.cursos[horarioActual.numCursos]=curso;
-		horarioActual.numCursos++;
+		horarioActual.cursos[horarioActual.num_Cursos]=curso;
+		horarioActual.num_Cursos++;
 		horarioActual.creditos_Totales += curso.creditos;
+		// console.log("after adding")
+		// console.log(horarioActual)
 	}
 	
 	/**
@@ -362,7 +373,7 @@ $(function() {
 		}
 		
 		horarioActual.cursos.splice(pos,1);
-		horarioActual.numCursos--;
+		horarioActual.num_Cursos--;
 		horarioActual.creditos_Totales -= curso.creditos;
 	}
 	
@@ -370,46 +381,56 @@ $(function() {
 	 * Guarda el horario actual de un usuario en el servidor. Si encuentra problemas de complementarias envía una alerta.
 	 */
 	function guardarHorario(){
-		var probs = verificarHorario()
-		if(probs.length > 0){
-			
-			var info = "El horario actual contiene los siguientes cursos inscritas sin sus respectivas complementarias o magistrales: <br>"
-			
-			for(var i=0,j=probs.length; i<j; i++){
-			  info += "<li>"+probs[i]+"</li>";
-			};
-			
-			info += "</ul><br>"
-			info += "Desea continuar guardando su horario?"
-			
-			$("#dialogConf").append(info);
+		
+		if(horarioActual.cursos.length == 0){
+			$("#dialogConf").empty();
+			$("#dialogConf").append("El horario actual se encuentra vacio");
 			$("#dialogConf").dialog({
-				modal: true,
-				buttons: {
-					"Si": function(){
-						$(this).dialog("close")
-						// $.ajax({
-							// /*url : '_php/hor_core.php',*/
-							// url : '_php/hor_core.php',
-							// data : {'tipsol':'5','horario':horarioActual},
-							// type : 'POST',
-							// success : function(response) {
-								// if(response == 1){
-									// alert("El horario ha sido guardado correctamente.")
-								// }
-								// else{
-									// alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
-								// }
-							// }
-						// });
-					},
-					"No": function(){ $(this).dialog("close")}
-				}				
+				modal: true
 			});
-			//alert('trouble');
 		}
-		
-		
+		else{
+			
+			var probs = verificarHorario()
+			if(probs.length > 0){
+				
+				var info = "El horario actual contiene los siguientes cursos inscritas sin sus respectivas complementarias o magistrales: <br>"
+				
+				for(var i=0,j=probs.length; i<j; i++){
+				  info += "<li>"+probs[i]+"</li>";
+				};
+				
+				info += "</ul><br>"
+				info += "Desea continuar guardando su horario?"
+				
+				$("#dialogConf").empty();
+				$("#dialogConf").append(info);
+				$("#dialogConf").dialog({
+					modal: true,
+					buttons: {
+						"Si": function(){
+							$(this).dialog("close")
+							// $.ajax({
+								// /*url : '_php/hor_core.php',*/
+								// url : '_php/hor_core.php',
+								// data : {'tipsol':'5','horario':horarioActual},
+								// type : 'POST',
+								// success : function(response) {
+									// if(response == 1){
+										// alert("El horario ha sido guardado correctamente.")
+									// }
+									// else{
+										// alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
+									// }
+								// }
+							// });
+						},
+						"No": function(){ $(this).dialog("close")}
+					}				
+				});
+				//alert('trouble');
+			}
+		}		
 	}
 	
 	/**
@@ -578,7 +599,7 @@ $(function() {
 					removerCursoCalendar(false, false);
 					removerCursoHorario(resultados[sel]);
 				}
-				console.log(horarioActual)
+				// console.log(horarioActual)
 			}));
 			// $event.find('.wc-time').css({
 			// 'background-color': '#F53400'
@@ -628,7 +649,7 @@ $(function() {
 	});
 	
 	$("#saveButton").click(function(){
-		console.log(horarioActual);
+		// console.log(horarioActual);
 		guardarHorario();
 	});
 

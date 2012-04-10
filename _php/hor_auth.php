@@ -38,7 +38,7 @@ function autenticar($usuario, $contrasenia) {
 
 		} else {
 			//Redirigue a la pagina de error en caso contrario
-			header("Location: /index2.html");
+			header("Location: /acmuniandes_hor/index2.html");
 		}
 
 	}

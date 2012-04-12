@@ -64,11 +64,17 @@ $(function() {
 			data : parametros,
 			type : 'POST',
 			success : function(response) {
-				horarios = response;
-				for(var i = 0; i < 1; i++) {
-					visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
-				};
-				inicilializar();
+				if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+				}
+				else {
+					horarios = response;
+					for(var i = 0; i < 1; i++) {
+						visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
+					};
+					inicilializar();					
+				}
 			}
 		});
 	}
@@ -113,9 +119,13 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
-			type : 'post',
+			dataType : 'json',
+			type : 'POST',
 			success : function(response) {
-				
+				if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+				}
 			}
 		});
 	}
@@ -159,20 +169,27 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
+			dataType : 'json',
 			type : 'POST',
 			success : function(response) {
-				horariocreado = response;
+				if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+				}
+				else{
+					horariocreado = response;
+				}
 			}
 		});
 
 		if(horariocreado) {
 			alert("Creado");
 			vaciarTablaHorarios();
-		};
-		if(!horarioeliminado){
+		}
+		else {
 			alert("Error al crear el horario");
 			vaciarTablaHorarios();
-		};
+		}
 
 	}
 
@@ -189,9 +206,16 @@ $(function() {
 		$.ajax({
 			url : '_php/hor_core.php',
 			data : parametros,
+			dataType : 'json',
 			type : 'POST',
 			success : function(response) {
-				horarioeliminado = response;
+				if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+				}
+				else{
+					horarioeliminado = response;					
+				}
 			}
 		});
 
@@ -199,8 +223,8 @@ $(function() {
 			/*Elimina el horario de la visualizacíón */
 			alert("Eliminado");
 			vaciarTablaHorarios();
-		};
-		if(!horarioeliminado){
+		}
+		else{
 			alert("Error al eliminar el horario");
 			vaciarTablaHorarios();
 		};

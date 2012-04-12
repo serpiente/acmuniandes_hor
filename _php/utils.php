@@ -77,6 +77,8 @@ function poblarArregloObjetos($arr, $nombreobj) {
  * Redirige al usuario a la página de login
  */
 function redirigirLoginPage(){
-	header("Location: /acmuniandes_hor/index.html");
+	echo json_encode(array('redirect' => '/acmuniandes_hor/'));
+	//header("Location: /acmuniandes_hor/index.html");
+	exit;
 }
 ?>

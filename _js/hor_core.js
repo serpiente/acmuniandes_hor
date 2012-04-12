@@ -166,7 +166,7 @@ $(function() {
 	 */
 	function abrirHorario() {
 		$.ajax({
-			/*url : '_php/hor_core.php',*/
+			//url : '_php/hor_core.php',
 			url : '_php/testhorcoredisp.php',
 			dataType : 'json',
 			data : {
@@ -175,11 +175,17 @@ $(function() {
 			type : 'POST',
 			success : function(response) {
 				if(response) {
-					horarioActual =  new Horario(response);
-					for(var i=0,j=horarioActual.cursos.length; i<j; i++){
-						sel = "p"+i;
-						horarioActual.cursos[i].persistido = true;
-						agregarCursoCalendar(horarioActual.cursos[i], false, null)
+					if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+					}
+					else{
+						horarioActual =  new Horario(response);
+						for(var i=0,j=horarioActual.cursos.length; i<j; i++){
+							sel = "p"+i;
+							horarioActual.cursos[i].persistido = true;
+							agregarCursoCalendar(horarioActual.cursos[i], false, null)
+						}
 					}
 				} else {
 					horarioActual = new Horario();
@@ -206,9 +212,39 @@ $(function() {
 	 * Consulta cursos con el servidor dado una entrada del usuario y los muestra en el campo indicado
 	 */
 	function obtenerResultados(input) {
-		//TODO Realizar consulta al servidor y obtener y mostrar los resultados obtenidos dado la consulta del usuario
+		$.ajax({
+			url : '_php/hor_core.php',
+			// url : '_php/testhorcoredisp.php',
+			dataType : 'json',
+			data : {
+				'valcon' : input,
+				'cbuflag': false //hace falta incluir selector de cbu
+			},
+			type : 'GET',
+			success : function(response) {
+				if(response) {
+					if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+					}
+					else{
+						resultados = response;	
+						resultGrid.jqGrid('clearGridData', this);
+						for(var i = 0; i < resultados.length; i++) {
+							resultados[i].profesor = resultados[i].profesores[0];
+							resultGrid.jqGrid('addRowData', i, resultados[i]);
+							// if(resultados[i].inpadre != null){
+							// $('#'+i).css({'background':'#BDEDFF'});
+							// }
+						}
+						inicializarResultados();
+					}
+				} else {
+					alert("La busqueda ha fallado, por favor intente de nuevo");
+				}
+			}
+		});
 		resultGrid.jqGrid('clearGridData', this);
-		rowindex = 0;
 		for(var i = 0; i < resultados.length; i++) {
 			resultados[i].profesor = resultados[i].profesores[0];
 			resultGrid.jqGrid('addRowData', i, resultados[i]);
@@ -223,7 +259,6 @@ $(function() {
 	/**
 	 * Inicializa todos los eventos necesarios sobre los nuevos resultados
 	 */
-
 	function inicializarResultados() {
 		// $('.jqgrow').draggable({
 			// addClasses : false,
@@ -294,7 +329,6 @@ $(function() {
 	 * @param vistaprevia booleano indicando si el curso se va a agregar al calendario como vista previa o no
 	 * @param row el objeto gráfico (del DOM) que representa la fila dentro de la lista de resultados que muestra la informacion del curso
 	 */
-
 	function agregarCursoCalendar(curso, vistaprevia, row) {
 		
 		var cursoAAgregar;
@@ -394,7 +428,7 @@ $(function() {
 			var probs = verificarHorario()
 			if(probs.length > 0){
 				
-				var info = "El horario actual contiene los siguientes cursos inscritas sin sus respectivas complementarias o magistrales: <br>"
+				var info = "El horario actual contiene los siguientes cursos inscritos <b>sin</b> sus respectivas complementarias o magistrales: <br>"
 				
 				for(var i=0,j=probs.length; i<j; i++){
 				  info += "<li>"+probs[i]+"</li>";
@@ -414,10 +448,16 @@ $(function() {
 								// /*url : '_php/hor_core.php',*/
 								// url : '_php/hor_core.php',
 								// data : {'tipsol':'5','horario':horarioActual},
+								// dataType : 'json',
 								// type : 'POST',
 								// success : function(response) {
-									// if(response == 1){
-										// alert("El horario ha sido guardado correctamente.")
+									// if(response){
+										// if(response.redirect) {
+											// // data.redirect contains the string URL to redirect to
+											// document.location = response.redirect;
+										// } else { 
+											// alert("El horario ha sido guardado correctamente.")
+										// }
 									// }
 									// else{
 										// alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
@@ -522,6 +562,7 @@ $(function() {
 
 	/**
 	 * Retorna el contenido del curso actualmente seleccionado al tooltip para ser mostrado
+	 * @return contenido html que se mostrará dentro del tooltip
 	 */
 	function contenidoTTip() {
 		return $("<span>Seccion: " + resultados[sel].seccion + "<br>" + "Codigo: " + resultados[sel].codigo_Curso + "<br>" + "Creditos: " + resultados[sel].creditos + "<br>" + "Departamento: " + resultados[sel].departamento + "<br>" + "Capacidad: " + resultados[sel].capacidad_Total + "</span>");

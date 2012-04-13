@@ -23,7 +23,14 @@ function consultarHorariosPorUsuario() {
 	//TODO
 	global $dao,$usuario; //Permite utilizar estas variables declaradas fuera de la funcion
 	
-
+	$result = $dao -> consultarHorariosPorUsuario($usuario);
+	
+	if($result==null){
+		echo FALSE;
+	}
+	else{
+		echo $result;
+	}
 	//return echo del arreglo con objetos Horario, json encoded
 }
 
@@ -59,7 +66,7 @@ function crearNuevoHorario($nombre) {
  */
 function asignarHorarioAbrir($id_hor){
 	$_SESSION['hor_abrir'] = $id_hor;
-	header("Location: /acmuniandes_hor/hor_coredisp.html");
+	echo json_encode(array('redirect'=>'/acmuniandes_hor/hor_coredisp.html'));
 }
 
 /**

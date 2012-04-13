@@ -254,14 +254,14 @@ class Hor_Dao {
 	}
 
 	/**
-	 * Consulta cursos dado el crn del curso
+	 * Consulta un dado el crn del curso
 	 * @param $crn string indicando el crn del curso
-	 * @return arreglo de objetos de la clase Curso
+	 * @return objeto de la Clase Curso (NOT JSON ENCODED)
 	 */
-	function consultarCursosPorCRN($crn) {
+	function consultarCursoPorCRN($crn) {
 		//TODO
 
-		//return del arreglo con objetos Curso, json encoded
+		//return Objeto de la clase Curso, sin hacer el json_encode
 	}
 
 	/**
@@ -308,8 +308,32 @@ class Hor_Dao {
 	 * @return objeto de la clase Horario, json encoded
 	 */
 	function consultarHorarioPorId($id_hor) {
-		//TODO
-		return null;
+		$query = "SELECT * FROM (SELECT * FROM HORARIOS WHERE HORARIOS.ID_HORARIO = $id_hor) NATURAL JOIN CURSOS_HORARIOS";
+		$result = $this -> queryMysql($query);
+		
+		$crns = array();
+		
+		$first = true;
+		$hor = new Horario();
+		while($row = $this -> darSiguienteRegistroMySql($result)){
+			if($first){
+				$hor -> setCreditosTotales($row['CREDITOS TOTALES']);
+				$hor -> setFechaCreacion($row['FECHA_CREACION']);
+				$hor -> setGuardado(false);
+				$hor -> setIdHorario($row['ID_HORARIO']);
+				$hor -> setNombre($row['NOMBRE']);
+				$hor -> setNumCursos($row['NUM_CURSOS']);
+				$hor -> setUsuario($row['LOGIN_USUARIO']);
+				$first = false;
+			}
+			$crns[] = $row['CRN_CURSO'];
+		}
+		$cursos = array();
+		foreach ($crns as $crn) {
+			$cursos[] = $this -> consultarCursosPorCRN($crn);
+		}
+		$hor -> setCursos($cursos);
+		return $hor;
 	}
 
 	/**
@@ -333,8 +357,25 @@ class Hor_Dao {
 	 */
 	function consultarHorariosPorUsuario($usuario) {
 		//TODO
-
+		$query = "SELECT h.ID_HORARIO, h.CREDITOS_TOTALES, h.NUM_CURSOS, h.FECHA_CREACION, h.NOMBRE FROM HORARIOS as h WHERE h.LOGIN_USUARIO = $usuario";
+		$result = $this -> queryMysql($query);
+		
+		$horarios = array();
+		
+		while($row = $this -> darSiguienteRegistroMySql($result)){
+			$hor = new Horario();
+			$hor -> setCreditosTotales($row['CREDITOS TOTALES']);
+			$hor -> setFechaCreacion($row['FECHA_CREACION']);
+			$hor -> setGuardado(false);
+			$hor -> setIdHorario($row['ID_HORARIO']);
+			$hor -> setNombre($row['NOMBRE']);
+			$hor -> setNumCursos($row['NUM_CURSOS']);
+			$hor -> setUsuario($usuario);
+			$horarios[] = $hor;
+		}
+		
 		//return del arreglo con objetos Horario, json encoded
+		return json_encode($horarios);
 	}
 
 	/**

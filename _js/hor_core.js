@@ -214,7 +214,7 @@ $(function() {
 	function obtenerResultados(input) {
 		$.ajax({
 			url : '_php/hor_core.php',
-			// url : '_php/testhorcoredisp.php',
+			//url : '_php/testhorcoredisp.php',
 			dataType : 'json',
 			data : {
 				'valcon' : input,
@@ -228,7 +228,8 @@ $(function() {
 						document.location = response.redirect;
 					}
 					else{
-						resultados = response;	
+						resultados = response;
+						console.log(response);
 						resultGrid.jqGrid('clearGridData', this);
 						for(var i = 0; i < resultados.length; i++) {
 							resultados[i].profesor = resultados[i].profesores[0];
@@ -244,14 +245,14 @@ $(function() {
 				}
 			}
 		});
-		resultGrid.jqGrid('clearGridData', this);
-		for(var i = 0; i < resultados.length; i++) {
-			resultados[i].profesor = resultados[i].profesores[0];
-			resultGrid.jqGrid('addRowData', i, resultados[i]);
-			// if(resultados[i].inpadre != null){
-				// $('#'+i).css({'background':'#BDEDFF'});
-			// }
-		}
+		// resultGrid.jqGrid('clearGridData', this);
+		// for(var i = 0; i < resultados.length; i++) {
+			// resultados[i].profesor = resultados[i].profesores[0];
+			// resultGrid.jqGrid('addRowData', i, resultados[i]);
+			// // if(resultados[i].inpadre != null){
+				// // $('#'+i).css({'background':'#BDEDFF'});
+			// // }
+		// }
 				
 		inicializarResultados();
 	}

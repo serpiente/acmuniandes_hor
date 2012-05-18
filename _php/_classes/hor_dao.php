@@ -10,15 +10,15 @@ foreach (glob("_classes/*.php") as $filename) {
 class Hor_Dao {
 
 	//Datos de la conexion a base de datos propia Wayu
-	private $dbhost_mysql = 'mysqlhostingdti.uniandes.edu.co:3308';
+	private $dbhost_mysql = 'apolo.uniandes.edu.co:3308';
 	private $dbname_mysql = 'dbcrearhorario';
 	private $dbuser_mysql = 'usdbcrearhorario';
-	private $dbpass_mysql = 'Iegiy3';
+	private $dbpass_mysql = '4CbWAHKz';
 	private $dbport_mysql = 3308;
 
 	//Datos de la conexión a base de datos de DTI, NIFE
 	//TODO Se asume que es conexion directa, pero puede no serlo.
-	private $dbhost_ora;
+	private $dbhost_ora = 'sisga.uniandes.edu.co:3308';
 	private $dbname_ora;
 	private $dbuser_ora;
 	private $dbpass_ora;
@@ -207,6 +207,8 @@ class Hor_Dao {
 		$query = "INSERT INTO $nombre_tabla VALUES ($vals)";
 
 	}
+	
+	//METODOS DE CONSULTA
 
 	/**
 	 * Consulta cursos dado el nombre de un profesor
@@ -258,10 +260,24 @@ class Hor_Dao {
 	 * @param $crn string indicando el crn del curso
 	 * @return objeto de la Clase Curso (NOT JSON ENCODED)
 	 */
+	private function consultarCursoPorCRNInterno($crn) {
+		//TODO Falta nombre de la tabla.
+		$query = "SELECT * FROM Vista c WHERE c.crn_key=$crn";
+		$result = $this -> queryOracle($query);
+		
+		return $this ->construirCursoDeArrAsoc($this -> darSiguienteRegistroOracle($result));
+		//return Objeto de la clase Curso, sin hacer el json_encode
+	}
+	
+		/**
+	 * Consulta un dado el crn del curso
+	 * @param $crn string indicando el crn del curso
+	 * @return objeto de la Clase Curso
+	 */
 	function consultarCursoPorCRN($crn) {
 		//TODO
-
-		//return Objeto de la clase Curso, sin hacer el json_encode
+		return json_encode(array($this -> consultarCursoPorCRNInterno($crn)));
+		//return del arreglo con objetos Curso, json encoded
 	}
 
 	/**
@@ -303,6 +319,21 @@ class Hor_Dao {
 	}
 
 	/**
+	 * Hace una búsqueda sobre todos los criterios de búsqueda posibles.
+	 * Retorna el conjunto de cursos encontrados bajo cualquier criterio de búsqueda utilizando la entrada del usuario
+	 * (i.e.) Si la entrada del usuario es 'ingenieria' debe retornar todos los cursos que tengan 'ingenieria' en el nombre del curso,
+	 * en el nombre del profesor, en el nombre del departamento, en el crn o en el código del curso.
+	 * @param $valor_consulta string indicando la entrada del usuario en la GUI
+	 * @param $cbuflag boolean indicando si se busca un cbu
+	 * @return 1(UN) arreglo de objetos de la clase Curso
+	 */
+	function consultarCualquierCriterio($valor_consulta, $cbuflag) {
+		//TODO
+		$query = "Seleccionar todo. MENOS (seleccionar las complementarias cuya magistral este en ( seleccionar todo magistral))";
+		//return del arreglo con objetos Curso, json encoded
+	}
+	
+		/**
 	 * Retorna un horario, dado su id
 	 * @param $id_hor string indicando el identificador unico de un horario
 	 * @return objeto de la clase Horario, json encoded
@@ -334,21 +365,6 @@ class Hor_Dao {
 		}
 		$hor -> setCursos($cursos);
 		return $hor;
-	}
-
-	/**
-	 * Hace una búsqueda sobre todos los criterios de búsqueda posibles.
-	 * Retorna el conjunto de cursos encontrados bajo cualquier criterio de búsqueda utilizando la entrada del usuario
-	 * (i.e.) Si la entrada del usuario es 'ingenieria' debe retornar todos los cursos que tengan 'ingenieria' en el nombre del curso,
-	 * en el nombre del profesor, en el nombre del departamento, en el crn o en el código del curso.
-	 * @param $valor_consulta string indicando la entrada del usuario en la GUI
-	 * @param $cbuflag boolean indicando si se busca un cbu
-	 * @return 1(UN) arreglo de objetos de la clase Curso
-	 */
-	function consultarCualquierCriterio($valor_consulta, $cbuflag) {
-		//TODO
-
-		//return del arreglo con objetos Curso, json encoded
 	}
 
 	/**
@@ -454,84 +470,182 @@ class Hor_Dao {
 	 * Función que construye un objeto curso a partir
 	 * de un arreglo asociativo como resultado.
 	 * Asigna sus complementarias y lo retorna con sus atributos asignados
+	 * @param $arr_asoc arreglo asociativo con la información de un curso
+	 * @return objeto de tipo Curso
 	 */
 	function construirCursoDeArrAsoc($arr_asoc) {
 		$curso = new Curso();
-		$curso . setCapacidad_Total($arr_asoc["cupo"]);
-		$curso . setCodigo_Curso($arr_asoc["subj_code"] + $arr_asoc["crse_number"]);
-		$curso . setCreditos($arr_asoc["creditos"]);
-		$curso . setCrn($arr_asoc["crn_key"]);
-		$curso . setCupos_Disponibles($curso . getcapacidad_Total() - $arr_asoc["inscritos"]);
-		$curso . setDepartamento($arr_asoc["subj_code"]);
-		$curso . setNombre($arr_asoc["title"]);
-		$curso . setSeccion($arr_asoc["seq_number_key"]);
-		//TODO
-		//$curso.setTipo($)
+		$curso -> setCapacidad_Total($arr_asoc["cupo"]);
+		$curso -> setCodigo_Curso($arr_asoc["subj_code"] + $arr_asoc["crse_number"]);
+		$curso -> setCreditos($arr_asoc["creditos"]);
+		$curso -> setCrn($arr_asoc["crn_key"]);
+		$curso -> setCupos_Disponibles($curso ->getcapacidad_Total() - $arr_asoc["inscritos"]);
+		$curso -> setDepartamento($arr_asoc["desc_depto"]);
+		$curso -> setNombre($arr_asoc["title"]);
+		$curso -> setSeccion($arr_asoc["seq_number_key"]);
+		
+		//TODO not sure
+		$curso.setTipo($arr_asoc["ATRIBUTO_SECCION"]);
+		
+		$profesores = array();
+		
+		for ($i=0; $i < 4; $i++) {
+			if($i == 0) 
+				$prof = $arr_asoc["primary_instructor_first_name"] + $arr_asoc["primary_instructor_last_name"];
+			else{
+				$prof = $arr_asoc["primary_instructor_first_name$i"] + $arr_asoc["primary_instructor_last_name$i"];
+			}
+			$profesores[] = $prof;
+		}
+		$curso -> setProfesores($profesores);
+		
 		$array_compl = array();
 		$arr_Strings = $arr_asoc["COMPLEMENTARIAS"];
 		$num = 0;
 		if (!empty($arr_Strings)) {
 			$crn_comps = explode(":", $arr_Strings);
 			foreach ($crn_comps as $compActual) {
-				$ret = consultarCursosPorCRN($crn_comps);
+				$ret = $this -> consultarCursosPorCRN($compActual);
 				array_push($array_compl, $ret);
 				$num++;
 			}
 		}
-
-		$curso . setComplementarias($array_compl);
-		$curso . setNumCompl($num);
-
-		$beginTime = "begin_time";
-		$endTime = "end_time";
-		$mon = "monday_ind";
-		$tus = "tuesday_ind";
-		$wed = "wednesday_ind";
-		$thus = "thursday_ind";
-		$frid = "friday_ind";
-		$sat = "saturday_ind";
-		$sun = "sunday_ind";
-		$ffecha = "ffecha_ini";
-		$ffecha = "ffecha_fin";
+		$curso -> setComplementarias($array_compl);
+		$curso -> setNumCompl($num);
+		
+		$mag = null;
+		if($arr_asoc["MAGISTRAL"]){
+			$mag = $this -> consultarCursoPorCRNInterno($arr_asoc["MAGISTRAL"]);
+		}
+		$curso -> setMagistral($mag);
 
 		$ocurrencias = array();
 
-		for ($i = 1; $i < 11; $i++) {
-
-			$beginTimeI = $arr_asoc["begin_time" . i];
-			$endTimeI = $arr_asoc["end_time" . i];
-			$ffechaI = $arr_asoc["ffecha_ini" . i];
-			$ffechaI = $arr_asoc["ffecha_fin" . i];
-
-			$monI = $arr_asoc["monday_ind" . i];
-			$tusI = $arr_asoc["tuesday_ind" . i];
-			$wedI = $arr_asoc["wednesday_ind" . i];
-			$thusI = $arr_asoc["thursday_ind" . i];
-			$fridI = $arr_asoc["friday_ind" . i];
-			$satI = $arr_asoc["saturday_ind" . i];
-			$sunI = $arr_asoc["sunday_ind" . i];
+		for ($i = 1; $i <= 11; $i++) {
+			
+			$beginTime = $arr_asoc["begin_time" . i];
+			$endTime = $arr_asoc["end_time" . i];
+			$ffecha_ini = $arr_asoc["ffecha_ini" . i];
+			$ffecha_fin = $arr_asoc["ffecha_fin" . i];
+			
+			$mon = $arr_asoc["monday_ind" . i];
+			$tue = $arr_asoc["tuesday_ind" . i];
+			$wed = $arr_asoc["wednesday_ind" . i];
+			$thu = $arr_asoc["thursday_ind" . i];
+			$fri = $arr_asoc["friday_ind" . i];
+			$sat = $arr_asoc["saturday_ind" . i];
+			$sun = $arr_asoc["sunday_ind" . i];
 
 			// TODO terminar occurencias.
-			if ($monI == "L") {
-			
+			$dias = "";
+			if ($mon == "L") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon);
+				$dias += $mon;
 			}
-			if ($tusI == "M") {
+			if ($tue == "M") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tus);
+				$dias += $tue;
 			}
-			if ($wedI == "I") {
+			if ($wed == "I") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $wed);
+				$dias += $wed;
 			}
-			if ($thusI == "J") {
+			if ($thu == "J") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $thu);
+				$dias += $thu;
 			}
-			if ($fridI == "V") {
+			if ($fri == "V") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $fri);
+				$dias += $fri;
 			}
-			if ($satI == "S") {
-
+			if ($sat == "S") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sat);
+				$dias += $sat;
 			}
-			if ($sunI == "D") {
+			if ($sun == "D") {
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sun);
+				$dias += $sun;
 			}
-
-			$curso . setOcurrencias();
-
 		}
+		$curso -> setOcurrencias($ocurrencias);
+		
+	}
+	
+	
+	/**
+	 * Funcion privada que retorna un arreglo unidimensional de objetos tipo Curso dado el resultado de un query a la base de datos Oracle
+	 * El arreglo está organizado de tal forma que las magistrales van seguidas de sus complementarias
+	 * Se asume que las complementarias de los cursos no se encuentran en el resultado de las base de datos por lo que se espera que no haya redundancia en el arreglo
+	 * @param $tabla_resultado el resultado obtenido de realizar un query sobre la base de datos Oracle
+	 * @return arreglo unidimensional de objetos tipo Curso donde las magistrales van seguidas de sus complementarias.
+	 */
+	private function crearArregloResultadosUnidim($tabla_resultado){
+		$resultados = array();
+		$i = 0;
+		while($asoc = $this -> darSiguienteRegistroOracle($tabla_resultado)){
+			$curso = $this -> construirCursoDeArrAsoc($asoc);
+			
+			if($curso -> getMagistral() != null){
+				$mag = $curso -> getMagistral();
+				$complmag = $mag -> getComplementarias();
+				$mag -> setComplementarias(array());
+				$mag -> setIndiceEnResultados($i);
+				$mag -> setInPadre(null);
+				$resultados[] = $mag;
+				$i++;
+				
+				foreach ($complmag as $comp) {
+					$comp -> setIndiceEnResultados($i);
+					$comp -> setInPadre($mag -> getIndiceEnResultados());
+					$resultados[] = $comp;
+					$i++;
+				}				
+				//$resultados = array_merge($resultados,$complmag);
+			}
+			else{
+				if(!empty($curso -> getComplementarias())){
+					$compl = $curso -> getComplementarias();
+					$curso -> setComplementarias(array());
+					$curso -> setIndiceEnResultados($i);
+					$curso -> setInPadre(null);
+					$resultados[] = $curso;
+					$i++;
+					
+					foreach ($compl as $comp) {
+						$comp -> setIndiceEnResultados($i);
+						$comp -> setInPadre($curso -> getIndiceEnResultados());
+						$resultados[] = $comp;
+						$i++;
+					}
+					//$resultados = array_merge($resultados,$compl);
+				}
+				else{
+					$curso -> setIndiceEnResultados($i);
+					$curso -> setInPadre(null);
+					$resultados[] = $curso;
+					$i++;
+				}
+			}
+		}
+		return $resultados;
+	}
+	
+	/**
+	 * Crea un objeto de tipo ocurrencia dadas las horas de inicio y fin y el día de la semana
+	 * El salon se asigna como pendiente debido a que no se puede acceder en la base de datos
+	 * @param $begin_time hora de inicio
+	 * @param $end_time hora de fin
+	 * @param $dia de la semana perteneciente a {L,M,I,J,V,S,D}
+	 * @return objeto de tipo ocurrencia
+	 */
+	private function crearOcurrencia($beginTime, $endTime, $dia){
+		$ocur = new Ocurrencia();
+		$ocur -> setHoraInicio($beginTime);
+		$ocur -> setHoraFin($endTime);
+		$ocur -> setDia($dia);
+		$ocur -> setSalon("Pendiente");
+		
+		return $ocur;
 	}
 
 }

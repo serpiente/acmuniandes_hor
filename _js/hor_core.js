@@ -115,7 +115,7 @@ $(function() {
 		"dias" : "V",
 		"numcompl": 0,
 		"inpadre": null,
-		"indiceEnResultados": 1	
+		"indiceEnResultados": 3
 	}];
 	
 	function Horario(obj) {

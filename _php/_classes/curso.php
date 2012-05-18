@@ -94,6 +94,11 @@ class Curso {
 	 */
 	public $indiceEnResultados;
 	
+	/**
+	 * Indica el curso magistral, si lo tiene
+	 */
+	 public $magistral;
+	
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -199,6 +204,10 @@ class Curso {
 	function getIndiceEnResultados(){
 		return $this -> indiceEnResultados;
 	}
+	
+	function getMagistral(){
+		return $this -> magistral;
+	}
 			
 	function setCapacidad_Total($ncapacidad_Total){
 		 $this -> capacidad_Total = $ncapacidad_Total;
@@ -262,6 +271,10 @@ class Curso {
 	
 	function setIndiceEnResultados($nIndiceEnResultados){
 		$this -> indiceEnResultados = $nIndiceEnResultados;
+	}
+	
+	function setMagistral($nmag){
+		$this -> magistral = $nmag;
 	}
 
 }

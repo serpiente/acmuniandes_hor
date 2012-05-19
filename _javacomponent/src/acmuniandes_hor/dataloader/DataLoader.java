@@ -19,11 +19,28 @@ import org.jsoup.select.Elements;
 
 import acmuniandes_hor.entidades.Curso;
 import acmuniandes_hor.entidades.Ocurrencia;
+import acmuniandes_hor.persist.JavaDao;
 
-public class DataLoader {
+public class DataLoader implements Runnable{
 	
+	private final static String BASE_URL = "http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=";
 	
-	public static void main(String[] args) throws ClientProtocolException, IOException{
+	//For Scraping
+	private final static String SELECTOR_QUERY = "font.texto4:not(:has(font)):matches([^ ]):not(:has(strong)";
+	
+	private String departamento;
+	//private String codDepartamento;
+	private final String URL;
+	private JavaDao dao;
+	
+	public DataLoader(String depto, String url){
+		this.departamento = depto;
+		//this.codDepartamento = codDepto;
+		this.URL = url;
+		this.dao = new JavaDao();
+	}
+	
+	private void scrape() throws ClientProtocolException, IOException{
 //		HttpClient httpclient = new DefaultHttpClient();
 //		HttpGet httpget = new HttpGet("http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=ADMI&nombreDepto=Administraci%F3n%20de%20Empresas");
 //		HttpResponse response = httpclient.execute(httpget);
@@ -43,54 +60,65 @@ public class DataLoader {
 //			}
 //		}
 		long s = System.currentTimeMillis();
-		Document doc = Jsoup.connect("http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=IELE").get();
-		Elements textos = doc.select("font.texto4:not(:has(font)):matches([^ ]):not(:has(strong)");
-//		System.out.println(textos.size());
-//		System.out.println(textos.get(textos.size()-1).text());
+		Document doc = Jsoup.connect(this.URL).get();
+		Elements textos = doc.select(SELECTOR_QUERY);
+		
+		//Para coger texto de complementarias
+//		Elements textos = doc.select("font.texto4,[color=#FF0000]").not(":has(strong)").not(":has(font)").select(":matches([^ ])");
+
+		
 //		for (Element texto : textos) {
 //			System.out.println(texto.text());
 //		}
 		
-//		ArrayList<Curso> cursosADMI = new ArrayList<Curso>();
 		int i = 0;
 		while(i < textos.size()) {
 			Curso curso = new Curso();
 			curso.setCrn(textos.get(i++).text());
 			curso.setCodigo(textos.get(i++).text());
+			if(curso.getCodigo().endsWith("A")){
+				curso.setTipo(Curso.A);
+			}else if(curso.getCodigo().endsWith("B")){
+				curso.setTipo(Curso.B);
+			}
 			curso.setSeccion(Integer.parseInt(textos.get(i++).text()));
 			curso.setCreditos(Double.parseDouble(textos.get(i++).text()));
 			curso.setTitulo(textos.get(i++).text());
 			curso.setCapacidad(Integer.parseInt(textos.get(i++).text()));
 			curso.setInscritos(Integer.parseInt(textos.get(i++).text()));
 			curso.setDisponibles(Integer.parseInt(textos.get(i++).text()));
-			if(!textos.get(i).text().equals("-") && !textos.get(i).text().isEmpty()){
-				ArrayList<Ocurrencia> ocurrencias = new ArrayList<Ocurrencia>();
-				while (i<textos.size() && textos.get(i).text().matches("[LMIJVSD ]+")) {
-					curso.setDias(textos.get(i++).text());
-					String[] dias = curso.getDias().split(" ");
-					String[] horas = textos.get(i++).text().split(" - ");
-					String salon = textos.get(i++).text();
-					String fechain = textos.get(i++).text();
-					String fechafin = textos.get(i++).text();
-					for (int j = 0; j < dias.length; j++) {
-						Ocurrencia ocur = new Ocurrencia();
-						ocur.setDia(dias[j]);
-						ocur.setHoraInicio(horas[0]);
-						ocur.setHoraFin(horas[1]);
-						ocur.setSalon(salon);
-						ocur.setFechaInicial(fechain);
-						ocur.setFechaFinal(fechafin);
-						ocurrencias.add(ocur);
+			if (i<textos.size()) {
+				if (!textos.get(i).text().equals("-")&& !textos.get(i).text().isEmpty()) {
+					ArrayList<Ocurrencia> ocurrencias = new ArrayList<Ocurrencia>();
+					while (i < textos.size() && textos.get(i).text().matches("[LMIJVSD ]+")) {
+						curso.setDias(textos.get(i++).text());
+						String[] dias = curso.getDias().split(" ");
+						String[] horas = textos.get(i++).text().split(" - ");
+						if(horas.length==0 || horas.length==1){
+							horas = new String[2];
+						}
+						String salon = textos.get(i++).text();
+						String fechain = textos.get(i++).text();
+						String fechafin = textos.get(i++).text();
+						for (int j = 0; j < dias.length; j++) {
+							Ocurrencia ocur = new Ocurrencia();
+							ocur.setDia(dias[j]);
+							ocur.setHoraInicio(horas[0]);
+							ocur.setHoraFin(horas[1]);
+							ocur.setSalon(salon);
+							ocur.setFechaInicial(fechain);
+							ocur.setFechaFinal(fechafin);
+							ocurrencias.add(ocur);
+						}
 					}
+					curso.setOcurrencias(ocurrencias);
+				} else {
+					i++;
+					i++;
+					i++;
+					i++;
 				}
-				curso.setOcurrencias(ocurrencias);
-			} else {
-				i++;
-				i++;
-				i++;
-				i++;
 			}
-			
 			if (i<textos.size()) {
 				ArrayList<String> profesores = new ArrayList<String>();
 				String profesor = textos.get(i++).text();
@@ -106,18 +134,39 @@ public class DataLoader {
 				i--;
 				curso.setProfesores(profesores);
 			}
-			curso.setDepartamento("Administracion");
-			System.out.println(curso.toString());
-//			cursosADMI.add(curso);
+			curso.setDepartamento(this.departamento);
+			dao.persistCurso(curso);
 		}
 		System.out.println("Duration: "+ (System.currentTimeMillis() - s));
 		
-//		for (Curso curso : cursosADMI) {
-//			System.out.println(curso.toString());
-//		}
-		
-//		System.out.println(textos.text());
+	}
+
+	@Override
+	public void run() {
+		try {
+			this.scrape();
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 	}
+
+	public String getDepartamento() {
+		return departamento;
+	}
+
+	public void setDepartamento(String departamento) {
+		this.departamento = departamento;
+	}
+
+//	public String getCodDepartamento() {
+//		return codDepartamento;
+//	}
+//
+//	public void setCodDepartamento(String codDepartamento) {
+//		this.codDepartamento = codDepartamento;
+//	}
 	
 }

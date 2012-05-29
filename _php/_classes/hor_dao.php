@@ -18,24 +18,28 @@ class Hor_Dao {
 
 	//Datos de la conexión a base de datos de DTI, NIFE
 	//TODO Se asume que es conexion directa, pero puede no serlo.
-	private $dbhost_ora = 'sisga.uniandes.edu.co:3308';
-	private $dbname_ora;
-	private $dbuser_ora;
-	private $dbpass_ora;
-	private $dbport_ora;
-
+	private $dbhost_ora = 'sisga.uniandes.edu.co:1521';
+	private $dbname_ora = 'nife';
+	private $dbuser_ora = 'INTEGRACION';
+	private $dbpass_ora = 'opzn290lh';
+	private $dbport_ora = 1521;
+	
 	/**
 	 * Constructor de la clase
 	 */
 	function __construct() {
-		//mysql_connect($dbhost_mysql, $dbuser_mysql, $dbpass_mysql) or die(mysql_error());
-		//mysql_select_db($dbname_mysql) or die(mysql_error());
+		mysql_connect($this -> dbhost_mysql, $this -> dbuser_mysql, $this -> dbpass_mysql);
+		mysql_select_db($this -> dbname_mysql);
 
 		//TODO
 		//Establecer conexion con NIFE
-		//oci_connect()
+		$conn = oci_connect($this -> dbuser_ora, $this -> dbpass_ora, $this -> dbhost_ora."/".$this -> dbname_ora);
+		if (!$conn) {
+			$e = oci_error();
+			trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+		}
 	}
-
+	
 	//METODOS
 	//Metodos privados son funciones de utilidad para realizar las consultas
 
@@ -339,7 +343,7 @@ class Hor_Dao {
 	 * @return objeto de la clase Horario, json encoded
 	 */
 	function consultarHorarioPorId($id_hor) {
-		$query = "SELECT * FROM (SELECT * FROM HORARIOS WHERE HORARIOS.ID_HORARIO = $id_hor) NATURAL JOIN CURSOS_HORARIOS";
+		$query = "SELECT * FROM (SELECT * FROM HORARIOS WHERE HORARIOS.ID_HORARIO = $id_hor) as ins NATURAL JOIN CURSOS_HORARIOS";
 		$result = $this -> queryMysql($query);
 		
 		$crns = array();
@@ -348,7 +352,7 @@ class Hor_Dao {
 		$hor = new Horario();
 		while($row = $this -> darSiguienteRegistroMySql($result)){
 			if($first){
-				$hor -> setCreditosTotales($row['CREDITOS TOTALES']);
+				$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
 				$hor -> setFechaCreacion($row['FECHA_CREACION']);
 				$hor -> setGuardado(false);
 				$hor -> setIdHorario($row['ID_HORARIO']);
@@ -364,7 +368,7 @@ class Hor_Dao {
 			$cursos[] = $this -> consultarCursosPorCRN($crn);
 		}
 		$hor -> setCursos($cursos);
-		return $hor;
+		return json_encode($hor);
 	}
 
 	/**
@@ -373,14 +377,14 @@ class Hor_Dao {
 	 */
 	function consultarHorariosPorUsuario($usuario) {
 		//TODO
-		$query = "SELECT h.ID_HORARIO, h.CREDITOS_TOTALES, h.NUM_CURSOS, h.FECHA_CREACION, h.NOMBRE FROM HORARIOS as h WHERE h.LOGIN_USUARIO = $usuario";
+		$query = 'SELECT h.ID_HORARIO, h.CREDITOS_TOTALES, h.NUM_CURSOS, h.FECHA_CREACION, h.NOMBRE FROM HORARIOS as h WHERE h.LOGIN_USUARIO = "'.$usuario.'"';
 		$result = $this -> queryMysql($query);
 		
 		$horarios = array();
 		
 		while($row = $this -> darSiguienteRegistroMySql($result)){
 			$hor = new Horario();
-			$hor -> setCreditosTotales($row['CREDITOS TOTALES']);
+			$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
 			$hor -> setFechaCreacion($row['FECHA_CREACION']);
 			$hor -> setGuardado(false);
 			$hor -> setIdHorario($row['ID_HORARIO']);
@@ -400,7 +404,7 @@ class Hor_Dao {
 	 */
 	function persistirHorario($horario) {
 		//TODO REVISION
-		$query = "INSERT INTO Horarios (Login_Usuario, Creditos_Totales, Num_Cursos, Fecha_Creacion, Nombre) VALUES (" . $horario -> getUsuario() . ", " . $horario -> getCreditosTotales() . ", " . $horario -> getNumCursos() . ", NOW(), " . $horario -> getNombre() . ")";
+		$query = 'INSERT INTO HORARIOS (LOGIN_USUARIO, CREDITOS_TOTALES, NUM_CURSOS, FECHA_CREACION, NOMBRE) VALUES ("' . $horario -> getUsuario() . '",' . $horario -> getCreditosTotales() . ',' . $horario -> getNumCursos() . ',NOW(),"' . $horario -> getNombre() . '")';
 		$this -> queryMysql($query);
 	}
 
@@ -454,7 +458,7 @@ class Hor_Dao {
 	 */
 	function eliminarHorario($id_hor) {
 		//TODO REVISION
-		$this -> queryMysql($this -> deleteFromWhereMysql("Horarios", "Id_Horario=$id_hor"));
+		$this -> queryMysql($this -> deleteFromWhereMysql("HORARIOS", 'ID_HORARIO='.$id_hor));
 	}
 
 	/**
@@ -464,6 +468,14 @@ class Hor_Dao {
 	 */
 	function eliminarCurso($id_curso) {
 		//TODO
+	}
+	
+	/**
+	 * Persiste el login de un usuario
+	 */
+	function persistirUsuario($usuario){
+		$query = 'INSERT INTO USUARIOS (LOGIN) VALUES ("'.$usuario.'") ON DUPLICATE KEY UPDATE LOGIN="'.$usuario.'"';
+		$this -> queryMysql($query);
 	}
 
 	/**
@@ -536,7 +548,7 @@ class Hor_Dao {
 			$sat = $arr_asoc["saturday_ind" . i];
 			$sun = $arr_asoc["sunday_ind" . i];
 
-			// TODO terminar occurencias.
+			//TODO terminar occurencias.
 			$dias = "";
 			if ($mon == "L") {
 				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon);
@@ -572,63 +584,63 @@ class Hor_Dao {
 	}
 	
 	
-	/**
-	 * Funcion privada que retorna un arreglo unidimensional de objetos tipo Curso dado el resultado de un query a la base de datos Oracle
-	 * El arreglo está organizado de tal forma que las magistrales van seguidas de sus complementarias
-	 * Se asume que las complementarias de los cursos no se encuentran en el resultado de las base de datos por lo que se espera que no haya redundancia en el arreglo
-	 * @param $tabla_resultado el resultado obtenido de realizar un query sobre la base de datos Oracle
-	 * @return arreglo unidimensional de objetos tipo Curso donde las magistrales van seguidas de sus complementarias.
-	 */
-	private function crearArregloResultadosUnidim($tabla_resultado){
-		$resultados = array();
-		$i = 0;
-		while($asoc = $this -> darSiguienteRegistroOracle($tabla_resultado)){
-			$curso = $this -> construirCursoDeArrAsoc($asoc);
-			
-			if($curso -> getMagistral() != null){
-				$mag = $curso -> getMagistral();
-				$complmag = $mag -> getComplementarias();
-				$mag -> setComplementarias(array());
-				$mag -> setIndiceEnResultados($i);
-				$mag -> setInPadre(null);
-				$resultados[] = $mag;
-				$i++;
-				
-				foreach ($complmag as $comp) {
-					$comp -> setIndiceEnResultados($i);
-					$comp -> setInPadre($mag -> getIndiceEnResultados());
-					$resultados[] = $comp;
-					$i++;
-				}				
-				//$resultados = array_merge($resultados,$complmag);
-			}
-			else{
-				if(!empty($curso -> getComplementarias())){
-					$compl = $curso -> getComplementarias();
-					$curso -> setComplementarias(array());
-					$curso -> setIndiceEnResultados($i);
-					$curso -> setInPadre(null);
-					$resultados[] = $curso;
-					$i++;
-					
-					foreach ($compl as $comp) {
-						$comp -> setIndiceEnResultados($i);
-						$comp -> setInPadre($curso -> getIndiceEnResultados());
-						$resultados[] = $comp;
-						$i++;
-					}
-					//$resultados = array_merge($resultados,$compl);
-				}
-				else{
-					$curso -> setIndiceEnResultados($i);
-					$curso -> setInPadre(null);
-					$resultados[] = $curso;
-					$i++;
-				}
-			}
-		}
-		return $resultados;
-	}
+	// /**
+	 // * Funcion privada que retorna un arreglo unidimensional de objetos tipo Curso dado el resultado de un query a la base de datos Oracle
+	 // * El arreglo está organizado de tal forma que las magistrales van seguidas de sus complementarias
+	 // * Se asume que las complementarias de los cursos no se encuentran en el resultado de las base de datos por lo que se espera que no haya redundancia en el arreglo
+	 // * @param $tabla_resultado el resultado obtenido de realizar un query sobre la base de datos Oracle
+	 // * @return arreglo unidimensional de objetos tipo Curso donde las magistrales van seguidas de sus complementarias.
+	 // */
+	// private function crearArregloResultadosUnidim($tabla_resultado){
+		// $resultados = array();
+		// $i = 0;
+		// while($asoc = $this -> darSiguienteRegistroOracle($tabla_resultado)){
+			// $curso = $this -> construirCursoDeArrAsoc($asoc);
+// 			
+			// if($curso -> getMagistral() != null){
+				// $mag = $curso -> getMagistral();
+				// $complmag = $mag -> getComplementarias();
+				// $mag -> setComplementarias(array());
+				// $mag -> setIndiceEnResultados($i);
+				// $mag -> setInPadre(null);
+				// $resultados[] = $mag;
+				// $i++;
+// 				
+				// foreach ($complmag as $comp) {
+					// $comp -> setIndiceEnResultados($i);
+					// $comp -> setInPadre($mag -> getIndiceEnResultados());
+					// $resultados[] = $comp;
+					// $i++;
+				// }				
+				// //$resultados = array_merge($resultados,$complmag);
+			// }
+			// else{
+				// if(!empty($curso -> getComplementarias())){
+					// $compl = $curso -> getComplementarias();
+					// $curso -> setComplementarias(array());
+					// $curso -> setIndiceEnResultados($i);
+					// $curso -> setInPadre(null);
+					// $resultados[] = $curso;
+					// $i++;
+// 					
+					// foreach ($compl as $comp) {
+						// $comp -> setIndiceEnResultados($i);
+						// $comp -> setInPadre($curso -> getIndiceEnResultados());
+						// $resultados[] = $comp;
+						// $i++;
+					// }
+					// //$resultados = array_merge($resultados,$compl);
+				// }
+				// else{
+					// $curso -> setIndiceEnResultados($i);
+					// $curso -> setInPadre(null);
+					// $resultados[] = $curso;
+					// $i++;
+				// }
+			// }
+		// }
+		// return $resultados;
+	// }
 	
 	/**
 	 * Crea un objeto de tipo ocurrencia dadas las horas de inicio y fin y el día de la semana
@@ -646,6 +658,17 @@ class Hor_Dao {
 		$ocur -> setSalon("Pendiente");
 		
 		return $ocur;
+	}
+	
+	/**
+ 	 * Función para limpiar una cadena de caracteres de código malicioso. Utilizada para limpiar user input.
+ 	 */
+	function sanitizeString($var)
+	{
+		$var = strip_tags($var);
+		$var = htmlentities($var);
+		$var = stripslashes($var);
+		return mysql_real_escape_string($var);
 	}
 
 }

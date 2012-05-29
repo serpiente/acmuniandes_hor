@@ -3,6 +3,7 @@ package acmuniandes_hor.dataloader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import org.apache.http.HttpEntity;
@@ -26,18 +27,22 @@ public class DataLoader implements Runnable{
 	private final static String BASE_URL = "http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=";
 	
 	//For Scraping
-	private final static String SELECTOR_QUERY = "font.texto4:not(:has(font)):matches([^ ]):not(:has(strong)";
+	private final static String SELECTOR_QUERY = "font.texto4:not(:has(font),:has(strong)):matches([^ ]),font[color=#FF0000]";
 	
 	private String departamento;
 	//private String codDepartamento;
 	private final String URL;
 	private JavaDao dao;
+	private HashMap<String, String> hm;
+	private HashMap<String, String> hmsis;
 	
 	public DataLoader(String depto, String url){
 		this.departamento = depto;
 		//this.codDepartamento = codDepto;
 		this.URL = url;
 		this.dao = new JavaDao();
+		this.hm = new HashMap<String, String>();
+		this.hmsis = new HashMap<String, String>();
 	}
 	
 	private void scrape() throws ClientProtocolException, IOException{
@@ -63,9 +68,6 @@ public class DataLoader implements Runnable{
 		Document doc = Jsoup.connect(this.URL).get();
 		Elements textos = doc.select(SELECTOR_QUERY);
 		
-		//Para coger texto de complementarias
-//		Elements textos = doc.select("font.texto4,[color=#FF0000]").not(":has(strong)").not(":has(font)").select(":matches([^ ])");
-
 		
 //		for (Element texto : textos) {
 //			System.out.println(texto.text());
@@ -75,6 +77,9 @@ public class DataLoader implements Runnable{
 		while(i < textos.size()) {
 			Curso curso = new Curso();
 			curso.setCrn(textos.get(i++).text());
+			if(hm.get(curso.getCrn()) != null){
+				curso.setMagistral(hm.get(curso.getCrn()));
+			}			
 			curso.setCodigo(textos.get(i++).text());
 			if(curso.getCodigo().endsWith("A")){
 				curso.setTipo(Curso.A);
@@ -82,6 +87,9 @@ public class DataLoader implements Runnable{
 				curso.setTipo(Curso.B);
 			}
 			curso.setSeccion(Integer.parseInt(textos.get(i++).text()));
+			if(hmsis.get(""+curso.getCodigo()+curso.getSeccion()) != null){
+				curso.setMagistral(hmsis.get(""+curso.getCodigo()+curso.getSeccion()));
+			}
 			curso.setCreditos(Double.parseDouble(textos.get(i++).text()));
 			curso.setTitulo(textos.get(i++).text());
 			curso.setCapacidad(Integer.parseInt(textos.get(i++).text()));
@@ -123,7 +131,18 @@ public class DataLoader implements Runnable{
 				ArrayList<String> profesores = new ArrayList<String>();
 				String profesor = textos.get(i++).text();
 				while (!profesor.matches("[0-9]+")) {
-					profesores.add(profesor);
+					if(profesor.matches("^La .+- -$")){
+						String [] compls = profesor.replaceAll(" ", "").split(":")[1].split("-");
+						curso.setComplementarias(compls);
+						for (int j = 0; j < compls.length; j++) {
+							hm.put(compls[j], curso.getCrn());
+						}
+					} else if(profesor.matches("^Debe .+[0-9]$")){
+						String[] sentence = profesor.split(" ");
+						hmsis.put(""+sentence[3]+sentence[sentence.length-1], curso.getCrn());
+					} else {
+						profesores.add(profesor);
+					}
 					if (i < textos.size()) {
 						profesor = textos.get(i++).text();
 					} else {

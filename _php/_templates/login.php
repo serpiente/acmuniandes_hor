@@ -9,7 +9,7 @@
 		<div style="padding: 100px 0 0 250px;">
 			<div class="login-box-options" id="login-box">
 				<H2>HorarioLab</H2>
-				Bienvenido a la pagina de HorarioLab.
+				Bienvenido a la página de HorarioLab.
 				<br />
 				<br />
 				<form id="loginForm" method="post" action="_php/hor_auth.php">

@@ -166,8 +166,8 @@ $(function() {
 	 */
 	function abrirHorario() {
 		$.ajax({
-			//url : '_php/hor_core.php',
-			url : '_php/testhorcoredisp.php',
+			url : '_php/hor_core.php',
+			// url : '_php/testhorcoredisp.php',
 			dataType : 'json',
 			data : {
 				'tipsol' : '7',
@@ -212,47 +212,47 @@ $(function() {
 	 * Consulta cursos con el servidor dado una entrada del usuario y los muestra en el campo indicado
 	 */
 	function obtenerResultados(input) {
-		$.ajax({
-			url : '_php/hor_core.php',
-			//url : '_php/testhorcoredisp.php',
-			dataType : 'json',
-			data : {
-				'valcon' : input,
-				'cbuflag': false //hace falta incluir selector de cbu
-			},
-			type : 'GET',
-			success : function(response) {
-				if(response) {
-					if(response.redirect) {
-						// data.redirect contains the string URL to redirect to
-						document.location = response.redirect;
-					}
-					else{
-						resultados = response;
-						console.log(response);
-						resultGrid.jqGrid('clearGridData', this);
-						for(var i = 0; i < resultados.length; i++) {
-							resultados[i].profesor = resultados[i].profesores[0];
-							resultGrid.jqGrid('addRowData', i, resultados[i]);
-							// if(resultados[i].inpadre != null){
-							// $('#'+i).css({'background':'#BDEDFF'});
-							// }
-						}
-						inicializarResultados();
-					}
-				} else {
-					alert("La busqueda ha fallado, por favor intente de nuevo");
-				}
-			}
-		});
-		// resultGrid.jqGrid('clearGridData', this);
-		// for(var i = 0; i < resultados.length; i++) {
-			// resultados[i].profesor = resultados[i].profesores[0];
-			// resultGrid.jqGrid('addRowData', i, resultados[i]);
-			// // if(resultados[i].inpadre != null){
-				// // $('#'+i).css({'background':'#BDEDFF'});
-			// // }
-		// }
+		// $.ajax({
+			// url : '_php/hor_core.php',
+			// //url : '_php/testhorcoredisp.php',
+			// dataType : 'json',
+			// data : {
+				// 'valcon' : input,
+				// 'cbuflag': false //hace falta incluir selector de cbu
+			// },
+			// type : 'GET',
+			// success : function(response) {
+				// if(response) {
+					// if(response.redirect) {
+						// // data.redirect contains the string URL to redirect to
+						// document.location = response.redirect;
+					// }
+					// else{
+						// resultados = response;
+						// console.log(response);
+						// resultGrid.jqGrid('clearGridData', this);
+						// for(var i = 0; i < resultados.length; i++) {
+							// resultados[i].profesor = resultados[i].profesores[0];
+							// resultGrid.jqGrid('addRowData', i, resultados[i]);
+							// // if(resultados[i].inpadre != null){
+							// // $('#'+i).css({'background':'#BDEDFF'});
+							// // }
+						// }
+						// inicializarResultados();
+					// }
+				// } else {
+					// alert("La busqueda ha fallado, por favor intente de nuevo");
+				// }
+			// }
+		// });
+		resultGrid.jqGrid('clearGridData', this);
+		for(var i = 0; i < resultados.length; i++) {
+			resultados[i].profesor = resultados[i].profesores[0];
+			resultGrid.jqGrid('addRowData', i, resultados[i]);
+			// if(resultados[i].inpadre != null){
+				// $('#'+i).css({'background':'#BDEDFF'});
+			// }
+		}
 				
 		inicializarResultados();
 	}

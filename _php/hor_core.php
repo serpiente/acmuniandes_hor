@@ -11,7 +11,6 @@ $usuario = $_SESSION['usuario']; //tomando el valor del login del usuario que se
 if (!isset($usuario)) {
 	redirigirLoginPage(); 	//Redirigir a la página de login
 }
-$dao = new Hor_Dao(); //instanciación del dao
 
 
 /**
@@ -66,7 +65,7 @@ function crearNuevoHorario($nombre) {
  */
 function asignarHorarioAbrir($id_hor){
 	$_SESSION['hor_abrir'] = $id_hor;
-	echo json_encode(array('redirect'=>'/acmuniandes_hor/hor_coredisp.html'));
+	header("Location: /acmuniandes_hor/hor_coredisp.html");
 }
 
 /**
@@ -125,7 +124,7 @@ function guardarHorario($horario){
 }
 
 
-$tipo_solicitud = sanitizeString($_POST['tipsol']);
+$tipo_solicitud = $dao -> sanitizeString($_POST['tipsol']);
 if (!isset($tipo_solicitud)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No se indico el tipo de solicitud", 1);
@@ -138,7 +137,7 @@ switch ($tipo_solicitud) {
 		consultarHorariosPorUsuario();
 		break;
 	case TiposSolicitud::TipoCrearHorario :
-		$nombre = sanitizeString($_POST['nomhor']);
+		$nombre = $dao -> sanitizeString($_POST['nomhor']);
 		if (!isset($nombre)) {
 			throw new Exception("No se indico el nombre del horario");
 		} else {
@@ -146,7 +145,7 @@ switch ($tipo_solicitud) {
 		}
 		break;
 	case TiposSolicitud::TipoElimHorario :
-		$id_hor = sanitizeString($_POST['id_hor']);
+		$id_hor = $dao -> sanitizeString($_POST['id_hor']);
 		if (!isset($id_hor)) {
 			throw new Exception("No se indico el id del horario a eliminar");
 		} else {
@@ -154,7 +153,7 @@ switch ($tipo_solicitud) {
 		}
 		break;
 	case TiposSolicitud::TipoGuardarHorario:
-		$horario_json = sanitizeString($_POST['horario']);
+		$horario_json = $dao -> sanitizeString($_POST['horario']);
 		if (!isset($horario_json)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se recibio el horario");
@@ -162,7 +161,7 @@ switch ($tipo_solicitud) {
 			guardarHorario($horario_json);
 		}
 	case TiposSolicitud::TipoAsignarHorarioAbrir:
-		$id_hor = sanitizeString($_POST['id_hor']);
+		$id_hor = $dao -> sanitizeString($_POST['id_hor']);
 		if (!isset($id_hor)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se indico el id del horario a eliminar");

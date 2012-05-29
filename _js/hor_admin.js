@@ -49,6 +49,12 @@ $(function() {
 	
 	$('#buttonCons').click(mostrarHorarios);
 	$('#buttonCreate').click(vizualizacionCreacion);
+	
+	$('#buttonLogout').click(function() {
+		params = {tipsol:'4'};
+		postform('_php/hor_auth.php',params);
+	}); 
+
 		
 	function mostrarHorarios() {
 		/*Conexión AJAX */
@@ -58,8 +64,8 @@ $(function() {
 		}
 
 		$.ajax({
-			/*url : '_php/hor_core.php',*/
-			url : '_php/testhoradmin.php',
+			url : '_php/hor_core.php',
+			//url : '_php/testhoradmin.php',
 			dataType : 'json', //hace que se evalue el json que retorna el servidor como un objeto
 			data : parametros,
 			type : 'POST',
@@ -70,9 +76,9 @@ $(function() {
 				}
 				else {
 					horarios = response;
-					for(var i = 0; i < 1; i++) {
+					for(var i in horarios) {
 						visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
-					};
+					}
 					inicilializar();					
 				}
 			}
@@ -100,7 +106,6 @@ $(function() {
 	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, id,i) {
 		$("#result").append("<tr><td>&nbsp</td></tr>");
 		$("#result").append("<tr class=\"celda1\" id=cell"+(i)+"><td width=\"12%\"> <span class='horarioResultado' id="+(id)+" >" +nombre+"</span></td><td width=\"88%\"></td><td width=\"3%\"> <button id=eli"+(i)+" > X</button></td></tr>");
-		console.log($("#"+id))
 		$("#"+id).click(function(){
 			abrirHorario(''+i)
 		});
@@ -111,23 +116,11 @@ $(function() {
 	
 	function abrirHorario(id)
 	{
-		alert('abrir '+id);
 		parametros = {
 			'tipsol' : '6',
 			'id_hor' : id
 		};
-		$.ajax({
-			url : '_php/hor_core.php',
-			data : parametros,
-			dataType : 'json',
-			type : 'POST',
-			success : function(response) {
-				if(response.redirect) {
-						// data.redirect contains the string URL to redirect to
-						document.location = response.redirect;
-				}
-			}
-		});
+		postform('_php/hor_core.php',parametros)
 	}
 	
 	function inicilializar(){
@@ -160,8 +153,6 @@ $(function() {
 	function crearHorario(nombre) {
 		/* Genera un dialogo para escribir el nombre del horario */
 		/*Conexión AJAX */
-		alert("hola"+nombre);
-		var horariocreado = false;
 		parametros = {
 			'nomhor' : nombre,
 			'tipsol' : '1'
@@ -176,29 +167,21 @@ $(function() {
 						// data.redirect contains the string URL to redirect to
 						document.location = response.redirect;
 				}
-				else{
-					horariocreado = response;
+				if(response) {
+					alert("Creado");
+					vaciarTablaHorarios();
+				}
+				else {
+					alert("Error al crear el horario");
+					vaciarTablaHorarios();
 				}
 			}
 		});
 
-		if(horariocreado) {
-			alert("Creado");
-			vaciarTablaHorarios();
-		}
-		else {
-			alert("Error al crear el horario");
-			vaciarTablaHorarios();
-		}
-
 	}
 
 	/*Metodo que eliminar un horario */
-
-	var j = 0;
 	function eliminarHorario(id) {
-	alert("elminar "+id);
-		var horarioeliminado = false;
 		parametros = {
 			'tipsol' : '2',
 			'id_hor':id
@@ -210,26 +193,41 @@ $(function() {
 			type : 'POST',
 			success : function(response) {
 				if(response.redirect) {
-						// data.redirect contains the string URL to redirect to
-						document.location = response.redirect;
+					// data.redirect contains the string URL to redirect to
+					document.location = response.redirect;
+				}
+				
+				if(response) {
+					/*Elimina el horario de la visualizacíón */
+					alert("Eliminado");
+					vaciarTablaHorarios();
 				}
 				else{
-					horarioeliminado = response;					
+					alert("Error al eliminar el horario");
+					vaciarTablaHorarios();
 				}
 			}
 		});
 
-		if(horarioeliminado) {
-			/*Elimina el horario de la visualizacíón */
-			alert("Eliminado");
-			vaciarTablaHorarios();
-		}
-		else{
-			alert("Error al eliminar el horario");
-			vaciarTablaHorarios();
-		};
-
-
 	}
+	
+	function postform(path, params){
+		var form = document.createElement("form");
+		form.setAttribute("method", "POST");
+		form.setAttribute("action", path);
+		
+		for(var key in params) {
+			if(params.hasOwnProperty(key)) {
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", key);
+				hiddenField.setAttribute("value", params[key]);
 
+				form.appendChild(hiddenField);
+			}
+		}
+
+		document.body.appendChild(form);
+		form.submit();
+	}
 });

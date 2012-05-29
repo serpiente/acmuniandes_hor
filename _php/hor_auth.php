@@ -9,7 +9,7 @@ require_once 'utils.php';
  * @param $contrasenia string indicando la contraseña del usuario
  */
 function autenticar($usuario, $contrasenia) {
-
+	global $dao;
 	//Se inicia la sesión
 	session_start();
 
@@ -27,6 +27,7 @@ function autenticar($usuario, $contrasenia) {
 			if (ldap_bind($ldapconn, $dist_name, $contrasenia)) {
 				//Guarda el nombre de usuario en la variable de sesión
 				$_SESSION['usuario'] = $usuario;
+				$dao -> persistirUsuario($usuario);
 				//Redirige a la pagina correspondiente en caso exitoso
 				header("Location: /acmuniandes_hor/hor_admin.html");
 
@@ -50,11 +51,12 @@ function autenticar($usuario, $contrasenia) {
 function logout() {
 	//TODO
 	destroySession();
-	redirigirLoginPage();
+	header("Location: /acmuniandes_hor/");
+	//redirigirLoginPage();
 	//Redirigir a la página de login
 }
 
-$tipo_solicitud = sanitizeString($_POST['tipsol']);
+$tipo_solicitud = $dao -> sanitizeString($_POST['tipsol']);
 if (!isset($tipo_solicitud)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No se indico el tipo de solicitud");
@@ -64,12 +66,12 @@ if (!isset($tipo_solicitud)) {
 switch ($tipo_solicitud) {
 
 	case TiposSolicitud::TipoAutenticar :
-		$usuario = sanitizeString($_POST['usuario']);
+		$usuario = $dao -> sanitizeString($_POST['usuario']);
 		if (!isset($usuario)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se indico el nombre de usuario");
 		}
-		$contrasenia = sanitizeString($_POST['contrasenia']);
+		$contrasenia = $dao -> sanitizeString($_POST['contrasenia']);
 		if (!isset($contrasenia)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se indico la contrasenia");

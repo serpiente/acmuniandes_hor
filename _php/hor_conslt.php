@@ -10,7 +10,6 @@ session_start();
 if (!isset($_SESSION['usuario'])) {
 	redirigirLoginPage(); //Redirigir a la página de login
 }
-$dao = new Hor_Dao(); //instanciación del dao
 
 /**
  * Consulta cursos dado el nombre de un profesor
@@ -135,12 +134,12 @@ function procesarConsulta($valor_consulta, $cbuflag) {
 	//echo del arreglo con objetos Curso, json encoded
 }
 
-$valor_consulta = sanitizeString($_GET['valcon']);
+$valor_consulta = $dao -> sanitizeString($_GET['valcon']);
 if (!isset($valor_consulta)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No existe entrada de usuario");
 }
-$cbuflag = sanitizeString($_GET['cbuflag']);
+$cbuflag = $dao -> sanitizeString($_GET['cbuflag']);
 if (!isset($cbuflag)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No existe indicador de cbu");
@@ -150,7 +149,7 @@ if (isset($_GET['tipcon'])) {
 	//Esta condición implica que el usuario eligió un tipo específico de consulta
 	//(Varios campos de busqueda)
 
-	$tipo_consulta = sanitizeString($_GET['tipcon']);
+	$tipo_consulta = $dao -> sanitizeString($_GET['tipcon']);
 
 	//Determina el tipo de consulta elegido por el usuario
 	switch ($tipo_consulta) {

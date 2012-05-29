@@ -8,4 +8,8 @@ public class JavaDao {
 		//TODO persistir un curso a una base de datos
 		System.out.println(curso.toString());
 	}
+	
+	public void updateCurso(Curso curso){
+		System.out.println(curso.toString());
+	}
 }

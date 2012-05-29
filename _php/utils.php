@@ -1,5 +1,8 @@
 <?php
 
+require_once '_classes/hor_dao.php';
+$dao = new Hor_Dao(); //instanciación del dao
+
 /**
  * Listado de constantes de tipo de consultas
  */
@@ -32,7 +35,7 @@ class TiposSolicitud {
 	const TipoAutenticar = '3';
 	const TipoLogout = '4';
 	const TipoGuardarHorario = '5';
-	const TipoAsignarHorarioAbrir = '6;';
+	const TipoAsignarHorarioAbrir = '6';
 	const TipoAbrirHorario = '7';
 }
 
@@ -46,16 +49,16 @@ function destroySession()
 	session_destroy();
 }
 
-/**
- * Función para limpiar una cadena de caracteres de código malicioso. Utilizada para limpiar user input.
- */
-function sanitizeString($var)
-{
-	$var = strip_tags($var);
-	$var = htmlentities($var);
-	$var = stripslashes($var);
-	return mysql_real_escape_string($var);
-}
+// /**
+ // * Función para limpiar una cadena de caracteres de código malicioso. Utilizada para limpiar user input.
+ // */
+// function sanitizeString($var)
+// {
+	// $var = strip_tags($var);
+	// $var = htmlentities($var);
+	// $var = stripslashes($var);
+	// return mysql_real_escape_string($var);
+// }
 
 /**
  * Dado un arreglo que contiene arreglos asociativos los cuales contienen los valores de atributos para un objeto,

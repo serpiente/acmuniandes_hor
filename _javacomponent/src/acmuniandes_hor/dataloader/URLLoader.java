@@ -30,16 +30,28 @@ public class URLLoader {
 	 * 
 	 */
 	public void comence() {
-//		DataLoader dl = new DataLoader("IIND", "http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=IIND");
+		
+//		DataUpdater du = new DataUpdater("http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=IIND");
+//		du.run();
+		
+//		DataLoader dl = new DataLoader("Ingenier’a Sistemas", "http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=IIND");
 //		dl.run();
+		
+		long s = System.currentTimeMillis();
+		for (int i = 0; i < this.numdeptos; i++) {
+			DataLoader dl = new DataLoader(this.departamentos[i], this.urls[i]);
+			dl.run();
+//			new Thread(dl).start();
+		}
+		System.out.println("TOTAL DURATION SEQUENTIAL: "+(System.currentTimeMillis() - s));
+		s = System.currentTimeMillis();
 		while (true) {
-			long s = System.currentTimeMillis();
 			for (int i = 0; i < this.numdeptos; i++) {
-				DataLoader dl = new DataLoader(this.departamentos[i], this.urls[i]);
-				dl.run();
-//				new Thread(dl).start();
+				DataUpdater du = new DataUpdater(this.urls[i]);
+				du.run();
+//				new Thread(du).start();
 			}
-			System.out.println("TOTAL DURATION SEQUENTIAL: "+(System.currentTimeMillis() - s));
+			System.out.println("TOTAL DURATION UPDATE SEQUENTIAL: "+(System.currentTimeMillis() - s));
 			try {
 				Thread.sleep(60000);
 			} catch (InterruptedException e) {

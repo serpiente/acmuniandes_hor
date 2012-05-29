@@ -28,7 +28,9 @@ public class Curso {
 	
 	private char tipo;
 	
-	private ArrayList<Curso> complementarias;
+	private String magistral;
+	
+	private String[] complementarias;
 	
 	private ArrayList<Ocurrencia> ocurrencias;
 	
@@ -122,11 +124,19 @@ public class Curso {
 		this.tipo = tipo;
 	}
 
-	public ArrayList<Curso> getComplementarias() {
+	public String getMagistral() {
+		return magistral;
+	}
+
+	public void setMagistral(String magistral) {
+		this.magistral = magistral;
+	}
+
+	public String[] getComplementarias() {
 		return complementarias;
 	}
 
-	public void setComplementarias(ArrayList<Curso> complementarias) {
+	public void setComplementarias(String[] complementarias) {
 		this.complementarias = complementarias;
 	}
 
@@ -173,6 +183,13 @@ public class Curso {
 		asw += "creditos: "+this.creditos+"\n";
 		asw += "departamento: "+this.departamento+"\n";
 		asw += "seccion: "+this.seccion+"\n";
+		asw += "magistral: "+this.magistral+"\n";
+		
+		if(complementarias != null){
+			for (int i = 0; i < complementarias.length; i++) {
+				asw += "complementaria: "+this.complementarias[i] + "\n";
+			}
+		}
 		
 		if (ocurrencias != null) {
 			for (int i = 0; i < ocurrencias.size(); i++) {

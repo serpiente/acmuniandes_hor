@@ -12,111 +12,7 @@ $(function() {
 		V : darFecha(5),
 		S : darFecha(6)
 	};
-	var resultados = [{
-		"capacidad_Total" : 25,
-		"codigo_Curso" : "ISIS2203",
-		"creditos" : 3,
-		"crn" : "45663",
-		"cupos_Disponibles" : 15,
-		"departamento" : "Ingenieria de Sistemas",
-		"nombre" : "Lenguajes y Maquinas",
-		"seccion" : 1,
-		"tipo" : null,
-		"complementarias" : [],
-		"ocurrencias" : [{
-			"dia" : "L",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "O201",
-			"unidades_Duracion" : 3
-		},{
-			"dia" : "I",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "O201",
-			"unidades_Duracion" : 3
-		}],
-		"profesores" : [{"nombre":"Rodrigo", "apellido": "Cardoso"}],
-		"dias" : "LI",
-		"numcompl": 1,
-		"inpadre": null,
-		"indiceEnResultados": 0
-	},{
-		"capacidad_Total" : 15,
-		"codigo_Curso" : "ISIS2203",
-		"creditos" : 0,
-		"crn" : "55555",
-		"cupos_Disponibles" : 5,
-		"departamento" : "Ingenieria de Sistemas",
-		"nombre" : "Compl. L y M",
-		"seccion" : 1,
-		"tipo" : null,
-		"complementarias" : [],
-		"ocurrencias" : [{
-			"dia" : "V",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "O301",
-			"unidades_Duracion" : 3
-		}],
-		"profesores" : [{"nombre":"Jaime","apellido": "Beltran"}],
-		"dias" : "V",
-		"numcompl": 0,
-		"inpadre": 0,
-		"indiceEnResultados": 1	
-	},{
-		"capacidad_Total" : 30,
-		"codigo_Curso" : "IIND3306",
-		"creditos" : 3,
-		"crn" : "33321",
-		"cupos_Disponibles" : 15,
-		"departamento" : "Ingenieria Industrial",
-		"nombre" : "Finanzas",
-		"seccion" : 1,
-		"tipo" : null,
-		"complementarias" : [],
-		"ocurrencias" : [{
-			"dia" : "M",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "R209",
-			"unidades_Duracion" : 3
-		},{
-			"dia" : "J",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "R209",
-			"unidades_Duracion" : 3
-		}],
-		"profesores": [{"apellido":"Villareal", "nombre":"Julio"}],
-		"dias" : "MJ",
-		"numcompl": 0,
-		"inpadre": null,
-		"indiceEnResultados": 2
-	},{
-		"capacidad_Total" : 15,
-		"codigo_Curso" : "ISIS2603",
-		"creditos" : 0,
-		"crn" : "66666",
-		"cupos_Disponibles" : 5,
-		"departamento" : "Ingenieria de Sistemas",
-		"nombre" : "Infracomm",
-		"seccion" : 1,
-		"tipo" : null,
-		"complementarias" : [],
-		"ocurrencias" : [{
-			"dia" : "V",
-			"horaInicio" : "10:00",
-			"horaFin" : "11:20",
-			"salon" : "O301",
-			"unidades_Duracion" : 3
-		}],
-		"profesores" : [{"nombre":"Jaime","apellido": "Beltran"}],
-		"dias" : "V",
-		"numcompl": 0,
-		"inpadre": null,
-		"indiceEnResultados": 3
-	}];
+	var resultdos = [];
 	
 	function Horario(obj) {
 		if(obj){
@@ -212,47 +108,47 @@ $(function() {
 	 * Consulta cursos con el servidor dado una entrada del usuario y los muestra en el campo indicado
 	 */
 	function obtenerResultados(input) {
-		// $.ajax({
-			// url : '_php/hor_core.php',
-			// //url : '_php/testhorcoredisp.php',
-			// dataType : 'json',
-			// data : {
-				// 'valcon' : input,
-				// 'cbuflag': false //hace falta incluir selector de cbu
-			// },
-			// type : 'GET',
-			// success : function(response) {
-				// if(response) {
-					// if(response.redirect) {
-						// // data.redirect contains the string URL to redirect to
-						// document.location = response.redirect;
-					// }
-					// else{
-						// resultados = response;
-						// console.log(response);
-						// resultGrid.jqGrid('clearGridData', this);
-						// for(var i = 0; i < resultados.length; i++) {
-							// resultados[i].profesor = resultados[i].profesores[0];
-							// resultGrid.jqGrid('addRowData', i, resultados[i]);
-							// // if(resultados[i].inpadre != null){
-							// // $('#'+i).css({'background':'#BDEDFF'});
-							// // }
-						// }
-						// inicializarResultados();
-					// }
-				// } else {
-					// alert("La busqueda ha fallado, por favor intente de nuevo");
-				// }
-			// }
-		// });
-		resultGrid.jqGrid('clearGridData', this);
-		for(var i = 0; i < resultados.length; i++) {
-			resultados[i].profesor = resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
-			resultGrid.jqGrid('addRowData', i, resultados[i]);
-			// if(resultados[i].inpadre != null){
-				// $('#'+i).css({'background':'#BDEDFF'});
-			// }
-		}
+		$.ajax({
+			url : '_php/hor_conslt.php',
+			//url : '_php/testhorcoredisp.php',
+			dataType : 'json',
+			data : {
+				'valcon' : input,
+				'cbuflag': false //hace falta incluir selector de cbu
+			},
+			type : 'GET',
+			success : function(response) {
+				if(response) {
+					if(response.redirect) {
+						// data.redirect contains the string URL to redirect to
+						document.location = response.redirect;
+					}
+					else{
+						resultados = response;
+						console.log(response);
+						resultGrid.jqGrid('clearGridData', this);
+						for(var i = 0; i < resultados.length; i++) {
+							resultados[i].profesor = resultados[i].profesores[0];
+							resultGrid.jqGrid('addRowData', i, resultados[i]);
+							// if(resultados[i].inpadre != null){
+							// $('#'+i).css({'background':'#BDEDFF'});
+							// }
+						}
+						inicializarResultados();
+					}
+				} else {
+					alert("La busqueda ha fallado, por favor intente de nuevo");
+				}
+			}
+		});
+		// resultGrid.jqGrid('clearGridData', this);
+		// for(var i = 0; i < resultados.length; i++) {
+			// resultados[i].profesor = resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
+			// resultGrid.jqGrid('addRowData', i, resultados[i]);
+			// // if(resultados[i].inpadre != null){
+				// // $('#'+i).css({'background':'#BDEDFF'});
+			// // }
+		// }
 				
 		inicializarResultados();
 	}

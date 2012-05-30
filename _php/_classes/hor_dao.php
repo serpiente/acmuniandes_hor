@@ -465,7 +465,7 @@ class Hor_Dao {
 		//TODO REVISION
 		print_r($horario);
 		if ($horario instanceof Horario) {
-			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'";';
+			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'" WHERE ID_HORARIO='.$horario -> getIdHorario().';';
 			$this -> queryMysql($query);
 			$query = 'DELETE FROM CURSOS_HORARIOS WHERE ID_HORARIO='.$horario -> getIdHorario().';';
 			$this -> queryMysql($query);

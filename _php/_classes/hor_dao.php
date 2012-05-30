@@ -168,10 +168,12 @@ class Hor_Dao {
 			if ($flag) {
 				$query .= "$colum=$valor";
 				$flag = FALSE;
+			}else{
+				$query .= ", $colum=$valor";
 			}
-			$query .= ", $colum=$valor";
 		}
 		$query .= " WHERE $where;";
+		return $query;
 	}
 
 	/**
@@ -451,20 +453,21 @@ class Hor_Dao {
 		//TODO REVISION
 		print_r($horario);
 		if ($horario instanceof Horario) {
-			$colums_valores = array('CREDITOS_TOTALES' => $horario -> getCreditosTotales(), 'NUM_CURSOS' => $horario -> getNumCursos(), 'NOMBRE' => $horario -> getNombre());
-			$query = $this -> updateSetWhere("HORARIOS", $colums_valores, "ID_HORARIO=" . $horario -> getIdHorario());
-			$query .= $this -> deleteFromWhereMysql('CURSOS_HORARIOS', "ID_HORARIO=" . $horario -> getIdHorario());
-
+			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'";';
+			$this -> queryMysql($query);
+			$query = 'DELETE FROM CURSOS_HORARIOS WHERE ID_HORARIO='.$horario -> getIdHorario().';';
+			$this -> queryMysql($query);
+			
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
-				// if ($curso instanceof Curso) {
-					$query .= "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
-				// } else {
-					// throw new Exception("El objeto no es una instancia de Curso", 1);
-				// }
+				if ($curso instanceof Curso) {
+					$query = "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
+					$this -> queryMysql($query);
+				} else {
+					throw new Exception("El objeto no es una instancia de Curso", 1);
+				}
 
 			}
-			$this -> queryMysql($query);
 		} else {
 			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");
 		}

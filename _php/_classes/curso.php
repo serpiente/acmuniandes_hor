@@ -97,8 +97,9 @@ class Curso {
 	/**
 	 * Indica el curso magistral, si lo tiene
 	 */
-	 public $magistral;
+	public $magistral;
 	
+	public $profesor;
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -128,13 +129,13 @@ class Curso {
 		foreach ($data as $llave => $valor) {
 			if (is_array($valor)) {
 				if ($llave == 'ocurrencias') {
-					poblarArregloObjetos($valor, 'Ocurrencia');
+					poblarArregloObjetos(&$valor, 'Ocurrencia');
 				}
 				if($llave == 'complementarias'){
-					poblarArregloObjetos($valor, 'Curso');
+					poblarArregloObjetos(&$valor, 'Curso');
 				}
 				if($llave == 'profesores'){
-					poblarArregloObjetos($valor, 'Profesor');
+					poblarArregloObjetos(&$valor, 'Profesor');
 				}
 			}
 			$this -> ${llave} = $valor;

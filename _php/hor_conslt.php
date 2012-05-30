@@ -130,7 +130,8 @@ function consultarCursosPorCBU($tipo) {
 function procesarConsulta($valor_consulta, $cbuflag) {
 	//TODO
 	global $dao; //Permite utilizar esta variable declarada fuera de la funcion
-
+	$ret = $dao -> consultarCualquierCriterio($valor_consulta,$cbuflag);
+	return $ret;
 	//echo del arreglo con objetos Curso, json encoded
 }
 

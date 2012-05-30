@@ -22,10 +22,12 @@ class Hor_Dao {
 	//Datos de la conexión a base de datos de DTI, NIFE
 	//TODO Se asume que es conexion directa, pero puede no serlo.
 	private $dbhost_ora = 'sisga.uniandes.edu.co:1521';
-	private $dbname_ora = 'nife';
 	private $dbuser_ora = 'INTEGRACION';
 	private $dbpass_ora = 'opzn290lh';
 	private $dbport_ora = 1521;
+	private $dbsid_ora = 'nife';
+	
+	private $conn;
 	
 	/**
 	 * Constructor de la clase
@@ -34,15 +36,8 @@ class Hor_Dao {
 		mysql_connect($this -> dbhost_mysql, $this -> dbuser_mysql, $this -> dbpass_mysql);
 		mysql_select_db($this -> dbname_mysql);
 
-		//TODO
-		//Establecer conexion con NIFE
-		$conn = oci_connect($this -> dbuser_ora, $this -> dbpass_ora, $this -> dbhost_ora."/".$this -> dbname_ora);
-		if (!$conn) {
-			$e = oci_error();
-			trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
-		}
+
 	}
-	
 	//METODOS
 	//Metodos privados son funciones de utilidad para realizar las consultas
 
@@ -64,10 +59,27 @@ class Hor_Dao {
 	 * @return $result tabla u objeto de resultados obtenida al ejecutar una sentencia, y sobre el cual se puede iterar
 	 */
 	private function queryOracle($query) {
-		$result = oci_execute($query) or die(oci_error());
-		return $result;
-	}
 
+		$this -> conn = oci_connect($this -> dbuser_ora, $this -> dbpass_ora, $this -> dbhost_ora . "/" . $this -> dbsid_ora);
+
+		if (!$this -> conn) {
+			$e = oci_error();
+			trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
+		}
+		$stid = oci_parse($this -> conn, $query);
+		
+		oci_execute($stid);
+		return $stid;
+	}
+	
+	/**
+	 * Método que cierre la conexión actual de Oracle.
+	 */
+	private function closeConnection()
+	{
+		oci_close($this->conn);
+	}
+	
 	/**
 	 * Retorna el siguiente registro o fila dada una tabla u objeto resultado de la ejecucion de una sentencia
 	 * @param $tabla_resultado tabla u objeto de resultados obtenida al ejecutar una sentencia
@@ -269,7 +281,7 @@ class Hor_Dao {
 	 */
 	private function consultarCursoPorCRNInterno($crn) {
 		//TODO Falta nombre de la tabla.
-		$query = "SELECT * FROM Vista c WHERE c.crn_key=$crn";
+		$query = "SELECT * FROM UA_PROYECTO_HORARIOS c WHERE c.CRN_KEY=$crn";
 		$result = $this -> queryOracle($query);
 		
 		return $this ->construirCursoDeArrAsoc($this -> darSiguienteRegistroOracle($result));
@@ -353,9 +365,9 @@ class Hor_Dao {
 		)
 		";
 		
-		
 		$result = $this -> queryOracle($query);
 		$array = $this -> crearArregloCursos($result);
+		$this -> closeConnection();
 		return json_encode($array);
 		
 		//return del arreglo con objetos Curso, json encoded
@@ -513,76 +525,79 @@ class Hor_Dao {
 	 * @return objeto de tipo Curso
 	 */
 	function construirCursoDeArrAsoc($arr_asoc) {
-		$curso = new Curso();
-		$curso -> setCapacidad_Total($arr_asoc["cupo"]);
-		$curso -> setCodigo_Curso($arr_asoc["subj_code"] + $arr_asoc["crse_number"]);
-		$curso -> setCreditos($arr_asoc["creditos"]);
-		$curso -> setCrn($arr_asoc["crn_key"]);
-		$curso -> setCupos_Disponibles($curso ->getcapacidad_Total() - $arr_asoc["inscritos"]);
-		$curso -> setDepartamento($arr_asoc["desc_depto"]);
-		$curso -> setNombre($arr_asoc["title"]);
-		$curso -> setSeccion($arr_asoc["seq_number_key"]);
 		
-		//TODO not sure
-		$curso.setTipo($arr_asoc["ATRIBUTO_SECCION"]);
+		$curso = new Curso();
+		$curso -> setCapacidad_Total($arr_asoc["CUPO"]);
+		$curso -> setCodigo_Curso($arr_asoc["SUBJ_CODE"] + $arr_asoc["CRSE_NUMBER"]);
+		$curso -> setCreditos($arr_asoc["CREDITOS"]);
+		$curso -> setCrn($arr_asoc["CRN_KEY"]);
+		$curso -> setCupos_Disponibles($curso ->getcapacidad_Total() - $arr_asoc["INSCRITOS"]);
+		$curso -> setDepartamento($arr_asoc["DESC_DEPTO"]);
+		$curso -> setNombre($arr_asoc["TITLE"]);
+		$curso -> setSeccion($arr_asoc["SEQ_NUMBER_KEY"]);
+		
+		$curso -> setTipo($arr_asoc["ATRIBUTO_SECCION"]);
 		
 		$profesores = array();
 		
-		for ($i=0; $i < 4; $i++) {
-			if($i == 0) 
-				$prof = $arr_asoc["primary_instructor_first_name"] + $arr_asoc["primary_instructor_last_name"];
+		for ($i=1; $i < 4; $i++) {
+			if($i == 1) 
+				$prof = $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"] + $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"];
 			else{
-				$prof = $arr_asoc["primary_instructor_first_name$i"] + $arr_asoc["primary_instructor_last_name$i"];
+				$prof = $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"] + $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
 			}
 			$profesores[] = $prof;
 		}
+		
 		$curso -> setProfesores($profesores);
 		
 		$array_compl = array();
+	/*
 		$arr_Strings = $arr_asoc["COMPLEMENTARIAS"];
-		$num = 0;
-		if (!empty($arr_Strings)) {
-			$crn_comps = explode(":", $arr_Strings);
-			foreach ($crn_comps as $compActual) {
-				$ret = $this -> consultarCursosPorCRN($compActual);
-				array_push($array_compl, $ret);
-				$num++;
+			$num = 0;
+			if (!empty($arr_Strings)) {
+				$crn_comps = explode(":", $arr_Strings);
+				foreach ($crn_comps as $compActual) {
+					$ret = $this -> consultarCursoPorCRNInterno($compActual);
+					array_push($array_compl, $ret);
+					$num++;
+				}
 			}
-		}
+			$curso -> setNumCompl($num);*/
+	
 		$curso -> setComplementarias($array_compl);
-		$curso -> setNumCompl($num);
+		
 		
 		$mag = null;
-		if($arr_asoc["MAGISTRAL"]){
-			$mag = $this -> consultarCursoPorCRNInterno($arr_asoc["MAGISTRAL"]);
-		}
+		// if($arr_asoc["MAGISTRAL"]){
+			// $mag = $this -> consultarCursoPorCRNInterno($arr_asoc["MAGISTRAL"]);
+		// }
 		$curso -> setMagistral($mag);
 
 		$ocurrencias = array();
 
 		for ($i = 1; $i <= 11; $i++) {
 			
-			$beginTime = $arr_asoc["begin_time" . i];
-			$endTime = $arr_asoc["end_time" . i];
-			$ffecha_ini = $arr_asoc["ffecha_ini" . i];
-			$ffecha_fin = $arr_asoc["ffecha_fin" . i];
+			$beginTime = $arr_asoc["BEGIN_TIME" . $i];
+			$endTime = $arr_asoc["END_TIME" . $i];
+			$ffecha_ini = $arr_asoc["FFECHA_INI" . $i];
+			$ffecha_fin = $arr_asoc["FFECHA_FIN" . $i];
 			
-			$mon = $arr_asoc["monday_ind" . i];
-			$tue = $arr_asoc["tuesday_ind" . i];
-			$wed = $arr_asoc["wednesday_ind" . i];
-			$thu = $arr_asoc["thursday_ind" . i];
-			$fri = $arr_asoc["friday_ind" . i];
-			$sat = $arr_asoc["saturday_ind" . i];
-			$sun = $arr_asoc["sunday_ind" . i];
+			$mon = $arr_asoc["MONDAY_IND" . $i];
+			$tue = $arr_asoc["TUESDAY_IND" . $i];
+			$wed = $arr_asoc["WEDNESDAY_IND" . $i];
+			$thu = $arr_asoc["THURSDAY_IND" . $i];
+			$fri = $arr_asoc["FRIDAY_IND" . $i];
+			$sat = $arr_asoc["SATURDAY_IND" . $i];
+			$sun = $arr_asoc["SUNDAY_IND" . $i];
 
-			//TODO terminar occurencias.
 			$dias = "";
 			if ($mon == "L") {
 				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon);
 				$dias += $mon;
 			}
 			if ($tue == "M") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tus);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tue);
 				$dias += $tue;
 			}
 			if ($wed == "I") {
@@ -607,6 +622,8 @@ class Hor_Dao {
 			}
 		}
 		$curso -> setOcurrencias($ocurrencias);
+		
+		return $curso;
 		
 	}
 	
@@ -679,7 +696,9 @@ class Hor_Dao {
 	{
 		$array = array();
 		
-		while($row = $this -> darNumeroResultadosOracle($result)){
+		while($row = $this -> darSiguienteRegistroOracle(($result))){
+
+			
 			$curso = $this ->construirCursoDeArrAsoc($row);
 			array_push($array,$curso);
 		}

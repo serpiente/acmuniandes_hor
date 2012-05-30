@@ -697,8 +697,6 @@ class Hor_Dao {
 		$array = array();
 		
 		while($row = $this -> darSiguienteRegistroOracle(($result))){
-
-			
 			$curso = $this ->construirCursoDeArrAsoc($row);
 			array_push($array,$curso);
 		}

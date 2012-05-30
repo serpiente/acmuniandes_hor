@@ -64,6 +64,7 @@ function crearNuevoHorario($nombre) {
  * @param $id_hor el id del horario que se desea abrir.
  */
 function asignarHorarioAbrir($id_hor){
+	global $dao;
 	$_SESSION['hor_abrir'] = $id_hor;
 	header("Location: /acmuniandes_hor/hor_coredisp.html");
 }
@@ -114,7 +115,6 @@ function guardarHorario($horario){
 	
 	try{
 		$horobj = new Horario($horario);
-		$horobj -> setUsuario($usuario);
 		$dao -> actualizarHorario($horobj);
 		echo TRUE;
 	} catch(Exception $e){
@@ -153,13 +153,14 @@ switch ($tipo_solicitud) {
 		}
 		break;
 	case TiposSolicitud::TipoGuardarHorario:
-		$horario_json = $dao -> sanitizeString($_POST['horario']);
+		$horario_json = $_POST['horario'];
 		if (!isset($horario_json)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 			throw new Exception("No se recibio el horario");
 		} else {
 			guardarHorario($horario_json);
 		}
+		break;
 	case TiposSolicitud::TipoAsignarHorarioAbrir:
 		$id_hor = $dao -> sanitizeString($_POST['id_hor']);
 		if (!isset($id_hor)) {
@@ -168,8 +169,10 @@ switch ($tipo_solicitud) {
 		} else {
 			asignarHorarioAbrir($id_hor);
 		}
+		break;
 	case TiposSolicitud::TipoAbrirHorario:
 		abrirHorario();
+		break;
 	default :
 		throw new Exception("El tipo de solicitud no es valido");
 		break;

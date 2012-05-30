@@ -3,7 +3,7 @@ $(function() {
 	var sel = -1;
 	var date = new Date();
 	var calendar = $('#scheduleContainer');
-	var resultGrid = $("#searchResults");
+	var resultGrid = $('#searchResults');
 	var mapaDias = {
 		L : darFecha(1),
 		M : darFecha(2),
@@ -11,7 +11,7 @@ $(function() {
 		J : darFecha(4),
 		V : darFecha(5),
 		S : darFecha(6)
-	}
+	};
 	var resultados = [{
 		"capacidad_Total" : 25,
 		"codigo_Curso" : "ISIS2203",
@@ -36,7 +36,7 @@ $(function() {
 			"salon" : "O201",
 			"unidades_Duracion" : 3
 		}],
-		"profesores" : ["Rodrigo Cardoso"],
+		"profesores" : [{"nombre":"Rodrigo", "apellido": "Cardoso"}],
 		"dias" : "LI",
 		"numcompl": 1,
 		"inpadre": null,
@@ -59,7 +59,7 @@ $(function() {
 			"salon" : "O301",
 			"unidades_Duracion" : 3
 		}],
-		"profesores" : ["Jaime Beltran"],
+		"profesores" : [{"nombre":"Jaime","apellido": "Beltran"}],
 		"dias" : "V",
 		"numcompl": 0,
 		"inpadre": 0,
@@ -88,7 +88,7 @@ $(function() {
 			"salon" : "R209",
 			"unidades_Duracion" : 3
 		}],
-		"profesores" : ["Julio Villareal"],
+		"profesores": [{"apellido":"Villareal", "nombre":"Julio"}],
 		"dias" : "MJ",
 		"numcompl": 0,
 		"inpadre": null,
@@ -111,7 +111,7 @@ $(function() {
 			"salon" : "O301",
 			"unidades_Duracion" : 3
 		}],
-		"profesores" : ["Jaime Beltran"],
+		"profesores" : [{"nombre":"Jaime","apellido": "Beltran"}],
 		"dias" : "V",
 		"numcompl": 0,
 		"inpadre": null,
@@ -190,7 +190,7 @@ $(function() {
 				} else {
 					horarioActual = new Horario();
 				}
-				// console.log(horarioActual);
+				console.log(horarioActual);
 			}
 		});
 	}
@@ -247,7 +247,7 @@ $(function() {
 		// });
 		resultGrid.jqGrid('clearGridData', this);
 		for(var i = 0; i < resultados.length; i++) {
-			resultados[i].profesor = resultados[i].profesores[0];
+			resultados[i].profesor = resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
 			resultGrid.jqGrid('addRowData', i, resultados[i]);
 			// if(resultados[i].inpadre != null){
 				// $('#'+i).css({'background':'#BDEDFF'});
@@ -445,31 +445,52 @@ $(function() {
 					buttons: {
 						"Si": function(){
 							$(this).dialog("close")
-							// $.ajax({
-								// /*url : '_php/hor_core.php',*/
-								// url : '_php/hor_core.php',
-								// data : {'tipsol':'5','horario':horarioActual},
-								// dataType : 'json',
-								// type : 'POST',
-								// success : function(response) {
-									// if(response){
-										// if(response.redirect) {
-											// // data.redirect contains the string URL to redirect to
-											// document.location = response.redirect;
-										// } else { 
-											// alert("El horario ha sido guardado correctamente.")
-										// }
-									// }
-									// else{
-										// alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
-									// }
-								// }
-							// });
+							$.ajax({
+								url : '_php/hor_core.php',
+								data : {'tipsol':'5','horario':horarioActual},
+								dataType : 'json',
+								type : 'POST',
+								success : function(response) {
+									if(response){
+										if(response.redirect) {
+											// data.redirect contains the string URL to redirect to
+											document.location = response.redirect;
+										} else { 
+											alert("El horario ha sido guardado correctamente.")
+										}
+									}
+									else{
+										alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
+									}
+								}
+							});
 						},
 						"No": function(){ $(this).dialog("close")}
 					}				
 				});
 				//alert('trouble');
+			} else {
+				$.ajax({
+					url : '_php/hor_core.php',
+					data : {
+						'tipsol' : '5',
+						'horario' : horarioActual
+					},
+					dataType : 'json',
+					type : 'POST',
+					success : function(response) {
+						if(response) {
+							if(response.redirect) {
+								// data.redirect contains the string URL to redirect to
+								document.location = response.redirect;
+							} else {
+								alert("El horario ha sido guardado correctamente.")
+							}
+						} else {
+							alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")
+						}
+					}
+				});
 			}
 		}		
 	}
@@ -691,7 +712,6 @@ $(function() {
 	});
 	
 	$("#saveButton").click(function(){
-		// console.log(horarioActual);
 		guardarHorario();
 	});
 

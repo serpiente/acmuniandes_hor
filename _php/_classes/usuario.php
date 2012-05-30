@@ -31,7 +31,7 @@ class Usuario {
 	 * @param $json representacion del objeto en formato json (string). Puede ser o no pasado como parametro.
 	 */
 	function __construct($json = false) {
-		if ($json) $this -> set(json_decode($json, true));
+		if ($json) $this -> set($json);
 		else $this -> horarios = array();
 	}
 	

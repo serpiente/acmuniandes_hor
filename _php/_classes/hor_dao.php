@@ -3,6 +3,9 @@ require_once 'utils.php';
 foreach (glob("_classes/*.php") as $filename) {
 	require_once $filename;
 }
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 /**
  * Clase que encapsula la funcionalidad para manejar las bases de datos
@@ -343,29 +346,31 @@ class Hor_Dao {
 	 * @return objeto de la clase Horario, json encoded
 	 */
 	function consultarHorarioPorId($id_hor) {
-		$query = "SELECT * FROM (SELECT * FROM HORARIOS WHERE HORARIOS.ID_HORARIO = $id_hor) as ins NATURAL JOIN CURSOS_HORARIOS";
+		$query = "SELECT * FROM HORARIOS WHERE HORARIOS.ID_HORARIO = $id_hor";
 		$result = $this -> queryMysql($query);
-		
-		$crns = array();
-		
-		$first = true;
+				
 		$hor = new Horario();
+		if($row = $this -> darSiguienteRegistroMySql($result)){
+			$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
+			$hor -> setFechaCreacion($row['FECHA_CREACION']);
+			$hor -> setGuardado(false);
+			$hor -> setIdHorario($row['ID_HORARIO']);
+			$hor -> setNombre($row['NOMBRE']);
+			$hor -> setNumCursos($row['NUM_CURSOS']);
+			$hor -> setUsuario($row['LOGIN_USUARIO']);	
+		}
+		
+		
+		$query = "SELECT CRN_CURSO FROM CURSOS_HORARIOS WHERE ID_HORARIO=$id_hor";
+		$result = $this -> queryMysql($query);
+		$crns = array();
 		while($row = $this -> darSiguienteRegistroMySql($result)){
-			if($first){
-				$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
-				$hor -> setFechaCreacion($row['FECHA_CREACION']);
-				$hor -> setGuardado(false);
-				$hor -> setIdHorario($row['ID_HORARIO']);
-				$hor -> setNombre($row['NOMBRE']);
-				$hor -> setNumCursos($row['NUM_CURSOS']);
-				$hor -> setUsuario($row['LOGIN_USUARIO']);
-				$first = false;
-			}
 			$crns[] = $row['CRN_CURSO'];
 		}
+		
 		$cursos = array();
 		foreach ($crns as $crn) {
-			$cursos[] = $this -> consultarCursosPorCRN($crn);
+			$cursos[] = $this -> consultarCursoPorCRNInterno($crn);
 		}
 		$hor -> setCursos($cursos);
 		return json_encode($hor);
@@ -423,18 +428,19 @@ class Hor_Dao {
 	 */
 	function actualizarHorario($horario) {
 		//TODO REVISION
+		print_r($horario);
 		if ($horario instanceof Horario) {
-			$colums_valores = array('Creditos_Totales' => $horario -> getCreditosTotales(), 'Num_Cursos' => $horario -> getNumCursos(), 'Nombre' => $horario -> getNombre());
-			$query = $this -> updateSetWhere("Horarios", $colums_valores, "Id_Horario=" . $horario -> getIdHorario());
-			$query .= $this -> deleteFromWhereMysql('Cursos_Horarios', "Id_Horario=" . $horario -> getIdHorario());
+			$colums_valores = array('CREDITOS_TOTALES' => $horario -> getCreditosTotales(), 'NUM_CURSOS' => $horario -> getNumCursos(), 'NOMBRE' => $horario -> getNombre());
+			$query = $this -> updateSetWhere("HORARIOS", $colums_valores, "ID_HORARIO=" . $horario -> getIdHorario());
+			$query .= $this -> deleteFromWhereMysql('CURSOS_HORARIOS', "ID_HORARIO=" . $horario -> getIdHorario());
 
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
-				if ($curso instanceof Curso) {
-					$query .= "INSERT INTO Cursos_Horarios (Id_Horario, CRN_Curso) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
-				} else {
-					throw new Exception("El objeto no es una instancia de Curso", 1);
-				}
+				// if ($curso instanceof Curso) {
+					$query .= "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
+				// } else {
+					// throw new Exception("El objeto no es una instancia de Curso", 1);
+				// }
 
 			}
 			$this -> queryMysql($query);

@@ -14,7 +14,7 @@ if (!$conn) {
     trigger_error(htmlentities($e['message'], ENT_QUOTES), E_USER_ERROR);
 }
 
-$stid = oci_parse($conn, 'SELECT * FROM UA_PROYECTO_HORARIOS');
+$stid = oci_parse($conn, 'SELECT PH.TITLE,PH.CRN_KEY, PH.MAGISTRAL,PH.COMPLEMENTARIAS FROM UA_PROYECTO_HORARIOS PH WHERE COMPLEMENTARIAS IS NOT NULL');
 oci_execute($stid);
 
 echo "<table border='1'>\n";

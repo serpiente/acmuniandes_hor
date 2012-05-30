@@ -37,12 +37,12 @@ $(function() {
 		// console.log(i);
 		this.id = "" + i + "-" + j;
 
-		var hmi = ocur.horaInicio.split(":");
+		var hmi = {0:ocur.horaInicio.substring(0,2), 1:ocur.horaInicio.substring(2,ocur.horaInicio.length)};
 		var fecha = mapaDias[ocur.dia];
 		this.start = fecha.setHours(hmi[0], hmi[1]);
 		// console.log(this.start);
 
-		var hmf = ocur.horaFin.split(":");
+		var hmf = {0:ocur.horaFin.substring(0,2), 1:ocur.horaFin.substring(2,ocur.horaFin.length)};
 		this.end = fecha.setHours(hmf[0], hmf[1]);
 		// console.log(this.end);
 
@@ -125,10 +125,9 @@ $(function() {
 					}
 					else{
 						resultados = response;
-						console.log(response);
 						resultGrid.jqGrid('clearGridData', this);
 						for(var i = 0; i < resultados.length; i++) {
-							resultados[i].profesor = resultados[i].profesores[0];
+							resultados[i].profesor = "" + resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
 							resultGrid.jqGrid('addRowData', i, resultados[i]);
 							// if(resultados[i].inpadre != null){
 							// $('#'+i).css({'background':'#BDEDFF'});
@@ -279,10 +278,9 @@ $(function() {
 	 * @param curso el objeto de tipo curso a ser agregado
 	 */
 	function agregarCursoHorario(curso){
-		
 		horarioActual.cursos[horarioActual.num_Cursos]=curso;
 		horarioActual.num_Cursos++;
-		horarioActual.creditos_Totales += curso.creditos;
+		horarioActual.creditos_Totales = parseInt(horarioActual.creditos_Totales)+ parseInt(curso.creditos);
 		// console.log("after adding")
 		// console.log(horarioActual)
 	}
@@ -312,7 +310,6 @@ $(function() {
 	 * Guarda el horario actual de un usuario en el servidor. Si encuentra problemas de complementarias envía una alerta.
 	 */
 	function guardarHorario(){
-		
 		if(horarioActual.cursos.length == 0){
 			$("#dialogConf").empty();
 			$("#dialogConf").append("El horario actual se encuentra vacio");
@@ -375,6 +372,7 @@ $(function() {
 					dataType : 'json',
 					type : 'POST',
 					success : function(response) {
+						console.log(response);
 						if(response) {
 							if(response.redirect) {
 								// data.redirect contains the string URL to redirect to
@@ -610,6 +608,35 @@ $(function() {
 	$("#saveButton").click(function(){
 		guardarHorario();
 	});
+	
+	$("#adminButton").click(function(){
+		document.location = '/acmuniandes_hor/hor_admin.html';
+	});
+	
+	$("#logoutButton").click(function(){
+		params = {tipsol:'4'};
+		postform('_php/hor_auth.php',params);
+	});
+	
+	function postform(path, params){
+		var form = document.createElement("form");
+		form.setAttribute("method", "POST");
+		form.setAttribute("action", path);
+		
+		for(var key in params) {
+			if(params.hasOwnProperty(key)) {
+				var hiddenField = document.createElement("input");
+				hiddenField.setAttribute("type", "hidden");
+				hiddenField.setAttribute("name", key);
+				hiddenField.setAttribute("value", params[key]);
+
+				form.appendChild(hiddenField);
+			}
+		}
+
+		document.body.appendChild(form);
+		form.submit();
+	}
 
 	// calendar.droppable({
 		// accept : ".jqgrow",

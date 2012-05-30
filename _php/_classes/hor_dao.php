@@ -3,8 +3,8 @@ require_once 'utils.php';
 foreach (glob("_classes/*.php") as $filename) {
 	require_once $filename;
 }
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 
 /**
@@ -463,7 +463,6 @@ class Hor_Dao {
 	 */
 	function actualizarHorario($horario) {
 		//TODO REVISION
-		print_r($horario);
 		if ($horario instanceof Horario) {
 			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'" WHERE ID_HORARIO='.$horario -> getIdHorario().';';
 			$this -> queryMysql($query);
@@ -531,7 +530,7 @@ class Hor_Dao {
 		
 		$curso = new Curso();
 		$curso -> setCapacidad_Total($arr_asoc["CUPO"]);
-		$curso -> setCodigo_Curso($arr_asoc["SUBJ_CODE"] + $arr_asoc["CRSE_NUMBER"]);
+		$curso -> setCodigo_Curso($arr_asoc["SUBJ_CODE"].$arr_asoc["CRSE_NUMBER"]);
 		$curso -> setCreditos($arr_asoc["CREDITOS"]);
 		$curso -> setCrn($arr_asoc["CRN_KEY"]);
 		$curso -> setCupos_Disponibles($curso ->getcapacidad_Total() - $arr_asoc["INSCRITOS"]);
@@ -544,10 +543,14 @@ class Hor_Dao {
 		$profesores = array();
 		
 		for ($i=1; $i < 4; $i++) {
-			if($i == 1) 
-				$prof = $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"] + $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"];
+			$prof = new Profesor();
+			if($i == 1) {
+				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"]);
+				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"]);
+			}
 			else{
-				$prof = $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"] + $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
+				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"]);
+				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"]);
 			}
 			$profesores[] = $prof;
 		}
@@ -698,10 +701,12 @@ class Hor_Dao {
 	private function crearArregloCursos($result)
 	{
 		$array = array();
-		
+		$i = 0;
 		while($row = $this -> darSiguienteRegistroOracle(($result))){
 			$curso = $this ->construirCursoDeArrAsoc($row);
+			$curso -> setIndiceEnResultados($i);
 			array_push($array,$curso);
+			$i++;
 		}
 		
 		return $array;

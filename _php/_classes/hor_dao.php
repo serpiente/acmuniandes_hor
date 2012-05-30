@@ -333,10 +333,30 @@ class Hor_Dao {
 	 */
 	function consultarCualquierCriterio($valor_consulta, $cbuflag) {
 		//TODO
-		$query = "Seleccionar todo. MENOS (seleccionar las complementarias cuya magistral este en ( seleccionar todo magistral))";
+		$query = "SELECT *
+		FROM UA_PROYECTO_HORARIOS PH
+		WHERE (PH.DESC_DEPTO LIKE '%$valor_consulta%' 
+		OR	 PH.DEPARTAMENTO LIKE '%$valor_consulta%'
+		OR	 PH.TITLE LIKE '%$valor_consulta%'
+		OR PH.PRIMARY_INSTRUCTOR_LAST_NAME LIKE '%$valor_consulta%'
+		OR PH.PRIMARY_INSTRUCTOR_FIRST_NAME LIKE '%$valor_consulta%'
+		OR PH.PRIMARY_INSTRUCTOR_LAST_NAME2 LIKE '%$valor_consulta%'
+		OR	 PH.PRIMARY_INSTRUCTOR_FIRST_NAME2 LIKE '%$valor_consulta%'
+		OR	 PH.PRIMARY_INSTRUCTOR_LAST_NAME3 LIKE '%$valor_consulta%'
+		OR	 PH.PRIMARY_INSTRUCTOR_FIRST_NAME3 LIKE '%$valor_consulta%'
+		OR PH.CRN_KEY LIKE '%$valor_consulta%'
+		OR PH.SUBJ_CODE LIKE '%$valor_consulta%'
+		OR PH.CRSE_NUMBER LIKE '%$valor_consulta%'
+		)
+		";
+		
+		
+		$result = $this -> queryOracle($query);
+		$array = $this -> crearArregloCursos($result);
+		return json_encode($array);
+		
 		//return del arreglo con objetos Curso, json encoded
 	}
-	
 		/**
 	 * Retorna un horario, dado su id
 	 * @param $id_hor string indicando el identificador unico de un horario
@@ -347,6 +367,7 @@ class Hor_Dao {
 		$result = $this -> queryMysql($query);
 		
 		$crns = array();
+		
 		
 		$first = true;
 		$hor = new Horario();
@@ -641,6 +662,24 @@ class Hor_Dao {
 		// }
 		// return $resultados;
 	// }
+	
+	/**
+	 * Método que crea un arreglo de cursos sin ninguna particularidad a partir del resultado de una consulta
+	 * hecha en oracle.
+	 * @param $result -> resultado de la ejecución de la consulta.
+	 * @return array() -> Arreglo de cursos. No es JSON ENCODE.
+	 */
+	private function crearArregloCursos($result)
+	{
+		$array = array();
+		
+		while($row = $this -> darNumeroResultadosOracle($result)){
+			$curso = $this ->construirCursoDeArrAsoc($row);
+			array_push($array,$curso);
+		}
+		
+		return $array;
+	}
 	
 	/**
 	 * Crea un objeto de tipo ocurrencia dadas las horas de inicio y fin y el día de la semana

@@ -74,7 +74,7 @@ class Horario {
 		foreach ($data as $llave => $valor) {
 			if (is_array($valor)) {
 				if($llave == 'cursos'){
-					poblarArregloObjetos($valor, 'Curso');
+					poblarArregloObjetos(&$valor, 'Curso');
 				}
 			}
 			$this -> ${llave} = $valor;

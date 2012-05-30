@@ -153,6 +153,7 @@ switch ($tipo_solicitud) {
 		}
 		break;
 	case TiposSolicitud::TipoGuardarHorario:
+		echo $_POST['horario'];
 		$horario_json = $_POST['horario'];
 		if (!isset($horario_json)) {
 			//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP

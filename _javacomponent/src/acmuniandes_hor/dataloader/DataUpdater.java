@@ -21,9 +21,9 @@ public class DataUpdater implements Runnable{
 	private JavaDao dao;
 	
 	
-	public DataUpdater(String url){
+	public DataUpdater(String url, JavaDao dao){
 		this.URL = url;
-		this.dao = new JavaDao();
+		this.dao = dao;
 	}
 	
 	private void scrape() throws ClientProtocolException, IOException{

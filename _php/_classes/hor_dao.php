@@ -180,12 +180,10 @@ class Hor_Dao {
 			if ($flag) {
 				$query .= "$colum=$valor";
 				$flag = FALSE;
-			}else{
-				$query .= ", $colum=$valor";
 			}
+			$query .= ", $colum=$valor";
 		}
 		$query .= " WHERE $where;";
-		return $query;
 	}
 
 	/**
@@ -470,21 +468,29 @@ class Hor_Dao {
 	function actualizarHorario($horario) {
 		//TODO REVISION
 		if ($horario instanceof Horario) {
-			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'" WHERE ID_HORARIO='.$horario -> getIdHorario().';';
-			$this -> queryMysql($query);
-			$query = 'DELETE FROM CURSOS_HORARIOS WHERE ID_HORARIO='.$horario -> getIdHorario().';';
-			$this -> queryMysql($query);
-			
+			$colums_valores = array('CREDITOS_TOTALES' => $horario -> getCreditosTotales(), 'NUM_CURSOS' => $horario -> getNumCursos(), 'NOMBRE' => $horario -> getNombre());
+			$query = $this -> updateSetWhere("HORARIOS", $colums_valores, "ID_HORARIO=" . $horario -> getIdHorario());
+			$query .= $this -> deleteFromWhereMysql('CURSOS_HORARIOS', "ID_HORARIO=" . $horario -> getIdHorario());
+
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
+<<<<<<< HEAD
 				if ($curso instanceof Curso) {
 					$query = "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
 					$this -> queryMysql($query);
 				} else if($curso != 'null') {
 					throw new Exception("El objeto no es una instancia de Curso", 1);
 				}
+=======
+				// if ($curso instanceof Curso) {
+					$query .= "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
+				// } else {
+					// throw new Exception("El objeto no es una instancia de Curso", 1);
+				// }
+>>>>>>> e278d7aed9ad7bf889f67e7ad02e7c9da924df37
 
 			}
+			$this -> queryMysql($query);
 		} else {
 			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");
 		}
@@ -709,6 +715,8 @@ class Hor_Dao {
 		$array = array();
 		$i = 0;
 		while($row = $this -> darSiguienteRegistroOracle(($result))){
+
+			
 			$curso = $this ->construirCursoDeArrAsoc($row);
 			$curso -> setIndiceEnResultados($i);
 			array_push($array,$curso);

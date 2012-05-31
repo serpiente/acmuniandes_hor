@@ -33,6 +33,7 @@ class Hor_Dao {
 	 * Constructor de la clase
 	 */
 	function __construct() {
+		initConections();
 		mysql_connect($this -> dbhost_mysql, $this -> dbuser_mysql, $this -> dbpass_mysql);
 		mysql_select_db($this -> dbname_mysql);
 
@@ -468,9 +469,10 @@ class Hor_Dao {
 	function actualizarHorario($horario) {
 		//TODO REVISION
 		if ($horario instanceof Horario) {
-			$colums_valores = array('CREDITOS_TOTALES' => $horario -> getCreditosTotales(), 'NUM_CURSOS' => $horario -> getNumCursos(), 'NOMBRE' => $horario -> getNombre());
-			$query = $this -> updateSetWhere("HORARIOS", $colums_valores, "ID_HORARIO=" . $horario -> getIdHorario());
-			$query .= $this -> deleteFromWhereMysql('CURSOS_HORARIOS', "ID_HORARIO=" . $horario -> getIdHorario());
+			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'" WHERE ID_HORARIO='.$horario -> getIdHorario().';';
+			$this -> queryMysql($query);
+			$query = 'DELETE FROM CURSOS_HORARIOS WHERE ID_HORARIO='.$horario -> getIdHorario().';';
+			$this -> queryMysql($query);
 
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
@@ -706,8 +708,6 @@ class Hor_Dao {
 		$array = array();
 		$i = 0;
 		while($row = $this -> darSiguienteRegistroOracle(($result))){
-
-			
 			$curso = $this ->construirCursoDeArrAsoc($row);
 			$curso -> setIndiceEnResultados($i);
 			array_push($array,$curso);
@@ -744,6 +744,19 @@ class Hor_Dao {
 		$var = htmlentities($var);
 		$var = stripslashes($var);
 		return mysql_real_escape_string($var);
+	}
+	
+	/**
+	 * Inicializa la información de conexiones desde disco
+	 */
+	function initConections() {
+		$file = fopen("infobd.csv", "r") or exit("No se pudo establecer la conexion");
+		$info = array();
+		if(!feof($file)) {
+			 fgets($file);
+		}
+
+		fclose($file);
 	}
 
 }

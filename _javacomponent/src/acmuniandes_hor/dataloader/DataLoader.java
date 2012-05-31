@@ -78,6 +78,7 @@ public class DataLoader implements Runnable{
 			Curso curso = new Curso();
 			curso.setCrn(textos.get(i++).text());
 			if(hm.get(curso.getCrn()) != null){
+				System.out.println("SUP");
 				curso.setMagistral(hm.get(curso.getCrn()));
 			}			
 			curso.setCodigo(textos.get(i++).text());
@@ -95,6 +96,7 @@ public class DataLoader implements Runnable{
 			curso.setCapacidad(Integer.parseInt(textos.get(i++).text()));
 			curso.setInscritos(Integer.parseInt(textos.get(i++).text()));
 			curso.setDisponibles(Integer.parseInt(textos.get(i++).text()));
+			
 			if (i<textos.size()) {
 				if (!textos.get(i).text().equals("-")&& !textos.get(i).text().isEmpty()) {
 					ArrayList<Ocurrencia> ocurrencias = new ArrayList<Ocurrencia>();
@@ -131,14 +133,19 @@ public class DataLoader implements Runnable{
 				ArrayList<String> profesores = new ArrayList<String>();
 				String profesor = textos.get(i++).text();
 				while (!profesor.matches("[0-9]+")) {
+				
 					if(profesor.matches("^La .+- -$")){
+
 						String [] compls = profesor.replaceAll(" ", "").split(":")[1].split("-");
+						
 						curso.setComplementarias(compls);
 						for (int j = 0; j < compls.length; j++) {
+							System.out.println(compls[j]);
 							hm.put(compls[j], curso.getCrn());
 						}
 					} else if(profesor.matches("^Debe .+[0-9]$")){
 						String[] sentence = profesor.split(" ");
+						
 						hmsis.put(""+sentence[3]+sentence[sentence.length-1], curso.getCrn());
 					} else {
 						profesores.add(profesor);

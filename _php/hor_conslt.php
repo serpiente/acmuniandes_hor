@@ -135,7 +135,7 @@ function procesarConsulta($valor_consulta, $cbuflag) {
 	//echo del arreglo con objetos Curso, json encoded
 }
 
-$valor_consulta = $dao -> sanitizeString($_GET['valcon']);
+$valor_consulta = strtoupper($dao -> sanitizeString($_GET['valcon']));
 if (!isset($valor_consulta)) {
 	//Condicion que implica que el parametro no fue recibio del cliente web a traves del metodo de HTTP
 	throw new Exception("No existe entrada de usuario");

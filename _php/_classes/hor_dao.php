@@ -285,7 +285,7 @@ class Hor_Dao {
 		//TODO Falta nombre de la tabla.
 		$query = "SELECT * FROM UA_PROYECTO_HORARIOS c WHERE c.CRN_KEY=$crn";
 		$result = $this -> queryOracle($query);
-		
+		$this -> closeConnection();
 		return $this ->construirCursoDeArrAsoc($this -> darSiguienteRegistroOracle($result));
 		//return Objeto de la clase Curso, sin hacer el json_encode
 	}
@@ -368,13 +368,19 @@ class Hor_Dao {
 		";
 		
 		$result = $this -> queryOracle($query);
-		$array = $this -> crearArregloCursos($result);
-		$this -> closeConnection();
-		return json_encode($array);
+		//TODO
+		if($this -> darNumeroResultadosOracle($result) > 100){
+			return json_encode(array('message' => 'Esta busqueda retorna demasiados resultados. Refine su busqueda e intente de nuevo.'));
+		} else {
+			$array = $this -> crearArregloCursos($result);
+			$this -> closeConnection();
+			return json_encode($array);
+		}
 		
 		//return del arreglo con objetos Curso, json encoded
 	}
-		/**
+	
+	/**
 	 * Retorna un horario, dado su id
 	 * @param $id_hor string indicando el identificador unico de un horario
 	 * @return objeto de la clase Horario, json encoded
@@ -474,7 +480,7 @@ class Hor_Dao {
 				if ($curso instanceof Curso) {
 					$query = "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
 					$this -> queryMysql($query);
-				} else {
+				} else if($curso != 'null') {
 					throw new Exception("El objeto no es una instancia de Curso", 1);
 				}
 

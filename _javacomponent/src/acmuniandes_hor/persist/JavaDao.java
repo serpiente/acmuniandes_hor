@@ -1,5 +1,9 @@
 package acmuniandes_hor.persist;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
+
 import acmuniandes_hor.entidades.Curso;
 
 public class JavaDao {

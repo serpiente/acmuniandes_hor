@@ -96,7 +96,7 @@ public class DataLoader implements Runnable{
 			curso.setInscritos(Integer.parseInt(textos.get(i++).text()));
 			curso.setDisponibles(Integer.parseInt(textos.get(i++).text()));
 			if (i<textos.size()) {
-				if (!textos.get(i).text().equals("-")&& !textos.get(i).text().isEmpty()) {
+				if (!textos.get(i).text().equals("-") && !textos.get(i).text().isEmpty() && textos.get(i).text().matches("[LMIJVSD ]+")) {
 					ArrayList<Ocurrencia> ocurrencias = new ArrayList<Ocurrencia>();
 					while (i < textos.size() && textos.get(i).text().matches("[LMIJVSD ]+")) {
 						curso.setDias(textos.get(i++).text());
@@ -120,6 +120,8 @@ public class DataLoader implements Runnable{
 						}
 					}
 					curso.setOcurrencias(ocurrencias);
+				} else if(textos.get(i).text().matches("[0-9]+")){
+					continue;
 				} else {
 					i++;
 					i++;

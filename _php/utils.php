@@ -1,4 +1,6 @@
 <?php
+// error_reporting(E_ALL);
+// ini_set('display_errors', 1);
 
 require_once '_classes/hor_dao.php';
 $dao = new Hor_Dao(); //instanciación del dao
@@ -68,13 +70,14 @@ function destroySession()
  * @param $nombreobj string que indica el nombre de la clase de los objetos a crear
  */
 function poblarArregloObjetos($arr, $nombreobj) {
-		for ($i = 0; $i < sizeof($arr); $i++) {
-			$obj = $arr[$i];
+	for ($i = 0; $i < sizeof($arr); $i++) {
+		if($arr[$i] != 'null'){
 			$sub = new ${nombreobj};
-			$sub -> set($obj);
-			$arr[$i] = $sub;
+			$sub -> set($arr[$i]);
+			$arr[$i] = $sub;				
 		}
 	}
+}
 
 /**
  * Redirige al usuario a la página de login

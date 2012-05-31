@@ -7,6 +7,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import acmuniandes_hor.persist.JavaDao;
+
 public class URLLoader {
 	
 	private final static String BASE_URL = "http://registroapps.uniandes.edu.co";
@@ -20,6 +22,7 @@ public class URLLoader {
 	//private String[] codDepartamentos;
 	private String[] urls;
 	private int numdeptos;
+	private JavaDao dao;;
 	
 	public URLLoader(){
 		//this.codDepartamentos = new String[NUM_DEPTOS];
@@ -38,19 +41,23 @@ public class URLLoader {
 //		dl.run();
 		
 		long s = System.currentTimeMillis();
+		dao = new JavaDao();
 		for (int i = 0; i < this.numdeptos; i++) {
-			DataLoader dl = new DataLoader(this.departamentos[i], this.urls[i]);
+			DataLoader dl = new DataLoader(this.departamentos[i], this.urls[i], dao);
 			dl.run();
 //			new Thread(dl).start();
 		}
 		System.out.println("TOTAL DURATION SEQUENTIAL: "+(System.currentTimeMillis() - s));
+		dao.closeConnection();
 		s = System.currentTimeMillis();
 		while (true) {
+			dao = new JavaDao();
 			for (int i = 0; i < this.numdeptos; i++) {
-				DataUpdater du = new DataUpdater(this.urls[i]);
+				DataUpdater du = new DataUpdater(this.urls[i], dao);
 				du.run();
 //				new Thread(du).start();
 			}
+			dao.closeConnection();
 			System.out.println("TOTAL DURATION UPDATE SEQUENTIAL: "+(System.currentTimeMillis() - s));
 			try {
 				Thread.sleep(60000);

@@ -36,11 +36,11 @@ public class DataLoader implements Runnable{
 	private HashMap<String, String> hm;
 	private HashMap<String, String> hmsis;
 	
-	public DataLoader(String depto, String url){
+	public DataLoader(String depto, String url, JavaDao dao){
 		this.departamento = depto;
 		//this.codDepartamento = codDepto;
 		this.URL = url;
-		this.dao = new JavaDao();
+		this.dao = dao;
 		this.hm = new HashMap<String, String>();
 		this.hmsis = new HashMap<String, String>();
 	}

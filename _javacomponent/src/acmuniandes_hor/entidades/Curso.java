@@ -41,7 +41,7 @@ public class Curso {
 	private int numcompl;
 	
 	public Curso(){
-		
+		tipo = 'N';
 	}
 
 	public int getCapacidad() {

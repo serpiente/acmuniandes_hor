@@ -474,21 +474,12 @@ class Hor_Dao {
 
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
-<<<<<<< HEAD
 				if ($curso instanceof Curso) {
 					$query = "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
 					$this -> queryMysql($query);
 				} else if($curso != 'null') {
 					throw new Exception("El objeto no es una instancia de Curso", 1);
 				}
-=======
-				// if ($curso instanceof Curso) {
-					$query .= "INSERT INTO CURSOS_HORARIOS (ID_HORARIO, CRN_CURSO) VALUES (" . $horario -> getIdHorario() . "," . $curso -> getCrn() . ");";
-				// } else {
-					// throw new Exception("El objeto no es una instancia de Curso", 1);
-				// }
->>>>>>> e278d7aed9ad7bf889f67e7ad02e7c9da924df37
-
 			}
 			$this -> queryMysql($query);
 		} else {

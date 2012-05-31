@@ -1,3 +1,7 @@
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
 $(function() {
 	// var dropped = false;
 	var bigIndex = 0;
@@ -34,7 +38,7 @@ $(function() {
 		}
 	}
 
-	function OcurCalendar(curso, ocur, i, j, ie, crn, numocur, curso) {
+	function OcurCalendar(curso, ocur, i, j, ie, crn, numocur) {
 		// console.log(i);
 		this.id = "" + i + "-" + j;
 

@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
 require_once 'utils.php';
 foreach (glob("_classes/*.php") as $filename) {
 	require_once $filename;
@@ -33,7 +37,7 @@ class Hor_Dao {
 	 * Constructor de la clase
 	 */
 	function __construct() {
-		initConections();
+		$this -> initConections();
 		mysql_connect($this -> dbhost_mysql, $this -> dbuser_mysql, $this -> dbpass_mysql);
 		mysql_select_db($this -> dbname_mysql);
 
@@ -750,7 +754,7 @@ class Hor_Dao {
 	 * Inicializa la información de conexiones desde disco
 	 */
 	function initConections() {
-		$file = fopen("../../_data/infobd.csv", "r") or exit("No se pudo establecer la conexion");
+		$file = fopen("../_data/infobd.csv", "r") or exit("No se pudo establecer la conexion");
 		$info = array();
 		if(!feof($file)) {
 			 $info = explode(",", fgets($file));

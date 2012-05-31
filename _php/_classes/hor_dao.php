@@ -13,19 +13,19 @@ foreach (glob("_classes/*.php") as $filename) {
 class Hor_Dao {
 
 	//Datos de la conexion a base de datos propia Wayu
-	private $dbhost_mysql = 'apolo.uniandes.edu.co:3308';
-	private $dbname_mysql = 'dbcrearhorario';
-	private $dbuser_mysql = 'usdbcrearhorario';
-	private $dbpass_mysql = '4CbWAHKz';
-	private $dbport_mysql = 3308;
+	private $dbhost_mysql;
+	private $dbname_mysql;
+	private $dbuser_mysql;
+	private $dbpass_mysql;
+	private $dbport_mysql;
 
 	//Datos de la conexión a base de datos de DTI, NIFE
 	//TODO Se asume que es conexion directa, pero puede no serlo.
-	private $dbhost_ora = 'sisga.uniandes.edu.co:1521';
-	private $dbuser_ora = 'INTEGRACION';
-	private $dbpass_ora = 'opzn290lh';
-	private $dbport_ora = 1521;
-	private $dbsid_ora = 'nife';
+	private $dbhost_ora;
+	private $dbuser_ora;
+	private $dbpass_ora;
+	private $dbport_ora;
+	private $dbsid_ora;
 	
 	private $conn;
 	
@@ -750,13 +750,25 @@ class Hor_Dao {
 	 * Inicializa la información de conexiones desde disco
 	 */
 	function initConections() {
-		$file = fopen("infobd.csv", "r") or exit("No se pudo establecer la conexion");
+		$file = fopen("../../_data/infobd.csv", "r") or exit("No se pudo establecer la conexion");
 		$info = array();
 		if(!feof($file)) {
-			 fgets($file);
+			 $info = explode(",", fgets($file));
 		}
-
 		fclose($file);
+		
+		$this -> dbhost_mysql = $info[0];
+		$this -> dbname_mysql = $info[1];
+		$this -> dbuser_mysql = $info[2];
+		$this -> dbpass_mysql = $info[3];
+		$this -> dbport_mysql = $info[4];
+		
+		$this -> dbhost_ora = $info[5];
+		$this -> dbuser_ora = $info[6];
+		$this -> dbpass_ora = $info[7];
+		$this -> dbport_ora = $info[8];
+		$this -> dbsid_ora = $info[9];				
+
 	}
 
 }

@@ -1,5 +1,9 @@
 package acmuniandes_hor.entidades;
-
+/**
+* Copyright Capítulo Estudiantil ACM Universidad de los Andes
+* Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+* Liderado por Juan Tejada y Jorge Lopez.
+**/
 public class Ocurrencia {
 	
 	public final static char L = 'L';

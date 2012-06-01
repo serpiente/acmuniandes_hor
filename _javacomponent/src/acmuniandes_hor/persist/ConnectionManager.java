@@ -1,24 +1,24 @@
 package acmuniandes_hor.persist;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
-
 import javax.swing.JOptionPane;
-
-
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
 
 /**
- * Método que maneja la conexión a MYSQL. Provee diferentes métodos para
+ * 
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+ * Liderado por Juan Tejada y Jorge Lopez.
+ *
+ * Clase que maneja la conexión a MYSQL. Provee diferentes métodos para
  * inicializar la conexión.
- * 
- * @author Jorge
- * 
  */
 public class ConnectionManager {
 
@@ -26,15 +26,15 @@ public class ConnectionManager {
 	// Constantes
 	// ------------------------------
 
-	private final static String SSH_HOST = "crearhorariopr.uniandes.edu.co";
-	private final static String SSH_USER = "crearhorario";
-	private final static String SSH_PASSWORD = "w3amJHcq";
-	private final static int FOWARD_PORT = 1113;
-	private final static String REMOTE_HOST = "apolo.uniandes.edu.co";
-	private final static int REMOTE_PORT = 3308;
-	private final static String REMOTE_INSTANCE = "dbcrearhorario";
-	private final static String REMOTE_USER = "usdbcrearhorario";
-	private final static String REMOTE_PASSWORD = "4CbWAHKz";
+	private static String SSH_HOST;
+	private static String SSH_USER;
+	private static String SSH_PASSWORD;
+	private static int FOWARD_PORT;
+	private static String REMOTE_HOST;
+	private static int REMOTE_PORT;
+	private static String REMOTE_INSTANCE;
+	private static String REMOTE_USER;
+	private static String REMOTE_PASSWORD;
 
 	// ---------------------------
 	// Atributos
@@ -66,6 +66,7 @@ public class ConnectionManager {
 	 * creando un tunel SSH.
 	 */
 	public ConnectionManager() {
+		loadInfoConexion();
 		conMySQL = obtenerConexionTunelSSH();
 	}
 
@@ -171,11 +172,26 @@ public class ConnectionManager {
 			return null;
 		}
 	}
-
-	public static void main(String[] args) {
-		ConnectionManager cm = new ConnectionManager();
-		cm.closeConnection();
-
+	
+	private void loadInfoConexion()
+	{
+		try{
+		BufferedReader bf = new BufferedReader(new FileReader(new File("./data/conexiones.csv")));
+		String[] partes = bf.readLine().split(",");
+		SSH_HOST = partes[0];
+		SSH_USER = partes[1];
+		SSH_PASSWORD = partes[2];
+		FOWARD_PORT = Integer.parseInt(partes[3]);
+		REMOTE_HOST = partes[4];
+		REMOTE_PORT = Integer.parseInt(partes[5]);
+		REMOTE_INSTANCE = partes[6];
+		REMOTE_USER  = partes[7];
+		REMOTE_PASSWORD = partes[8];
+		
+		}catch(Exception e)
+		{
+			System.out.println("Problemas cargando los datos de la conexion. Tal vez no este el archivo?");
+		}
 	}
 
 }

@@ -9,7 +9,11 @@ import org.jsoup.select.Elements;
 
 import acmuniandes_hor.entidades.Curso;
 import acmuniandes_hor.persist.JavaDao;
-
+/**
+* Copyright Capítulo Estudiantil ACM Universidad de los Andes
+* Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+* Liderado por Juan Tejada y Jorge Lopez.
+**/
 public class DataUpdater implements Runnable{
 
 	private final static String BASE_URL = "http://registroapps.uniandes.edu.co/scripts/adm_con_horario1_joomla.php?depto=";

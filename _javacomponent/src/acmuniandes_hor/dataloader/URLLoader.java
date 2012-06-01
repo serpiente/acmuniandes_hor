@@ -6,7 +6,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
+/**
+* Copyright Capítulo Estudiantil ACM Universidad de los Andes
+* Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+* Liderado por Juan Tejada y Jorge Lopez.
+**/
 import acmuniandes_hor.persist.JavaDao;
 
 public class URLLoader {

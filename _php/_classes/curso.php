@@ -103,7 +103,6 @@ class Curso {
 	 */
 	public $magistral;
 	
-	public $profesor;
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -137,9 +136,6 @@ class Curso {
 				}
 				if($llave == 'complementarias'){
 					poblarArregloObjetos(&$valor, 'Curso');
-				}
-				if($llave == 'profesores'){
-					poblarArregloObjetos(&$valor, 'Profesor');
 				}
 			}
 			$this -> ${llave} = $valor;

@@ -71,7 +71,7 @@ function crearNuevoHorario($nombre) {
 function asignarHorarioAbrir($id_hor){
 	global $dao;
 	$_SESSION['hor_abrir'] = $id_hor;
-	header("Location: /acmuniandes_hor/hor_coredisp.html");
+	header("Location: /acmuniandes_hor/index.php/horario");
 }
 
 /**

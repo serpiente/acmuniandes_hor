@@ -3,7 +3,6 @@
  * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
  */
 $(function() {
-	// var dropped = false;
 	var bigIndex = 0;
 	var sel = -1;
 	var date = new Date();
@@ -38,18 +37,15 @@ $(function() {
 		}
 	}
 
-	function OcurCalendar(curso, ocur, i, j, ie, crn, numocur) {
-		// console.log(i);
+	function OcurCalendar(curso, ocur, i, j, ie, numocur) {
 		this.id = "" + i + "-" + j;
 
 		var hmi = {0:ocur.horaInicio.substring(0,2), 1:ocur.horaInicio.substring(2,ocur.horaInicio.length)};
 		var fecha = mapaDias[ocur.dia];
 		this.start = fecha.setHours(hmi[0], hmi[1]);
-		// console.log(this.start);
 
 		var hmf = {0:ocur.horaFin.substring(0,2), 1:ocur.horaFin.substring(2,ocur.horaFin.length)};
 		this.end = fecha.setHours(hmf[0], hmf[1]);
-		// console.log(this.end);
 
 		this.title = curso.nombre + "<br>" + ocur.salon;
 		this.opac = "0.5";
@@ -57,10 +53,8 @@ $(function() {
 		else this.persistido = false;
 		
 		this.indiceEnResultados = ie;
-		this.crn = crn;
 		this.numocur = numocur;
 		this.curso = curso;
-		// console.log(mapaDias);
 	}
 
 	var horarioActual;
@@ -72,8 +66,7 @@ $(function() {
 	 */
 	function abrirHorario() {
 		$.ajax({
-			url : '_php/hor_core.php',
-			// url : '_php/testhorcoredisp.php',
+			url : '/acmuniandes_hor/_php/hor_core.php',
 			dataType : 'json',
 			data : {
 				'tipsol' : '7',
@@ -97,7 +90,6 @@ $(function() {
 				} else {
 					horarioActual = new Horario();
 				}
-				console.log(horarioActual);
 			}
 		});
 	}
@@ -121,12 +113,11 @@ $(function() {
 	function obtenerResultados(input) {
 		if(input){			
 			$.ajax({
-				url : '_php/hor_conslt.php',
-				//url : '_php/testhorcoredisp.php',
+				url : '/acmuniandes_hor/_php/hor_conslt.php',
 				dataType : 'json',
 				data : {
 					'valcon' : input,
-					'cbuflag': false //hace falta incluir selector de cbu
+					'cbuflag': false //TODO hace falta incluir selector de cbu
 				},
 				type : 'GET',
 				success : function(response) {
@@ -145,14 +136,11 @@ $(function() {
 							resultados = response;
 							resultGrid.jqGrid('clearGridData', this);
 							for(var i = 0; i < resultados.length; i++) {
-								resultados[i].profesor = "" + resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
+								resultados[i].profesor = "" + resultados[i].profesores[0];
 								resultados[i].id = bigIndex;
 								resultGrid.jqGrid('addRowData', bigIndex, resultados[i]);
 								$('#'+bigIndex).attr('ie',i);
 								bigIndex++;
-								// if(resultados[i].inpadre != null){
-								// $('#'+i).css({'background':'#BDEDFF'});
-								// }
 							}
 							inicializarResultados();
 						}
@@ -169,14 +157,6 @@ $(function() {
 				modal: true
 			});
 		}
-		// resultGrid.jqGrid('clearGridData', this);
-		// for(var i = 0; i < resultados.length; i++) {
-			// resultados[i].profesor = resultados[i].profesores[0].nombre + " "+resultados[i].profesores[0].apellido;
-			// resultGrid.jqGrid('addRowData', i, resultados[i]);
-			// // if(resultados[i].inpadre != null){
-				// // $('#'+i).css({'background':'#BDEDFF'});
-			// // }
-		// }
 				
 		inicializarResultados();
 	}
@@ -185,26 +165,7 @@ $(function() {
 	 * Inicializa todos los eventos necesarios sobre los nuevos resultados
 	 */
 	function inicializarResultados() {
-		// $('.jqgrow').draggable({
-			// addClasses : false,
-			// revert : true,
-			// //helper: "clone",
-			// //appendTo: "#helper",
-			// helper : function(event) {
-				// sel = $(this).attr('id');
-				// return $(this).clone().appendTo('#helper');
-			// },
-			// start : function(event, ui) {
-				// dropped = false;
-				// $(this).hide();
-			// },
-			// stop : function(event) {
-				// if(!dropped) {
-					// $(this).show();
-				// }
-			// },
-			// zIndex : 100
-		// });
+		
 		$('.jqgrow').attr('addbl','true');
 		
 		$('.jqgrow').dblclick(function(){
@@ -214,10 +175,8 @@ $(function() {
 			}
 		});
 		
-		//TODO Fix This!!
 		$('.jqgrow').hover(function() {
 			sel = $(this).attr('id');
-			console.log(sel);
 			if(verificarConflictoHorario(resultados[$(this).attr('ie')])){
 				agregarCursoCalendar(null, true, $(this));
 			}
@@ -225,7 +184,6 @@ $(function() {
 				$("#"+sel).attr('confl','true');
 				$("#"+sel).css({'background':'#E42217','opacity': 0.9});
 			}
-			//setTimeout(agregarCursoCalendar,'500');
 		}, function() {
 			if(!$(this).attr('out'))
 			{
@@ -258,22 +216,18 @@ $(function() {
 	function agregarCursoCalendar(curso, vistaprevia, row) {
 		
 		var cursoAAgregar;
-		
 		if(curso != null){
 			cursoAAgregar = curso;
 		}
 		else{
 			cursoAAgregar = resultados[row.attr('ie')];
 		}
-
 		for(var k = 0; k < cursoAAgregar.ocurrencias.length; k++) {
-			// var ocurid = sel;
-			// if(sel.charAt(0)=='p'){
-				// ocurid = sel.substring(1,sel.length);
+			// if(new Date(cursoAAgregar.ocurrencias[k].fechaini) < date && new Date(cursoAAgregar.ocurrencias[k].fechafin) > date){
+				var ocur = new OcurCalendar(cursoAAgregar, cursoAAgregar.ocurrencias[k], cursoAAgregar.id, k, cursoAAgregar.indiceEnResultados, cursoAAgregar.ocurrencias.length);
+				if(!vistaprevia) ocur.opac = 1;
+				calendar.weekCalendar("updateEvent", ocur);
 			// }
-			var ocur = new OcurCalendar(cursoAAgregar, cursoAAgregar.ocurrencias[k], cursoAAgregar.id, k, cursoAAgregar.indiceEnResultados, cursoAAgregar.crn, cursoAAgregar.ocurrencias.length, cursoAAgregar);
-			if(!vistaprevia) ocur.opac = 1;
-			calendar.weekCalendar("updateEvent", ocur);
 		}
 		if(!vistaprevia){
 			if(row != null){
@@ -301,7 +255,6 @@ $(function() {
 		}
 		
 		if(!vistaprevia) {
-			//TODO define time
 			if($('#' + sel)){
 				$('#' + sel).show(500);
 				$('#' + sel).removeAttr('out');
@@ -317,9 +270,6 @@ $(function() {
 		horarioActual.cursos[horarioActual.num_Cursos]=curso;
 		horarioActual.num_Cursos++;
 		horarioActual.creditos_Totales = parseInt(horarioActual.creditos_Totales)+ parseInt(curso.creditos);
-		console.log(horarioActual.cursos);
-		// console.log("after adding")
-		// console.log(horarioActual)
 	}
 	
 	/**
@@ -340,7 +290,6 @@ $(function() {
 		horarioActual.cursos[pos] = null;
 		horarioActual.num_Cursos--;
 		horarioActual.creditos_Totales -= curso.creditos;
-		console.log(horarioActual.cursos);
 	}
 	
 	/**
@@ -376,7 +325,7 @@ $(function() {
 						"Si": function(){
 							$(this).dialog("close")
 							$.ajax({
-								url : '_php/hor_core.php',
+								url : '/acmuniandes_hor/_php/hor_core.php',
 								data : {'tipsol':'5','horario':horarioActual},
 								dataType : 'json',
 								type : 'POST',
@@ -398,10 +347,9 @@ $(function() {
 						"No": function(){ $(this).dialog("close")}
 					}				
 				});
-				//alert('trouble');
 			} else {
 				$.ajax({
-					url : '_php/hor_core.php',
+					url : '/acmuniandes_hor/_php/hor_core.php',
 					data : {
 						'tipsol' : '5',
 						'horario' : horarioActual
@@ -543,7 +491,7 @@ $(function() {
 			width : 30
 		}, {
 			name : 'crn',
-			width : 30
+			width : 37
 		}],
 		gridview : true,
 		hoverrows:true,
@@ -552,9 +500,6 @@ $(function() {
 		width : 375,
 		height : 536,
 		scrollOffset : 0,
-		// onSelectRow: function(id) {
-		// sel = id;
-		// },
 		beforeSelectRow : function() {
 			return false;
 		}
@@ -565,7 +510,7 @@ $(function() {
 		firstDayOfWeek : 1,
 		businessHours : {
 			start : 7,
-			end : 22,
+			end : 20,
 			limitDisplay : true
 		},
 		daysToShow : 6,
@@ -581,14 +526,12 @@ $(function() {
 		},
 		displayOddEven : true,
 		eventRender : function(calEvent, $event) {
-			// console.log($event);
 			$event.css({
 				'opacity' : calEvent.opac
-				// 'background-color': '#F53400'
 			});
 			$event.attr('id', calEvent.id);
 
-			$event.prepend($('<div class="icon"><img alt="close" src="_images/close.png" /></div>').hide().click(function() {
+			$event.prepend($('<div class="icon"><img alt="close" src="/acmuniandes_hor/_images/close.png" /></div>').hide().click(function() {
 				if(calEvent.persistido){
 					removerCursoCalendar(true, true, calEvent.indiceEnResultados, calEvent.numocur);
 					removerCursoHorario(calEvent.curso);
@@ -596,22 +539,12 @@ $(function() {
 					removerCursoCalendar(false, false, calEvent.indiceEnResultados, calEvent.numocur);
 					removerCursoHorario(calEvent.curso);
 				}
-				// console.log(horarioActual)
 			}));
 			// $event.find('.wc-time').css({
-			// 'background-color': '#F53400'
+			// 'background': '#F53400'
 			// });
-			// animate({
-			// opacity:calEvent.opac
-			// }, 500);
 			$event.hover(function() {
 				sel = calEvent.id.substring(0,calEvent.id.indexOf("-"));
-				console.log("Indice:");
-				console.log(calEvent.indiceEnResultados)
-				console.log("sel:");
-				console.log(sel);
-				// console.log('[id|="' + sel + '"]');
-				// console.log(calendar.find('[id|=' + sel + ']'));
 				calendar.find('[id|="' + sel + '"]').find('.icon').show();
 			}, function() {
 				calendar.find('[id|="' + sel + '"]').find('.icon').hide();
@@ -658,7 +591,7 @@ $(function() {
 	
 	$("#logoutButton").click(function(){
 		params = {tipsol:'4'};
-		postform('_php/hor_auth.php',params);
+		postform('/acmuniandes_hor/_php/hor_auth.php',params);
 	});
 	
 	function postform(path, params){
@@ -680,21 +613,4 @@ $(function() {
 		document.body.appendChild(form);
 		form.submit();
 	}
-
-	// calendar.droppable({
-		// accept : ".jqgrow",
-		// over : function() {
-			// agregarCursoCalendar(true);
-		// },
-		// out : function() {
-			// removerCursoCalendar(true);
-// 
-		// },
-		// drop : function(event, ui) {
-			// dropped = true;
-			// $.ui.ddmanager.current.cancelHelperRemoval = false;
-			// ui.helper.hide();
-			// agregarCursoCalendar(false);
-		// }
-	// });
 });

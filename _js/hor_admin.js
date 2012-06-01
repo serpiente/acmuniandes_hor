@@ -12,7 +12,7 @@ $(function() {
 	
 	$('#buttonLogout').click(function() {
 		params = {tipsol:'4'};
-		postform('_php/hor_auth.php',params);
+		postform('/acmuniandes_hor/_php/hor_auth.php',params);
 	}); 
 
 		
@@ -24,8 +24,7 @@ $(function() {
 		}
 
 		$.ajax({
-			url : '_php/hor_core.php',
-			//url : '_php/testhoradmin.php',
+			url : '/acmuniandes_hor/_php/hor_core.php',
 			dataType : 'json', //hace que se evalue el json que retorna el servidor como un objeto
 			data : parametros,
 			type : 'POST',
@@ -80,7 +79,7 @@ $(function() {
 			'tipsol' : '6',
 			'id_hor' : id
 		};
-		postform('_php/hor_core.php',parametros)
+		postform('/acmuniandes_hor/_php/hor_core.php',parametros)
 	}
 	
 	function inicilializar(){
@@ -118,7 +117,7 @@ $(function() {
 			'tipsol' : '1'
 		};
 		$.ajax({
-			url : '_php/hor_core.php',
+			url : '/acmuniandes_hor/_php/hor_core.php',
 			data : parametros,
 			dataType : 'json',
 			type : 'POST',
@@ -147,7 +146,7 @@ $(function() {
 			'id_hor':id
 		};
 		$.ajax({
-			url : '_php/hor_core.php',
+			url : '/acmuniandes_hor/_php/hor_core.php',
 			data : parametros,
 			dataType : 'json',
 			type : 'POST',

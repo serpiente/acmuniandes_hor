@@ -552,14 +552,14 @@ class Hor_Dao {
 		$profesores = array();
 		
 		for ($i=1; $i < 4; $i++) {
-			$prof = new Profesor();
+			$prof = "";
 			if($i == 1) {
-				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"]);
-				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"]);
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"];
 			}
 			else{
-				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"]);
-				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"]);
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
 			}
 			$profesores[] = $prof;
 		}
@@ -595,8 +595,8 @@ class Hor_Dao {
 			
 			$beginTime = $arr_asoc["BEGIN_TIME" . $i];
 			$endTime = $arr_asoc["END_TIME" . $i];
-			$ffecha_ini = $arr_asoc["FFECHA_INI" . $i];
-			$ffecha_fin = $arr_asoc["FFECHA_FIN" . $i];
+			$fecha_ini = $arr_asoc["FFECHA_INI" . $i];
+			$fecha_fin = $arr_asoc["FFECHA_FIN" . $i];
 			
 			$mon = $arr_asoc["MONDAY_IND" . $i];
 			$tue = $arr_asoc["TUESDAY_IND" . $i];
@@ -608,31 +608,31 @@ class Hor_Dao {
 
 			$dias = "";
 			if ($mon == "L") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon, $fecha_ini, $fecha_fin);
 				$dias += $mon;
 			}
 			if ($tue == "M") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tue);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tue, $fecha_ini, $fecha_fin);
 				$dias += $tue;
 			}
 			if ($wed == "I") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $wed);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $wed, $fecha_ini, $fecha_fin);
 				$dias += $wed;
 			}
 			if ($thu == "J") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $thu);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $thu, $fecha_ini, $fecha_fin);
 				$dias += $thu;
 			}
 			if ($fri == "V") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $fri);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $fri, $fecha_ini, $fecha_fin);
 				$dias += $fri;
 			}
 			if ($sat == "S") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sat);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sat, $fecha_ini, $fecha_fin);
 				$dias += $sat;
 			}
 			if ($sun == "D") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sun);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sun, $fecha_ini, $fecha_fin);
 				$dias += $sun;
 			}
 		}
@@ -729,12 +729,14 @@ class Hor_Dao {
 	 * @param $dia de la semana perteneciente a {L,M,I,J,V,S,D}
 	 * @return objeto de tipo ocurrencia
 	 */
-	private function crearOcurrencia($beginTime, $endTime, $dia){
+	private function crearOcurrencia($beginTime, $endTime, $dia, $fecha_ini, $fecha_fin){
 		$ocur = new Ocurrencia();
 		$ocur -> setHoraInicio($beginTime);
 		$ocur -> setHoraFin($endTime);
 		$ocur -> setDia($dia);
 		$ocur -> setSalon("Pendiente");
+		$ocur -> setFechaIni($fecha_ini);
+		$ocur -> setFechaFin($fecha_fin);
 		
 		return $ocur;
 	}

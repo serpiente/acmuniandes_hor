@@ -38,6 +38,16 @@ class Ocurrencia {
 	*/	
 	public $unidades_Duracion;
 	
+	/**
+	 * Representa la fecha de inicio de la ocurrencia.
+	 */
+	public $fechaini;
+	
+	/**
+	 * Representa la fecha de fin de la ocurrencia.
+	 */
+	public $fechafin;
+	
 	
 	//---------------------------------------------------------------------------------------------------//
 	//-----------------------------------------METODOS---------------------------------------------------//
@@ -102,6 +112,22 @@ class Ocurrencia {
 	
 	function setUnidadesDuracion($nunidades_Duracion){
 		$this -> unidades_Duracion = $nunidades_Duracion;
+	}
+	
+	function getFechaIni(){
+		return $this -> fechaini;
+	}
+	
+	function setFechaIni($fechaini){
+		$this -> fechaini = $fechaini;
+	}
+	
+	function getFechaFin(){
+		return $this -> fechafin;
+	}
+	
+	function setFechaFin($fechafin){
+		$this -> fechafin = $fechafin;
 	}
 }
 

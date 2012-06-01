@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
 require_once 'utils.php';
 foreach (glob("_classes/*.php") as $filename) {
 	require_once $filename;
@@ -13,19 +17,19 @@ foreach (glob("_classes/*.php") as $filename) {
 class Hor_Dao {
 
 	//Datos de la conexion a base de datos propia Wayu
-	private $dbhost_mysql = 'apolo.uniandes.edu.co:3308';
-	private $dbname_mysql = 'dbcrearhorario';
-	private $dbuser_mysql = 'usdbcrearhorario';
-	private $dbpass_mysql = '4CbWAHKz';
-	private $dbport_mysql = 3308;
+	private $dbhost_mysql;
+	private $dbname_mysql;
+	private $dbuser_mysql;
+	private $dbpass_mysql;
+	private $dbport_mysql;
 
 	//Datos de la conexión a base de datos de DTI, NIFE
 	//TODO Se asume que es conexion directa, pero puede no serlo.
-	private $dbhost_ora = 'sisga.uniandes.edu.co:1521';
-	private $dbuser_ora = 'INTEGRACION';
-	private $dbpass_ora = 'opzn290lh';
-	private $dbport_ora = 1521;
-	private $dbsid_ora = 'nife';
+	private $dbhost_ora;
+	private $dbuser_ora;
+	private $dbpass_ora;
+	private $dbport_ora;
+	private $dbsid_ora;
 	
 	private $conn;
 	
@@ -33,6 +37,7 @@ class Hor_Dao {
 	 * Constructor de la clase
 	 */
 	function __construct() {
+		$this -> initConections();
 		mysql_connect($this -> dbhost_mysql, $this -> dbuser_mysql, $this -> dbpass_mysql);
 		mysql_select_db($this -> dbname_mysql);
 
@@ -468,9 +473,10 @@ class Hor_Dao {
 	function actualizarHorario($horario) {
 		//TODO REVISION
 		if ($horario instanceof Horario) {
-			$colums_valores = array('CREDITOS_TOTALES' => $horario -> getCreditosTotales(), 'NUM_CURSOS' => $horario -> getNumCursos(), 'NOMBRE' => $horario -> getNombre());
-			$query = $this -> updateSetWhere("HORARIOS", $colums_valores, "ID_HORARIO=" . $horario -> getIdHorario());
-			$query .= $this -> deleteFromWhereMysql('CURSOS_HORARIOS', "ID_HORARIO=" . $horario -> getIdHorario());
+			$query = 'UPDATE HORARIOS SET CREDITOS_TOTALES='.$horario -> getCreditosTotales().', NUM_CURSOS='.$horario -> getNumCursos().', NOMBRE="'.$horario -> getNombre().'" WHERE ID_HORARIO='.$horario -> getIdHorario().';';
+			$this -> queryMysql($query);
+			$query = 'DELETE FROM CURSOS_HORARIOS WHERE ID_HORARIO='.$horario -> getIdHorario().';';
+			$this -> queryMysql($query);
 
 			$cursos = $horario -> getCursos();
 			foreach ($cursos as $curso) {
@@ -546,14 +552,14 @@ class Hor_Dao {
 		$profesores = array();
 		
 		for ($i=1; $i < 4; $i++) {
-			$prof = new Profesor();
+			$prof = "";
 			if($i == 1) {
-				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"]);
-				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"]);
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"];
 			}
 			else{
-				$prof -> setNombre($arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"]);
-				$prof -> setApellido($arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"]);
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
 			}
 			$profesores[] = $prof;
 		}
@@ -589,8 +595,8 @@ class Hor_Dao {
 			
 			$beginTime = $arr_asoc["BEGIN_TIME" . $i];
 			$endTime = $arr_asoc["END_TIME" . $i];
-			$ffecha_ini = $arr_asoc["FFECHA_INI" . $i];
-			$ffecha_fin = $arr_asoc["FFECHA_FIN" . $i];
+			$fecha_ini = $arr_asoc["FFECHA_INI" . $i];
+			$fecha_fin = $arr_asoc["FFECHA_FIN" . $i];
 			
 			$mon = $arr_asoc["MONDAY_IND" . $i];
 			$tue = $arr_asoc["TUESDAY_IND" . $i];
@@ -602,31 +608,31 @@ class Hor_Dao {
 
 			$dias = "";
 			if ($mon == "L") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $mon, $fecha_ini, $fecha_fin);
 				$dias += $mon;
 			}
 			if ($tue == "M") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tue);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $tue, $fecha_ini, $fecha_fin);
 				$dias += $tue;
 			}
 			if ($wed == "I") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $wed);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $wed, $fecha_ini, $fecha_fin);
 				$dias += $wed;
 			}
 			if ($thu == "J") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $thu);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $thu, $fecha_ini, $fecha_fin);
 				$dias += $thu;
 			}
 			if ($fri == "V") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $fri);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $fri, $fecha_ini, $fecha_fin);
 				$dias += $fri;
 			}
 			if ($sat == "S") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sat);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sat, $fecha_ini, $fecha_fin);
 				$dias += $sat;
 			}
 			if ($sun == "D") {
-				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sun);
+				$ocurrencias[] = $this -> crearOcurrencia($beginTime, $endTime, $sun, $fecha_ini, $fecha_fin);
 				$dias += $sun;
 			}
 		}
@@ -706,8 +712,6 @@ class Hor_Dao {
 		$array = array();
 		$i = 0;
 		while($row = $this -> darSiguienteRegistroOracle(($result))){
-
-			
 			$curso = $this ->construirCursoDeArrAsoc($row);
 			$curso -> setIndiceEnResultados($i);
 			array_push($array,$curso);
@@ -725,12 +729,14 @@ class Hor_Dao {
 	 * @param $dia de la semana perteneciente a {L,M,I,J,V,S,D}
 	 * @return objeto de tipo ocurrencia
 	 */
-	private function crearOcurrencia($beginTime, $endTime, $dia){
+	private function crearOcurrencia($beginTime, $endTime, $dia, $fecha_ini, $fecha_fin){
 		$ocur = new Ocurrencia();
 		$ocur -> setHoraInicio($beginTime);
 		$ocur -> setHoraFin($endTime);
 		$ocur -> setDia($dia);
 		$ocur -> setSalon("Pendiente");
+		$ocur -> setFechaIni($fecha_ini);
+		$ocur -> setFechaFin($fecha_fin);
 		
 		return $ocur;
 	}
@@ -744,6 +750,31 @@ class Hor_Dao {
 		$var = htmlentities($var);
 		$var = stripslashes($var);
 		return mysql_real_escape_string($var);
+	}
+	
+	/**
+	 * Inicializa la información de conexiones desde disco
+	 */
+	function initConections() {
+		$file = fopen("../_data/infobd.csv", "r") or exit("No se pudo establecer la conexion");
+		$info = array();
+		if(!feof($file)) {
+			 $info = explode(",", fgets($file));
+		}
+		fclose($file);
+		
+		$this -> dbhost_mysql = $info[0];
+		$this -> dbname_mysql = $info[1];
+		$this -> dbuser_mysql = $info[2];
+		$this -> dbpass_mysql = $info[3];
+		$this -> dbport_mysql = $info[4];
+		
+		$this -> dbhost_ora = $info[5];
+		$this -> dbuser_ora = $info[6];
+		$this -> dbpass_ora = $info[7];
+		$this -> dbport_ora = $info[8];
+		$this -> dbsid_ora = $info[9];				
+
 	}
 
 }

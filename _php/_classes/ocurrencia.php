@@ -1,4 +1,8 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
 
 /**
  * Representa una ocurrencia
@@ -33,6 +37,16 @@ class Ocurrencia {
 	* Representa la duración del curso en unidades de media hora. Ej. 3 unidades = 1.5 horas. Mínimo valor: 2.
 	*/	
 	public $unidades_Duracion;
+	
+	/**
+	 * Representa la fecha de inicio de la ocurrencia.
+	 */
+	public $fechaini;
+	
+	/**
+	 * Representa la fecha de fin de la ocurrencia.
+	 */
+	public $fechafin;
 	
 	
 	//---------------------------------------------------------------------------------------------------//
@@ -98,6 +112,22 @@ class Ocurrencia {
 	
 	function setUnidadesDuracion($nunidades_Duracion){
 		$this -> unidades_Duracion = $nunidades_Duracion;
+	}
+	
+	function getFechaIni(){
+		return $this -> fechaini;
+	}
+	
+	function setFechaIni($fechaini){
+		$this -> fechaini = $fechaini;
+	}
+	
+	function getFechaFin(){
+		return $this -> fechafin;
+	}
+	
+	function setFechaFin($fechafin){
+		$this -> fechafin = $fechafin;
 	}
 }
 

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
+
 require_once 'utils.php';
 /**
  * Autentica a un usuario dados su login y su contraseña
@@ -24,22 +29,22 @@ function autenticar($usuario, $contrasenia) {
 		$dist_name = $info[0]["dn"];
 
 		if (strlen($dist_name) > 0) {
-			if (ldap_bind($ldapconn, $dist_name, $contrasenia)) {
+			if (@ldap_bind($ldapconn, $dist_name, $contrasenia)) {
 				//Guarda el nombre de usuario en la variable de sesión
 				$_SESSION['usuario'] = $usuario;
 				$dao -> persistirUsuario($usuario);
 				//Redirige a la pagina correspondiente en caso exitoso
-				header("Location: /acmuniandes_hor/hor_admin.html");
+				header("Location: /acmuniandes_hor/index.php/admin");
 
 				ldap_close($ds);
 			} else {
 				//Redirigue a la pagina de error en caso contrario
-				header("Location: /acmuniandes_hor/index2.html");
+				header("Location: /acmuniandes_hor/index.php/invalid");
 			}
 
 		} else {
 			//Redirigue a la pagina de error en caso contrario
-			header("Location: /acmuniandes_hor/index2.html");
+			header("Location: /acmuniandes_hor/index.php/invalid");
 		}
 
 	}

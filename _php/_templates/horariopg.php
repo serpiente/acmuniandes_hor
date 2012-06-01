@@ -1,22 +1,28 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+	header("Location: /acmuniandes_hor/");
+}
+?>
 <!--
 Copyright Capítulo Estudiantil ACM Universidad de los Andes
 Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
 -->
 <html>
 	<head>
-		<link rel='stylesheet' type='text/css' href='_css/jquery-ui-1.8.11.custom.css' />
-		<link rel='stylesheet' type='text/css' href='_css/jquery.weekcalendar.css' />
-		<link rel='stylesheet' type='text/css' href='_css/ui.jqgrid.css' />
-		<link rel='stylesheet' type='text/css' href='_css/hor_core.css' />
-		<link rel="stylesheet" type="text/css" href="_css/tip-twitter.css" />
+		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/jquery-ui-1.8.11.custom.css' />
+		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/jquery.weekcalendar.css' />
+		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/ui.jqgrid.css' />
+		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/hor_core.css' />
+		<link rel="stylesheet" type="text/css" href="/acmuniandes_hor/_css/tip-twitter.css" />
 
-		<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
-		<script type="text/javascript" src="_js/_lib/jquery-ui-1.8.14.custom.min.js" ></script>
-		<script type="text/javascript" src="_js/_lib/jquery.weekcalendar.js"></script>
-		<script type="text/javascript" src="_js/_lib/grid.locale-en.js"></script>
-		<script type="text/javascript" src="_js/_lib/jquery.jqGrid.min.js"></script>
-		<script type="text/javascript" src="_js/_lib/jquery.poshytip.min.js"></script>
-		<script type="text/javascript" src="_js/hor_core.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery-ui-1.8.14.custom.min.js" ></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery.weekcalendar.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/grid.locale-en.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery.jqGrid.min.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery.poshytip.min.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/hor_core.js"></script>
 
 		<title>HorarioLab</title>
 	</head>

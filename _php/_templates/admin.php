@@ -1,3 +1,9 @@
+<?php
+session_start();
+if (!isset($_SESSION['usuario'])) {
+	header("Location: /acmuniandes_hor/");
+}
+?>
 <!--
 Copyright Capítulo Estudiantil ACM Universidad de los Andes
 Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
@@ -17,11 +23,11 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 		</style>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<title>HorarioLab</title>
-		<link rel="stylesheet" type="text/css" href="_css/hor_admin.css" />
-		<link rel="stylesheet" type="text/css" href="_css/tip-twitter.css" />
-		<script type="text/javascript" src="_js/_lib/jquery-1.6.2.js"></script>
-		<script type="text/javascript" src="_js/_lib/jquery.poshytip.min.js"></script>
-		<script type="text/javascript" src="_js/hor_admin.js"></script>
+		<link rel="stylesheet" type="text/css" href="/acmuniandes_hor/_css/hor_admin.css" />
+		<link rel="stylesheet" type="text/css" href="/acmuniandes_hor/_css/tip-twitter.css" />
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery.poshytip.min.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/hor_admin.js"></script>
 	</head>
 	<body>
 		<!-- Tabla que organiza la totalidad de la página -->

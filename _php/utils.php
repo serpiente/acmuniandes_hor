@@ -1,6 +1,8 @@
 <?php
-// error_reporting(E_ALL);
-// ini_set('display_errors', 1);
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
 
 require_once '_classes/hor_dao.php';
 $dao = new Hor_Dao(); //instanciación del dao

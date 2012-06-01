@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
+
 require_once 'utils.php';
 require_once "_lib/src/apiClient.php";
 require_once "_lib/src/contrib/apiCalendarService.php";

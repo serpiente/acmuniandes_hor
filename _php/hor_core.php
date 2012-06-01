@@ -1,4 +1,9 @@
 <?php
+/**
+ * Copyright Capítulo Estudiantil ACM Universidad de los Andes
+ * Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Liderado por Juan Tejada y Jorge Lopez.
+ */
+
 require_once 'utils.php';
 foreach (glob("_classes/*.php") as $filename){
 	require_once $filename;
@@ -66,7 +71,7 @@ function crearNuevoHorario($nombre) {
 function asignarHorarioAbrir($id_hor){
 	global $dao;
 	$_SESSION['hor_abrir'] = $id_hor;
-	header("Location: /acmuniandes_hor/hor_coredisp.html");
+	header("Location: /acmuniandes_hor/index.php/horario");
 }
 
 /**

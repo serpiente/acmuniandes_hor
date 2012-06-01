@@ -1,15 +1,21 @@
+<!--
+Copyright Capítulo Estudiantil ACM Universidad de los Andes
+Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
+-->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
 		<title>HorarioLab</title>
-		<link href="_css/login-box.css" rel="stylesheet" type="text/css" />
+		<?php echo $css ?>
 	</head>
 	<body>
 		<div style="padding: 100px 0 0 250px;">
 			<div class="login-box-options" id="login-box">
 				<H2>HorarioLab</H2>
-				Bienvenido a la página de HorarioLab.
+				Bienvenido a la pagina de HorarioLab.
+				<br />
+				Por favor ingrese el usuario y clave de su correo Uniandes.
 				<br />
 				<br />
 				<form id="loginForm" method="post" action="_php/hor_auth.php">
@@ -29,6 +35,7 @@
 						<input type="hidden" name="tipsol" value="3">
 						<br />
 						<a href="#" style="margin-left:30px;">Olvido su clave?</a>
+						<?php echo $autenticacion ?>
 					</p>
 					<p>
 						<input name="LoginBtn" type="submit" class="login-box-options" id="login" value="Login" />

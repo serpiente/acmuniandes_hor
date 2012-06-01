@@ -12,7 +12,11 @@ import org.jsoup.select.Elements;
 * Liderado por Juan Tejada y Jorge Lopez.
 **/
 import acmuniandes_hor.persist.JavaDao;
-
+/**
+* Copyright Capítulo Estudiantil ACM Universidad de los Andes
+* Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+* Liderado por Juan Tejada y Jorge Lopez.
+**/
 public class URLLoader {
 	
 	private final static String BASE_URL = "http://registroapps.uniandes.edu.co";

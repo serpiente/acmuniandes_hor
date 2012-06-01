@@ -8,83 +8,48 @@ if (!isset($_SESSION['usuario'])) {
 Copyright Capítulo Estudiantil ACM Universidad de los Andes
 Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml" >
+<!DOCTYPE html>
+<html>
 	<head>
-		<style>
-			/* Crea el estilo de los cuadros que contienen la información relevante de cada horario */
-			/*p {
-				font-weight: bold;
-				background-color: #fcd;
-				display: none;
-				height: 100px;
-				width: 1055px;
-				margin: 10px;
-			}*/
-		</style>
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<title>HorarioLab</title>
+		<link rel="icon" type="image/png" href="/acmuniandes_hor/_images/acm_sym.png">
+		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/jquery-ui-1.8.11.custom.css' />
 		<link rel="stylesheet" type="text/css" href="/acmuniandes_hor/_css/hor_admin.css" />
-		<link rel="stylesheet" type="text/css" href="/acmuniandes_hor/_css/tip-twitter.css" />
 		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery-1.6.2.js"></script>
-		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery.poshytip.min.js"></script>
+		<script type="text/javascript" src="/acmuniandes_hor/_js/_lib/jquery-ui-1.8.14.custom.min.js" ></script>
 		<script type="text/javascript" src="/acmuniandes_hor/_js/hor_admin.js"></script>
 	</head>
 	<body>
-		<!-- Tabla que organiza la totalidad de la página -->
-		<table border="1px" width="100%"  height="1000">
-			<!-- Header-->
-			<tr height="150 px">
-				<td colspan="2"><!--<img src="_images/gradient.jpg" width="1400 px" height="150 px"/>--></td>
-			</tr>
-			<!-- tabla con links y contenido, los botones estan sacados de un template por lo tanto tienen clases en el CSS.-->
-			<tr height="800" >
-				<td class="tabla" width="10%">
-				<table width="80%" class="menu" align="center" height="100%">
-					<tr>
-						<td width="100%">
-						<div id="button-container" class="demo">
-							<button id="buttonCons">Mostrar mis horarios</button>
-							<div id="arrow-container">
-								<div id="arrow-rectangle"></div>
-								<div id="arrow-triangle" ></div>
-							</div>
-						</div></td>
-					</tr>
-					<tr>
-						<td width="100%">
-						<div id="button-container" class="download">
-							<button  id="buttonCreate">Crear Horario</button>
-							<div id="arrow-container">
-								<div id="arrow-rectangle"></div>
-								<div id="arrow-triangle" ></div>
-							</div>
-						</div></td>
-					</tr>
-					<tr>
-						<td width="100%">
-						<div id="button-container" class="download">
-							<button  id="buttonLogout">Logout</button>
-							<div id="arrow-container">
-								<div id="arrow-rectangle"></div>
-								<div id="arrow-triangle" ></div>
-							</div>
-						</div></td>
-					</tr>
-					<tr>
-						<td height="600"></td>
-					</tr>
-				</table></td>
-				<!-- Muestra el contenido principal de la pagina -->
-				<td class="contentResult"  valign="top" width="100%">
-				<table id="result">
-				</table>
-				</td>
-			</tr>
-			<!-- Footer
-			<tr height="100" >
-				<td colspan="2" > footer </td>
-			</tr>-->
-		</table>
-		<div align="center"><p style="font-size:10px;">Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. <br /> Liderado por Juan Tejada y Jorge Lopez</p></div>
+		<div id="dialogConf" ></div>
+		<div id="container">
+			<div id="header">
+				<h1> HorarioLab </h1>
+			</div>
+			<div id="content">
+				<h2> Mis Horarios </h2>
+				<div id="horcontent">
+					<div id="horarios1" align="center" class="content">
+						
+					</div>
+				</div>
+				<div id="agregar" class="content">
+					<input type="text" id="inputText" value="nombre su nuevo horario"/>
+					<button id="saveButton" class="boton">Guardar Nuevo Horario</button>
+					<span id="msgError">El nombre debe ser menor a 8 caracteres</span>
+					<button id="addButton" class="boton" style="font-size: 20px">+</button>
+				</div>
+				<div id="logout" class="content">
+					<button id="buttonLogout" class="boton">Logout</button>
+				</div>
+			</div>
+			<div id="footer">
+				<p style="font-size:10px;">
+					Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes.
+					<br />
+					Liderado por Juan Tejada y Jorge Lopez
+				</p>
+			</div>
+		</div>
+		
 	</body>
 </html>

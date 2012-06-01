@@ -5,20 +5,62 @@
 $(function() {
 
 	var horarios;
-	var sel= "";
+	var sel= 0;
+	var j=1;
 	
-	$('#buttonCons').click(mostrarHorarios);
-	$('#buttonCreate').click(vizualizacionCreacion);
+	mostrarHorarios();
 	
 	$('#buttonLogout').click(function() {
 		params = {tipsol:'4'};
 		postform('/acmuniandes_hor/_php/hor_auth.php',params);
-	}); 
+	});
+	
+	$("#inputText").keypress(function(event) {
+		if(event.which == 13) {
+			crearHorario($(this).val());
+		}
+	});
 
+	$("#inputText").focus(function() {
+		$("#msgError").fadeOut(200);
+		$(this).val('');
+		$(this).css({
+			color : 'black',
+			fontStyle : 'normal'
+		});
+	});
+
+	$("#inputText").focusout(function() {
+		if(!$(this).val()) {
+			$(this).val('nombre su nuevo horario');
+			$(this).css({
+				color : '#B3B3B3',
+				fontStyle : 'italic'
+			});
+		}
+	});
+	
+	$("#saveButton").click(function(){
+		var input = $("#inputText").val();
+		$("#msgError").hide();
+		if(input != 'nombre su nuevo horario'){
+			if(input.length > 8){
+				$("#msgError").fadeIn(200);
+			} else {
+				crearHorario(input);
+			}
+		}
+	});
+	
+	$("#addButton").click(function(){
+		$(this).hide();
+		$("#inputText").fadeIn(1000);
+		$("#saveButton").fadeIn(1000);
+	});
 		
 	function mostrarHorarios() {
 		/*Conexión AJAX */
-		vaciarTablaHorarios();
+		vaciarResultados();
 		parametros = {
 			'tipsol' : '0'
 		}
@@ -34,44 +76,38 @@ $(function() {
 						document.location = response.redirect;
 				}
 				else {
-					horarios = response;
-					for(var i in horarios) {
-						visualizarHorario(horarios[i].nombre, horarios[i].creditos_Totales, horarios[i].fechaCreacion, horarios[i].num_Cursos, horarios[i].cursos, i,horarios[i].id_horario);
+					if(response.length == 0){
+						console.log(response);					
+						$("#horarios"+j).append('<h2 style="color: #444444;"> No tienes ningun horario guardado. <br />Agrega uno nuevo haciendo click en el boton (+) </h2>')
+					} else {
+						horarios = response;
+						sel = 0;
+						for(var i in horarios) {
+							if(i<5*j){
+								$("#horarios"+j).append('<div id="horario'+i+'" idbd="'+horarios[i].id_horario+'" class="horario"><button id="delButton'+i+'" class="delete">x</button><p><span style="font-size: 40px;">'+horarios[i].nombre+'</span> <br />Creditos: '+horarios[i].creditos_Totales+'<br /># Cursos: '+horarios[i].num_Cursos+'<br />Fecha de Creacion: '+horarios[i].fechaCreacion+'<br /></p></div>&nbsp&nbsp');
+							}
+							else{
+								j++;
+								$("#horcontent").append('<div id="horarios'+j+'" align="center" class="content"></div>');
+								$("#horarios"+j).append('<div id="horario'+i+'" idbd="'+horarios[i].id_horario+'" class="horario"><button id="delButton'+i+'" class="delete">x</button><p><span style="font-size: 40px;">'+horarios[i].nombre+'</span> <br />Creditos: '+horarios[i].creditos_Totales+'<br /># Cursos: '+horarios[i].num_Cursos+'<br />Fecha de Creacion: '+horarios[i].fechaCreacion+'<br /></p></div>&nbsp&nbsp');
+	
+							}
+							sel = i;
+							$("#horario"+i).click(function(){
+								abrirHorario(''+$(this).attr('idbd'));
+							});
+							$("#delButton"+i).click(function(event){
+								event.stopPropagation();
+								eliminarHorario(''+$("#horario"+i).attr('idbd'))
+							});
+						}
+						inicilializar();					
 					}
-					inicilializar();					
 				}
 			}
 		});
 	}
 
-	
-	function vizualizacionCreacion ()
-	{
-		vaciarTablaHorarios();
-		$("#result").append("<tr><td>&nbsp</td></tr>");
-		$("#result").append("<tr> <td> Nombre del Horario: </td> <td> <input type='text' id ='nombreHorario'> </input> </td> </tr>  ");
-		$("#result").append("<tr> <td></td><td><button id='buttonCreateHorario'> Crear Nuevo Horario</button></td> </tr>");	
-		$("#buttonCreateHorario").click(function(){
-			crearHorario($('#nombreHorario').val())
-		});
-	}
-	
-	function vaciarTablaHorarios() {
-		$("#result").find("tr").remove();
-	}
-
-	/*Permite visualizar cada uno de los horarios que el usuario posee */
-
-	function visualizarHorario(nombre, creditos, fecha, numcursos, cursos, id,i) {
-		$("#result").append("<tr><td>&nbsp</td></tr>");
-		$("#result").append("<tr class=\"celda1\" id=cell"+(i)+"><td width=\"12%\"> <span class='horarioResultado' id="+(id)+" >" +nombre+"</span></td><td width=\"88%\"></td><td width=\"3%\"> <button id=eli"+(i)+" > X</button></td></tr>");
-		$("#"+id).click(function(){
-			abrirHorario(''+i)
-		});
-		$("#eli"+i).click(function(){
-			eliminarHorario(''+i)
-		});
-	}
 	
 	function abrirHorario(id)
 	{
@@ -82,33 +118,21 @@ $(function() {
 		postform('/acmuniandes_hor/_php/hor_core.php',parametros)
 	}
 	
-	function inicilializar(){
-		$('.horarioResultado').poshytip({
-			content : contenidoTTip,
-			className : 'tip-twitter',
-			showTimeout : 20,
-			alignTo : 'cursor',
-			alignX : 'center',
-			offsetY : 20,
-			allowTipHover : false,
-			fade : true,
-			slide : true
-		});
-		
-		$('.horarioResultado').hover(function() {
-			sel = ($(this).attr('id'));
-			document.body.style.cursor = 'pointer';
-		}, function(){
-			document.body.style.cursor = 'auto';
+	
+	function inicilializar() {
+		$('.horario').hover(function() {
+			$(this).css({
+				opacity : 1
+			})
+			$(this).find('button').show();
+		}, function() {
+			$(this).css({
+				opacity : 0.8
+			})
+			$(this).find('button').hide();
 		});
 	}
 
-	function contenidoTTip(){
-		if(sel){
-			return $("<span>Creditos: "+horarios[sel].creditos_Totales + "<br>" +"Numero de Cursos: "+horarios[sel].num_Cursos 
-			+"<br> Fecha de Creacion: "+horarios[sel].fechaCreacion +"</span>");
-		}
-	}
 	function crearHorario(nombre) {
 		/* Genera un dialogo para escribir el nombre del horario */
 		/*Conexión AJAX */
@@ -127,12 +151,21 @@ $(function() {
 						document.location = response.redirect;
 				}
 				if(response) {
-					alert("Creado");
-					vaciarTablaHorarios();
-				}
-				else {
-					alert("Error al crear el horario");
-					vaciarTablaHorarios();
+					restaurarBotones()
+					$("#dialogConf").attr('title','Success!');
+					$("#dialogConf").empty();
+					$("#dialogConf").append("El horario ha sido creado con exito.");
+					$("#dialogConf").dialog({
+						modal : true
+					});
+					mostrarHorarios();
+				} else {
+					$("#dialogConf").attr('title','Oops!');
+					$("#dialogConf").empty();
+					$("#dialogConf").append("<p>El horario no ha sido creado.<br />Por favor intente de nuevo</p>");
+					$("#dialogConf").dialog({
+						modal : true
+					});
 				}
 			}
 		});
@@ -158,16 +191,42 @@ $(function() {
 				
 				if(response) {
 					/*Elimina el horario de la visualizacíón */
-					alert("Eliminado");
-					vaciarTablaHorarios();
+					restaurarBotones();
+					$("#dialogConf").attr('title','Success!');
+					$("#dialogConf").empty();
+					$("#dialogConf").append("El horario ha sido eliminado con exito.");
+					$("#dialogConf").dialog({
+						modal : true
+					});
+					if(sel == 5*(j-1)){
+						j--;						
+					}
+					mostrarHorarios();
 				}
 				else{
-					alert("Error al eliminar el horario");
-					vaciarTablaHorarios();
+					$("#dialogConf").attr('title','Oops!');
+					$("#dialogConf").empty();
+					$("#dialogConf").append("<p>El horario no ha sido eliminado.<br />Por favor intente de nuevo</p>");
+					$("#dialogConf").dialog({
+						modal : true
+					});
 				}
 			}
 		});
 
+	}
+	
+
+	function vaciarResultados(){
+		$("#horarios1").empty();
+		$("#horarios1").siblings().remove();
+		
+	}
+	
+	function restaurarBotones(){
+		$("#inputText").hide();
+		$("#saveButton").hide();
+		$("#addButton").fadeIn(1000);
 	}
 	
 	function postform(path, params){

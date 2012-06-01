@@ -8,8 +8,10 @@ if (!isset($_SESSION['usuario'])) {
 Copyright Capítulo Estudiantil ACM Universidad de los Andes
 Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
 -->
+<!DOCTYPE html>
 <html>
 	<head>
+		<link rel="icon" type="image/png" href="/acmuniandes_hor/_images/acm_sym.png">
 		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/jquery-ui-1.8.11.custom.css' />
 		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/jquery.weekcalendar.css' />
 		<link rel='stylesheet' type='text/css' href='/acmuniandes_hor/_css/ui.jqgrid.css' />
@@ -33,7 +35,7 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 			<!-- Header-->
 			<tr height="50">
 				<td colspan="2" width="200px"><h1>HorarioLab</h1></td>
-				<td><button id="adminButton" type="button" class="boton"><span class="ui-button-text">Panel de Horarios</span></button>&nbsp;&nbsp;<button id="logoutButton" type="button" class="boton"><span class="ui-button-text">Logout</span></button></td>
+				<td><button id="adminButton" class="boton">Panel de Horarios</button>&nbsp;&nbsp;<button id="logoutButton" class="boton">Logout</button></td>
 			</tr>
 			<!-- tabla con links y contenido-->
 			<tr valign="top">
@@ -42,24 +44,14 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 						<tr height="50">
 							<td align="center">
 								<div id="searchInput">
-									<input type="text" id="searchInputText" class="textoBusqueda" value="ingrese cualquier busqueda"/>
-									<button id="searchButton" type="button" class="boton"><span class="ui-button-text">Buscar</span></button>
+									<input type="text" id="searchInputText" value="ingrese cualquier busqueda"/>
+									<button id="searchButton" class="boton">Buscar</button>
 								</div>
 							</td>
 						</tr>
 						<tr>
 							<td>
 								<table id="searchResults">
-									<!--<thead>
-										<tr>
-											<th>Seccion</th>
-											<th>Nombre</th>
-											<th>Disponibles</th>
-										</tr>
-									</thead>
-									<tbody>
-										
-									</tbody>-->
 								</table>
 							</td>
 						</tr>
@@ -75,14 +67,14 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 						</tr>
 						<tr align="right">
 							<td colspan="2" >
-							<button id="saveButton" type="button" class="boton">
-								<span class="ui-button-text">Guardar Horario</span>
+							<button id="saveButton" class="boton">
+								Guardar Horario
 							</button>
-							<button id="expCRNButton" type="button" class="boton">
-								<span class="ui-button-text">Exportar CRNs</span>
+							<button id="expCRNButton" class="boton">
+								Exportar CRNs
 							</button>
-							<button id="expButton" type="button" class="boton">
-								<span class="ui-button-text">Exportar</span>
+							<button id="expButton" class="boton">
+								Exportar
 							</button></td>
 						</tr>
 					</table>

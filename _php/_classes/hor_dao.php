@@ -422,7 +422,7 @@ class Hor_Dao {
 
 	/**
 	 * Consulta los horarios del usuario que se encuentra loggeado para ser mostrados
-	 * @return echo arreglo de objetos de la clase Horario, json encoded
+	 * @return arreglo de objetos de la clase Horario, json encoded
 	 */
 	function consultarHorariosPorUsuario($usuario) {
 		//TODO
@@ -542,8 +542,8 @@ class Hor_Dao {
 		$curso -> setCreditos($arr_asoc["CREDITOS"]);
 		$curso -> setCrn($arr_asoc["CRN_KEY"]);
 		$curso -> setCupos_Disponibles($curso ->getcapacidad_Total() - $arr_asoc["INSCRITOS"]);
-		$curso -> setDepartamento($arr_asoc["DESC_DEPTO"]);
-		$curso -> setNombre($arr_asoc["TITLE"]);
+		$curso -> setDepartamento(ucwords(strtolower($arr_asoc["DESC_DEPTO"])));
+		$curso -> setNombre(ucwords(strtolower($arr_asoc["TITLE"])));
 		$curso -> setSeccion($arr_asoc["SEQ_NUMBER_KEY"]);
 		
 		$curso -> setTipo($arr_asoc["ATRIBUTO_SECCION"]);
@@ -560,7 +560,7 @@ class Hor_Dao {
 				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"]." ";
 				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
 			}
-			$profesores[] = $prof;
+			$profesores[] = ucwords(strtolower($prof));
 		}
 		
 		$curso -> setProfesores($profesores);

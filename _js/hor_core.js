@@ -111,6 +111,7 @@ $(function() {
 	 * Consulta cursos con el servidor dado una entrada del usuario y los muestra en el campo indicado
 	 */
 	function obtenerResultados(input) {
+		resultGrid.jqGrid('clearGridData', $(this));
 		if(input){			
 			$.ajax({
 				url : '/acmuniandes_hor/_php/hor_conslt.php',
@@ -134,7 +135,7 @@ $(function() {
 						}
 						else{
 							resultados = response;
-							resultGrid.jqGrid('clearGridData', this);
+							
 							for(var i = 0; i < resultados.length; i++) {
 								resultados[i].profesor = "" + resultados[i].profesores[0];
 								resultados[i].id = bigIndex;
@@ -145,7 +146,12 @@ $(function() {
 							inicializarResultados();
 						}
 					} else {
-						alert("La busqueda ha fallado, por favor intente de nuevo");
+						$("#dialogConf").attr('title','Oops!');
+						$("#dialogConf").empty();
+						$("#dialogConf").append("<p>La busqueda ha fallado.<br />Por favor intente de nuevo</p>");
+						$("#dialogConf").dialog({
+							modal : true
+						});
 					}
 				}
 			});
@@ -314,7 +320,7 @@ $(function() {
 				  info += "<li>"+probs[i]+"</li>";
 				};
 				
-				info += "</ul><br>"
+				info += "</ul><br />"
 				info += "Desea continuar guardando su horario?"
 				
 				$("#dialogConf").empty();
@@ -335,11 +341,21 @@ $(function() {
 											// data.redirect contains the string URL to redirect to
 											document.location = response.redirect;
 										} else { 
-											alert("El horario ha sido guardado correctamente.")
+											$("#dialogConf").attr('title','Success!');
+											$("#dialogConf").empty();
+											$("#dialogConf").append("El horario ha sido guardado con exito.");
+											$("#dialogConf").dialog({
+												modal : true
+											});
 										}
 									}
 									else{
-										alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")					
+										$("#dialogConf").attr('title','Oops!');
+										$("#dialogConf").empty();
+										$("#dialogConf").append("<p>El horario no ha sido guardado con exito.<br />Por favor intente de nuevo</p>");
+										$("#dialogConf").dialog({
+											modal : true
+										});					
 									}
 								}
 							});
@@ -362,10 +378,20 @@ $(function() {
 								// data.redirect contains the string URL to redirect to
 								document.location = response.redirect;
 							} else {
-								alert("El horario ha sido guardado correctamente.")
+								$("#dialogConf").attr('title','Success!');
+								$("#dialogConf").empty();
+								$("#dialogConf").append("El horario ha sido guardado con exito.");
+								$("#dialogConf").dialog({
+									modal : true
+								});
 							}
 						} else {
-							alert("El horario NO ha sido guardado correctamente.Por favor intente de nuevo")
+							$("#dialogConf").attr('title','Oops!');
+							$("#dialogConf").empty();
+							$("#dialogConf").append("<p>El horario no ha sido guardado con exito.<br />Por favor intente de nuevo</p>");
+							$("#dialogConf").dialog({
+								modal : true
+							});
 						}
 					}
 				});
@@ -527,7 +553,8 @@ $(function() {
 		displayOddEven : true,
 		eventRender : function(calEvent, $event) {
 			$event.css({
-				'opacity' : calEvent.opac
+				'opacity' : calEvent.opac,
+				'font' : '100%/1.3 helvetica,arial,sans-serif'
 			});
 			$event.attr('id', calEvent.id);
 
@@ -586,13 +613,20 @@ $(function() {
 	});
 	
 	$("#adminButton").click(function(){
-		document.location = '/acmuniandes_hor/hor_admin.html';
+		document.location = '/acmuniandes_hor/index.php/admin';
 	});
 	
 	$("#logoutButton").click(function(){
 		params = {tipsol:'4'};
 		postform('/acmuniandes_hor/_php/hor_auth.php',params);
 	});
+	
+	$(".ui-jqgrid-bdiv").prepend('<div id="loadimg" style="display:none;position: absolute; left: 147.5px; top: 170px;"><img src="/acmuniandes_hor/_images/loading.gif"/></div>');
+	$("#loadimg").ajaxStart(function(){
+   		$(this).show();
+ 	}).ajaxStop(function(){
+ 		$(this).hide();
+ 	});
 	
 	function postform(path, params){
 		var form = document.createElement("form");

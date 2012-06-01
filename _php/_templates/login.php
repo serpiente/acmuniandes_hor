@@ -2,10 +2,10 @@
 Copyright Capítulo Estudiantil ACM Universidad de los Andes
 Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Juan Tejada y Jorge Lopez.
 -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+		<link rel="icon" type="image/png" href="/acmuniandes_hor/_images/acm_sym.png">
 		<title>HorarioLab</title>
 		<?php echo $css ?>
 	</head>
@@ -18,7 +18,7 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 				Por favor ingrese el usuario y clave de su correo Uniandes.
 				<br />
 				<br />
-				<form id="loginForm" method="post" action="_php/hor_auth.php">
+				<form id="loginForm" method="post" action="/acmuniandes_hor/_php/hor_auth.php">
 					<div id="login-box-name" style="margin-top:20px;">
 						Cuenta:
 					</div>
@@ -38,12 +38,13 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 						<?php echo $autenticacion ?>
 					</p>
 					<p>
-						<input name="LoginBtn" type="submit" class="login-box-options" id="login" value="Login" />
+						<input name="LoginBtn" type="submit" class="boton" id="login" value="Login" />
 						<br />
 					</p>
 				</form>
 				<a href="#"></a>
 			</div>
 		</div>
+		<div align="center"><p style="font-size:10px;">Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. <br /> Liderado por Juan Tejada y Jorge Lopez</p></div>
 	</body>
 </html>

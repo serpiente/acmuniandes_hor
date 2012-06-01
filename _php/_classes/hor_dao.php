@@ -487,7 +487,6 @@ class Hor_Dao {
 					throw new Exception("El objeto no es una instancia de Curso", 1);
 				}
 			}
-			$this -> queryMysql($query);
 		} else {
 			throw new Exception("El objeto recibido por parametro no es una instancia de Horario y no se puede actualizar");
 		}
@@ -554,11 +553,11 @@ class Hor_Dao {
 		for ($i=1; $i < 4; $i++) {
 			$prof = "";
 			if($i == 1) {
-				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME"]." ";
 				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME"];
 			}
 			else{
-				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"];
+				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_FIRST_NAME$i"]." ";
 				$prof.= $arr_asoc["PRIMARY_INSTRUCTOR_LAST_NAME$i"];
 			}
 			$profesores[] = $prof;

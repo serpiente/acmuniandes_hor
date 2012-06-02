@@ -89,4 +89,18 @@ function redirigirLoginPage(){
 	//header("Location: /acmuniandes_hor/index.html");
 	exit;
 }
+
+/**
+* Inicializa la información de conexiones desde disco
+*/
+function initConectionInfoLDAP() {
+	$file = fopen("../_data/infoldap.txt", "r") or exit("No se pudo establecer la conexion");
+	$info = array();
+	while(!feof($file)) {
+		 $info[]=fgets($file);
+	}
+	fclose($file);
+	return $info;	
+
+}
 ?>

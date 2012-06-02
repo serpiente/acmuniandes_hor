@@ -30,7 +30,7 @@ Creado y desarrollado por Capitulo Estudiantil ACM Universidad de los Andes. Jua
 	</head>
 	<body>
 		<div id="helper" class="helper"></div>
-		<div id="dialogConf" title="Advertencia!"></div>
+		<div id="dialogConf"></div>
 		<table border="0px" width="1500" cellspacing="10" align="center">
 			<!-- Header-->
 			<tr height="50">

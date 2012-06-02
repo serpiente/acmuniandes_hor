@@ -112,6 +112,7 @@ $(function() {
 	 */
 	function obtenerResultados(input) {
 		resultGrid.jqGrid('clearGridData', $(this));
+		$("#loadimg").show();
 		if(input){			
 			$.ajax({
 				url : '/acmuniandes_hor/_php/hor_conslt.php',
@@ -127,15 +128,25 @@ $(function() {
 							// data.redirect contains the string URL to redirect to
 							document.location = response.redirect;
 						} else if(response.message){
+							$("#loadimg").hide();
+							$("#dialogConf").attr('title','Oops!');
 							$("#dialogConf").empty();
 							$("#dialogConf").append(response.message);
 							$("#dialogConf").dialog({
 								modal: true
 							});
+						} else if(response.length == 0){
+							$("#loadimg").hide();
+							$("#dialogConf").attr('title','Oops!');
+							$("#dialogConf").empty();
+							$("#dialogConf").append("<p>Su busqueda no ha obtenido resultados.<br />Por favor intente de nuevo</p>");
+							$("#dialogConf").dialog({
+								modal : true
+							});
 						}
 						else{
 							resultados = response;
-							
+							$("#loadimg").hide();
 							for(var i = 0; i < resultados.length; i++) {
 								resultados[i].profesor = "" + resultados[i].profesores[0];
 								resultados[i].id = bigIndex;
@@ -157,6 +168,7 @@ $(function() {
 			});
 		}
 		else{
+			$("#dialogConf").attr('title','Oops!');
 			$("#dialogConf").empty();
 			$("#dialogConf").append("Se debe ingresar una consulta");
 			$("#dialogConf").dialog({
@@ -174,7 +186,7 @@ $(function() {
 		
 		$('.jqgrow').attr('addbl','true');
 		
-		$('.jqgrow').dblclick(function(){
+		$('.jqgrow').click(function(){
 			if(!$("#"+sel).attr('confl')){
 				agregarCursoCalendar(null, false, $(this));
 				agregarCursoHorario(resultados[$(this).attr('ie')]);
@@ -303,6 +315,7 @@ $(function() {
 	 */
 	function guardarHorario(){
 		if(horarioActual.cursos.length == 0){
+			$("#dialogConf").attr('title','Oops!');
 			$("#dialogConf").empty();
 			$("#dialogConf").append("El horario actual se encuentra vacio");
 			$("#dialogConf").dialog({
@@ -322,7 +335,7 @@ $(function() {
 				
 				info += "</ul><br />"
 				info += "Desea continuar guardando su horario?"
-				
+				$("#dialogConf").attr('title','Oops!');
 				$("#dialogConf").empty();
 				$("#dialogConf").append(info);
 				$("#dialogConf").dialog({
@@ -519,6 +532,7 @@ $(function() {
 			name : 'crn',
 			width : 37
 		}],
+		sortable: true,
 		gridview : true,
 		hoverrows:true,
 		caption : "Cursos Encontrados",
@@ -622,11 +636,6 @@ $(function() {
 	});
 	
 	$(".ui-jqgrid-bdiv").prepend('<div id="loadimg" style="display:none;position: absolute; left: 147.5px; top: 170px;"><img src="/acmuniandes_hor/_images/loading.gif"/></div>');
-	$("#loadimg").ajaxStart(function(){
-   		$(this).show();
- 	}).ajaxStop(function(){
- 		$(this).hide();
- 	});
 	
 	function postform(path, params){
 		var form = document.createElement("form");

@@ -78,7 +78,7 @@ $(function() {
 				else {
 					if(response.length == 0){
 						console.log(response);					
-						$("#horarios"+j).append('<h2 style="color: #444444;"> No tienes ningun horario guardado. <br />Agrega uno nuevo haciendo click en el boton (+) </h2>')
+						$("#horarios"+j).append('<h2 style="color: #444444;"> No hay ningun horario guardado. <br />Agrega uno nuevo haciendo click en el boton (+) </h2>')
 					} else {
 						horarios = response;
 						sel = 0;

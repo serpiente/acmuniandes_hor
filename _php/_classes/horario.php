@@ -34,11 +34,6 @@ class Horario {
 	public $fechaCreacion;
 	
 	/**
-	* Indica si el horario ha sido o no guardado
-	*/
-	public $guardado;
-	
-	/**
 	* Representa el nombre del Horario
 	*/
 	public $nombre;
@@ -52,6 +47,11 @@ class Horario {
 	* Representa los cursos que posee el horario
 	*/
 	public $cursos;
+	
+	/**
+	 * Representa los crns de cada curso dentro del horario
+	 */
+	public $crns;
 	
 	
 	//---------------------------------------------------------------------------------------------------//
@@ -117,14 +117,6 @@ class Horario {
 		$this -> fechaCreacion = $nfechaCreacion;
 	}
 	
-	function getGuardado(){
-		return $this -> guardado;
-	}
-	
-	function setGuardado($nguardado){
-		$this -> guardado = $nguardado;
-	}
-	
 	function getNombre(){
 		return $this -> nombre;
 	}
@@ -148,6 +140,14 @@ class Horario {
 	function setCursos($ncursos){
 		$this -> cursos = $ncursos;
 	}	
+	
+	function getCRNs(){
+		return $this -> crns;
+	}
+	
+	function setCRNs($ncrns){
+		$this -> crns = $ncrns;
+	}
 }
 
 ?>

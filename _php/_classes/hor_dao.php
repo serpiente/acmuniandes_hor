@@ -367,7 +367,7 @@ class Hor_Dao {
 		OR PH.CRN_KEY LIKE '%$valor_consulta%'
 		OR PH.SUBJ_CODE LIKE '%$valor_consulta%'
 		OR PH.CRSE_NUMBER LIKE '%$valor_consulta%'
-		)
+		) ORDER BY PH.TITLE, PH.CRN_KEY
 		";
 		
 		$result = $this -> queryOracle($query);
@@ -396,7 +396,6 @@ class Hor_Dao {
 		if($row = $this -> darSiguienteRegistroMySql($result)){
 			$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
 			$hor -> setFechaCreacion($row['FECHA_CREACION']);
-			$hor -> setGuardado(false);
 			$hor -> setIdHorario($row['ID_HORARIO']);
 			$hor -> setNombre($row['NOMBRE']);
 			$hor -> setNumCursos($row['NUM_CURSOS']);
@@ -411,7 +410,7 @@ class Hor_Dao {
 		while($row = $this -> darSiguienteRegistroMySql($result)){
 			$crns[] = $row['CRN_CURSO'];
 		}
-		
+		$hor -> setCRNs($crns);
 		$cursos = array();
 		foreach ($crns as $crn) {
 			$cursos[] = $this -> consultarCursoPorCRNInterno($crn);
@@ -430,17 +429,28 @@ class Hor_Dao {
 		$result = $this -> queryMysql($query);
 		
 		$horarios = array();
-		
+		$idhors = array();
 		while($row = $this -> darSiguienteRegistroMySql($result)){
 			$hor = new Horario();
 			$hor -> setCreditosTotales($row['CREDITOS_TOTALES']);
 			$hor -> setFechaCreacion($row['FECHA_CREACION']);
-			$hor -> setGuardado(false);
 			$hor -> setIdHorario($row['ID_HORARIO']);
 			$hor -> setNombre($row['NOMBRE']);
 			$hor -> setNumCursos($row['NUM_CURSOS']);
 			$hor -> setUsuario($usuario);
+			$idhors[] = $hor->getIdHorario();			
 			$horarios[] = $hor;
+		}
+		
+		for ($i=0; $i<sizeof($idhors);$i++) {
+			$query = "SELECT CRN_CURSO FROM CURSOS_HORARIOS WHERE ID_HORARIO=".$idhors[$i];
+			$result = $this -> queryMysql($query);
+			$crns = array();
+		
+			while($row = $this -> darSiguienteRegistroMySql($result)){
+				$crns[] = $row['CRN_CURSO'];
+			}
+			$horarios[$i] -> setCRNs($crns);
 		}
 		
 		//return del arreglo con objetos Horario, json encoded
